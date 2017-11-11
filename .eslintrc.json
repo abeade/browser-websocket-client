@@ -1,0 +1,36 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 8,
+    "sourceType": "module"
+  },
+  "env": {
+    "es6": true,
+    "browser": true,
+    "jasmine": true,
+    "jquery": true,
+    "protractor": true,
+    "webextensions": true
+  },
+  "plugins": [
+    "promise",
+    "standard"
+  ],
+  "extends": [
+    "standard",
+    "standard-preact"
+  ],
+  "settings": {
+    "react": {
+      "pragma": "h"
+    }
+  },
+  "globals": {
+    "document": true,
+    "navigator": false,
+    "spyOnEvent": true,
+    "window": true
+  },
+  "rules": {
+    "no-useless-escape": "off"
+  }
+}

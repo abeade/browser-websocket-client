@@ -1,0 +1,11 @@
+.DS_Store
+.idea
+*.iml
+*.log
+package-lock.json
+/build/
+/dist/
+/karma_html/
+/node_modules/
+/protractor_html/
+/Logo.pxm

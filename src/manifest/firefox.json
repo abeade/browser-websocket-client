@@ -1,0 +1,10 @@
+{
+  "applications": {
+    "gecko": {
+      "id": "browser-websocket-client@example.com"
+    }
+  },
+  "options_ui": {
+    "page": "index.html#options"
+  }
+}

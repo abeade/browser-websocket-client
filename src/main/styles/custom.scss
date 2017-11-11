@@ -1,0 +1,104 @@
+@import '../../../node_modules/bootstrap/scss/bootstrap';
+
+// HTML tag styles
+
+a {
+  text-decoration: none !important
+}
+
+body {
+  margin: 10px 0 20px 0;
+}
+
+input {
+  font-family: monospace;
+  min-width: 300px;
+  width: 50%;
+  padding: 1px 3px;
+  margin-bottom: 10px;
+}
+
+textarea {
+  font-family: monospace;
+  min-width: 300px;
+  width: 60%;
+  padding: 1px 3px;
+  height: 4em;
+  margin-bottom: 10px;
+}
+
+// Custom Bootstrap styles
+
+.card-header {
+  padding: 0;
+}
+
+.mb-0 > a {
+  display: inline-block;
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+}
+
+// Custom id styles
+
+#connectionStatus {
+  font-weight: bold;
+}
+
+#messages {
+  font-family: monospace;
+  height: 300px;
+  margin-top: 15px;
+  padding: 1px 3px;
+  overflow: auto;
+  background-color: rgb(249, 249, 249);
+}
+
+// Custom class styles
+
+.bwc-margin-top {
+  margin-top: 10px;
+}
+
+.bwc-pointer {
+  cursor: pointer;
+}
+
+.bwc-sent {
+  color: rgb(200, 35, 51);
+}
+
+.bwc-table-row {
+  padding: 5px 20px;
+}
+
+.bwc-table-row:hover {
+  background-color: rgba(0, 0, 0, 0.075);
+}
+
+.bwc-table-row-icon{
+  cursor: pointer;
+  margin-left: 20px;
+}
+
+// JSON pretty-print
+
+.bwc-boolean {
+  color: rgb(0, 105, 217);
+}
+
+.bwc-key {
+  color: rgb(200, 35, 51);
+}
+
+.bwc-null {
+  color: rgb(255, 0, 255);
+}
+
+.bwc-number {
+  color: rgb(255, 140, 0);
+}
+
+.bwc-string {
+  color: rgb(0, 128, 0);;
+}

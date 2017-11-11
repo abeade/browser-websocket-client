@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<!--suppress HtmlFormInputWithoutLabel, HtmlUnknownTarget -->
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>
+		Browser WebSocket Client
+	</title>
+<body>
+<div class="container">
+	<h3>
+		Browser WebSocket Client
+	</h3>
+	<div id="accordion" role="tablist">
+		<!--OPTIONS CARD-->
+		<div class="card">
+			<div id="optionsHeading" class="card-header" role="tab">
+				<h5 class="mb-0">
+					<a id="optionsAnchor" data-toggle="collapse" href="#options" aria-expanded="false"
+					   aria-controls="options">
+						Options
+					</a>
+				</h5>
+			</div>
+			<div id="options" class="collapse" role="tabpanel" aria-labelledby="optionsHeading"
+				 data-parent="#accordion">
+				<div class="card-body">
+					<h4>
+						Server Connections
+					</h4>
+					<h5>
+						Saved Connections
+					</h5>
+					<p id="optionsUrlNoneSaved">
+						You have not saved any connections.
+					</p>
+					<div id="optionsUrlSavedTable" class="clearfix"></div>
+					<h5 class="bwc-margin-top">
+						Save a server connection
+					</h5>
+					<label id="optionsUrlInputLabel" for="optionsUrlInput">
+						URL:
+					</label>
+					<input id="optionsUrlInput"
+						   class="form-control"
+						   type="text"
+						   placeholder="The URL usually begins with ws:// or wss://"/>
+					<p id="optionsUrlStatus" class="hide"></p>
+					<p id="optionsUrlInputEmpty" class="alert alert-danger rounded hide" role="alert">
+						You must enter a URL.
+					</p>
+					<p id="optionsUrlInvalidWarning" class="alert alert-warning rounded hide" role="alert">
+						Invalid URL! It should begin with <code>ws://</code> or <code>wss://</code> and not contain any
+						spaces.
+					</p>
+					<button id="optionsUrlSaveButton" class="btn btn-primary" disabled="disabled">
+						Save URL
+					</button>
+					<button id="optionsUrlCancelEditButton" class="btn btn-secondary">
+						Cancel
+					</button>
+					<hr/>
+					<h4>
+						Messages
+					</h4>
+					<h5>
+						Saved Messages
+					</h5>
+					<p id="optionsMessageNoneSaved">
+						You have not saved any messages.
+					</p>
+					<div id="optionsMessageSavedTable" class="clearfix"></div>
+					<h4 class="bwc-margin-top">
+						Save a message
+					</h4>
+					<label id="optionsMessageNameInputLabel" for="optionsMessageNameInput">
+						Display Name:
+					</label>
+					<input id="optionsMessageNameInput"
+						   class="form-control"
+						   type="text"
+						   placeholder="The display name appears in the 'Saved Messages' table and client drop-down menu."/>
+					<label for="optionsMessageTextarea">
+						Message Body:
+					</label>
+					<textarea id="optionsMessageTextarea"
+							  class="form-control"
+							  placeholder="The message body does not appear in the 'Saved Messages' table or drop-down menu."></textarea>
+					<p id="optionsMessageStatus" class="hide"></p>
+					<p id="optionsMessageNameInvalid" class="alert alert-danger rounded hide" role="alert">
+						You must enter a display name.
+					</p>
+					<p id="optionsMessageTextareaEmpty" class="alert alert-danger rounded hide" role="alert">
+						You must enter a message body.
+					</p>
+					<p id="optionsMessageJsonInvalidWarning" class="alert alert-warning rounded hide" role="alert">
+						Invalid JSON! You entered invalid JSON in the message body.
+					</p>
+					<button id="optionsMessageSaveButton" class="btn btn-primary" disabled="disabled">
+						Save Message
+					</button>
+					<button id="optionsMessageCancelEditButton" class="btn btn-secondary">
+						Cancel
+					</button>
+				</div>
+			</div>
+		</div>
+		<!--CLIENT CARD-->
+		<div class="card">
+			<div id="clientHeading" class="card-header" role="tab">
+				<h5 class="mb-0">
+					<a id="clientAnchor" class="collapsed" data-toggle="collapse" href="#client" aria-expanded="true"
+					   aria-controls="client">
+						Client
+					</a>
+				</h5>
+			</div>
+			<div id="client" class="collapse show" role="tabpanel" aria-labelledby="clientHeading"
+				 data-parent="#accordion">
+				<div class="card-body">
+					<h4>
+						Server Connection
+					</h4>
+					<select id="urlSelect" class="custom-select"></select>
+					<input id="urlInput"
+						   class="form-control bwc-margin-top"
+						   type="text"
+						   placeholder="Enter the server URL here"/>
+					<p>
+						Status:
+						<span id="connectionStatus">
+							CLOSED
+						</span>
+					</p>
+					<button id="connectButton" class="btn btn-primary" disabled="disabled">
+						Connect
+					</button>
+					<button id="disconnectButton" class="btn btn-danger hide">
+						Disconnect
+					</button>
+					<hr/>
+					<h4>
+						Send a Message
+					</h4>
+					<select id="messageSelect" class="custom-select"></select>
+					<textarea id="messageTextarea"
+							  class="form-control bwc-margin-top"
+							  placeholder="Enter JSON here and press Ctrl + Enter or click the Send button after establishing a connection to a server."></textarea>
+					<p id="messageJsonInvalidWarning" class="alert alert-warning rounded hide" role="alert">
+						Invalid JSON! You entered invalid JSON in the message body.
+					</p>
+					<button id="messageSendButton" class="btn btn-primary" disabled="disabled">
+						Send
+					</button>
+					<hr/>
+					<h4>
+						Received Messages
+					</h4>
+					<p>
+						Outgoing messages from client are shown in red.
+						Incoming messages from server are shown in black.
+						Click on on an incoming message to pretty-print it.
+					</p>
+					<button id="clearMessagesButton" class="btn btn-danger" disabled="disabled">
+						Clear Messages
+					</button>
+					<div id="messages" class="border border-secondary rounded"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--DELETE MODAL-->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModal"
+	 aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="deleteModalTitle">
+					Confirm Delete
+				</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<p id="deleteModalBody"></p>
+				<p id="deleteModalName"></p>
+			</div>
+			<div class="modal-footer">
+				<button id="deleteModalDeleteButton" type="button" class="btn btn-danger" data-target="">
+					Delete!
+				</button>
+				<button id="deleteModalCancelButton" type="button" class="btn btn-secondary" data-dismiss="modal">
+					Cancel
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--JSON MODAL-->
+<div class="modal fade" id="jsonModal" tabindex="-1" role="dialog" aria-labelledby="jsonModal"
+	 aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 id="jsonModalTitle" class="modal-title">
+					Incoming Message
+				</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<p id="jsonModalBody"></p>
+			</div>
+			<div class="modal-footer">
+				<button id="jsonModalCloseButton" type="button" class="btn btn-secondary" data-dismiss="modal">
+					Close
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript" src="index.js"></script>
+<script type="text/javascript" src="styles.js"></script>
+</body>
+</html>
