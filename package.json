@@ -1,6 +1,6 @@
 {
   "name": "browser-websocket-client",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Connect to a WebSocket server to send and receive raw JSON messages.",
   "license": "Apache-2.0",
   "author": "Ken Siprell",

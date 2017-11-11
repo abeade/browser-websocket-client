@@ -2,14 +2,11 @@
 
 Browser WebSocket Client is an extension for Chrome and Firefox that provides a simple method for testing a WebSocket server. It allows you to send and receive raw JSON messages as well as save server URLs and messages for later use.
 
-### TODO
-- Add installation URL for Firefox
-
 ### Browser Installation
 
-Chrome: [browser-websocket-client](https://chrome.google.com/webstore/detail/browser-websocket-client/mdmlhchldhfnfnkfmljgeinlffmdgkjo)
+Chrome: [https://chrome.google.com/webstore/detail/browser-websocket-client/mdmlhchldhfnfnkfmljgeinlffmdgkjo](https://chrome.google.com/webstore/detail/browser-websocket-client/mdmlhchldhfnfnkfmljgeinlffmdgkjo)
 
-Firefox: []()
+Firefox: [https://addons.mozilla.org/en-US/firefox/addon/browser-websocket-client/](https://addons.mozilla.org/en-US/firefox/addon/browser-websocket-client/)
 
 After installing look for the icon in the toolbar:
 
