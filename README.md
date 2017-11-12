@@ -16,7 +16,7 @@ After installing look for the icon in the toolbar:
 
 * Bootstrap 4 user interface
 * Save server URLs and JSON messages for later use
-* Pretty-print incoming JSON messages and saved messages
+* Pretty-print incoming JSON messages and saved message bodies
 
 ### Screenshots
 
@@ -83,14 +83,22 @@ Then you can load the unpacked extension using these [instructions](https://deve
 /some/directory/browser-websocket-client/build/dev/firefox
 ```
 
-Notes:
+### Development Notes
 
 The JavaScript is written in ES6 using the jQuery framework.
 
-Unit test report: ```karma_html/Karma_Report/index.html```
+Unit test report (after ```npm run test:unit```):
+```
+/some/directory/browser-websocket-client/karma_html/Karma_Report/index.html
+```
 
-E2E test report: ```protractor_html/htmlReport_BrowserWebSocketClient.html```
+E2E test report (after ```npm run test:e2e```):
+```
+/some/directory/browser-websocket-client/protractor_html/htmlReport_BrowserWebSocketClient.html
+```
 
 ### Inspiration
 
 This extension was inspired by [Simple-WebSocket-Client](https://github.com/hakobera/Simple-WebSocket-Client).
+
+The [syntaxHighlight function](https://github.com/kensiprell/browser-websocket-client/blob/master/src/main/index.js#L317) came from this [stackoverflow answer](https://stackoverflow.com/a/7220510/1705701).
