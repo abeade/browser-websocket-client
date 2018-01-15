@@ -14,11 +14,6 @@ module.exports = function () {
     module: {
       rules: [{
         test: /\.js$/,
-        include: [
-          root('src/main/index.js'),
-          root('src/test/index.spec.js')
-        ],
-        exclude: [/node_modules/],
         loader: 'babel-loader'
       }, {
         test: /\.scss$/,
@@ -28,11 +23,6 @@ module.exports = function () {
         test: /\.html$/,
         loader: 'raw-loader',
         exclude: [root('src/main/index.html')]
-      }, {
-        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: 'url-loader?limit=10000&mimetype=application/font-woff'
-      }, {
-        test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'file-loader'
       }]
     }
   }

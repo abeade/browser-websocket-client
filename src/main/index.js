@@ -1,3 +1,7 @@
+import fontawesome from '@fortawesome/fontawesome'
+import faPencilAlt from '@fortawesome/fontawesome-free-solid/faPencilAlt'
+import faPrint from '@fortawesome/fontawesome-free-solid/faPrint'
+import faTrashAlt from '@fortawesome/fontawesome-free-solid/faTrashAlt'
 require('jquery')
 require('popper.js')
 require('bootstrap/js/src/button')
@@ -5,7 +9,13 @@ require('bootstrap/js/src/collapse')
 require('bootstrap/js/src/modal')
 require('bootstrap/js/src/tooltip')
 require('bootstrap/js/src/util')
-require('font-awesome-webpack')
+
+// Add Font Awesome icons to its library
+fontawesome.library.add(
+  faPencilAlt,
+  faPrint,
+  faTrashAlt
+)
 
 window.app = {}
 const APP = window.app
@@ -19,13 +29,13 @@ const messageTableRow = `
   <span>
     REPLACE_NAME
   </span>
-  <span class="deleteMessage bwc-table-row-icon pull-right" data-toggle="tooltip" data-placement="top" title="Click to delete this message" data-message='REPLACE_ALL'>
-      <i class="fa fa-trash" aria-hidden="true"></i>
+  <span class="deleteMessage bwc-table-row-icon float-right" data-toggle="tooltip" data-placement="top" title="Click to delete this message" data-message='REPLACE_ALL'>
+      <i class="fa fa-trash-alt" aria-hidden="true"></i>
   </span>
-  <span class="editMessage bwc-table-row-icon pull-right" data-toggle="tooltip" data-placement="top" title="Click to edit this message" data-message='REPLACE_ALL'>
-    <i class="fa fa-pencil" aria-hidden="true"></i>
+  <span class="editMessage bwc-table-row-icon float-right" data-toggle="tooltip" data-placement="top" title="Click to edit this message" data-message='REPLACE_ALL'>
+    <i class="fa fa-pencil-alt" aria-hidden="true"></i>
   </span>
-  <span class="printMessage bwc-table-row-icon pull-right" data-toggle="tooltip" data-placement="top" title="Click to pretty-print this message" data-message='REPLACE_ALL'>
+  <span class="printMessage bwc-table-row-icon float-right" data-toggle="tooltip" data-placement="top" title="Click to pretty-print this message" data-message='REPLACE_ALL'>
     <i class="fa fa-print" aria-hidden="true"></i>
   </span>
 </div>
@@ -35,11 +45,11 @@ const urlTableRow = `
   <span>
     REPLACE_URL
   </span>
-  <span class="deleteUrl bwc-table-row-icon pull-right" data-toggle="tooltip" data-placement="top" title="Click to delete this URL" data-url='REPLACE_URL'>
-    <i class="fa fa-trash" aria-hidden="true"></i>
+  <span class="deleteUrl bwc-table-row-icon float-right" data-toggle="tooltip" data-placement="top" title="Click to delete this URL" data-url='REPLACE_URL'>
+    <i class="fa fa-trash-alt" aria-hidden="true"></i>
   </span>
-  <span class="editUrl bwc-table-row-icon pull-right" data-toggle="tooltip" data-placement="top" title="Click to edit this URL" data-url='REPLACE_URL'>
-    <i class="fa fa-pencil" aria-hidden="true"></i>
+  <span class="editUrl bwc-table-row-icon float-right" data-toggle="tooltip" data-placement="top" title="Click to edit this URL" data-url='REPLACE_URL'>
+    <i class="fa fa-pencil-alt" aria-hidden="true"></i>
   </span>
 </div>
 `
