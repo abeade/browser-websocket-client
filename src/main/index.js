@@ -526,11 +526,6 @@ APP.close = function () {
     console.log('CLOSING CONNECTION ...')
     ws.close()
   }
-  connectButton.show()
-  connectionStatus.text('CLOSED')
-  disconnectButton.hide()
-  messageSendButton.prop('disabled', true)
-  urlInput.prop('disabled', false)
 }
 
 // WebSocket onOpen handler
@@ -547,6 +542,11 @@ APP.onOpen = function () {
 APP.onClose = function () {
   console.log('CLOSED: ' + urlInput.val())
   ws = null
+  connectButton.show()
+  connectionStatus.text('CLOSED')
+  disconnectButton.hide()
+  messageSendButton.prop('disabled', true)
+  urlInput.prop('disabled', false)
 }
 
 // WebSocket onMessage handler
