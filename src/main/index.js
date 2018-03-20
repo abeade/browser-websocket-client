@@ -91,6 +91,7 @@ let editingMessage = false
 let editingMessageTarget = ''
 let isCtrlKey = false
 let ws = null
+let wsPoliteDisconnection = false
 
 // Used only by background.js to show the options card
 // when user chooses extension options in browser settings
@@ -524,13 +525,9 @@ APP.open = function () {
 APP.close = function () {
   if (ws) {
     console.log('CLOSING CONNECTION ...')
+    wsPoliteDisconnection = true
     ws.close()
   }
-  connectButton.show()
-  connectionStatus.text('CLOSED')
-  disconnectButton.hide()
-  messageSendButton.prop('disabled', true)
-  urlInput.prop('disabled', false)
 }
 
 // WebSocket onOpen handler
@@ -541,12 +538,21 @@ APP.onOpen = function () {
   disconnectButton.show()
   messageSendButton.prop('disabled', false)
   urlInput.prop('disabled', true)
+  wsPoliteDisconnection = false
 }
 
 // WebSocket onClose handler
 APP.onClose = function () {
   console.log('CLOSED: ' + urlInput.val())
   ws = null
+  if (!wsPoliteDisconnection) {
+    alert("Uh-oh! You were disconnected by the server.")
+  }
+  connectButton.show()
+  connectionStatus.text('CLOSED')
+  disconnectButton.hide()
+  messageSendButton.prop('disabled', true)
+  urlInput.prop('disabled', false)
 }
 
 // WebSocket onMessage handler
