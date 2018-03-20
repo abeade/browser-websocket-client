@@ -554,9 +554,7 @@ APP.onOpen = function () {
 // WebSocket onClose handler
 APP.onClose = function () {
   const disconnectionMessage = 'CLOSED';
-  if (!wsPoliteDisconnection) {
-    disconnectionMessage += '. Disconnected by the server.';
-  }
+  disconnectionMessage += (wsPoliteDisconnection) ? '' : '. Disconnected by the server.';
   console.log('CLOSED: ' + urlInput.val())
   ws = null
   connectButton.show()
