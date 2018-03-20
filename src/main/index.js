@@ -556,7 +556,7 @@ APP.onClose = function () {
   console.log('CLOSED: ' + urlInput.val())
   ws = null
   if (!wsPoliteDisconnection) {
-    alert("Uh-oh! You were disconnected by the server.")
+    connectionStatus.text('CLOSED. You were disconnected by the server.')
   }
   connectButton.show()
   connectionStatus.text('CLOSED')
