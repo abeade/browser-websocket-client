@@ -1,6 +1,6 @@
 describe('Browser WebSocket Client', function () {
   const EC = protractor.ExpectedConditions
-  const EXTENSION_ID = 'bnlojoffibgpedmkpbjkhpehomkmmicm'
+  const EXTENSION_ID = 'eikkfakofkkjephhmabjoncpigmcpllf'
   const KEY_BACKSPACE = protractor.Key.BACK_SPACE
   const KEY_CTRL = protractor.Key.CONTROL
   const KEY_ENTER = protractor.Key.ENTER
@@ -323,6 +323,7 @@ describe('Browser WebSocket Client', function () {
       expect(jsonModalBody.all(by.className('bwc-string')).count()).toBe(1)
       expect(jsonModalBody.all(by.className('bwc-boolean')).count()).toBe(1)
       browser.wait(EC.elementToBeClickable(jsonModalCloseButton), WAIT)
+      browser.sleep(SLEEP)
       jsonModalCloseButton.click()
       browser.wait(EC.invisibilityOf(jsonModal), WAIT)
       expect(jsonModal.isDisplayed()).toBe(false)

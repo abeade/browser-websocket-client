@@ -12,9 +12,11 @@ const reporter = new HtmlScreenshotReporter({
 
 exports.config = {
   capabilities: {
-    'browserName': 'chrome',
-    'chromeOptions': {
-      'args': ['--load-extension=build/prod/chrome']
+    browserName: 'chrome',
+    chromeOptions: {
+      args: [
+        'load-extension=build/production/chrome'
+      ]
     }
   },
   directConnect: true,

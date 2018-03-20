@@ -3,7 +3,9 @@ const ROOT = path.resolve(__dirname)
 const root = path.join.bind(path, ROOT)
 
 module.exports = function () {
+  // noinspection WebpackConfigHighlighting
   return {
+    mode: 'development',
     devtool: 'inline-source-map',
     resolve: {
       modules: [

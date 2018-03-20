@@ -2,7 +2,6 @@ const merge = require('webpack-merge')
 const webpack = require('webpack')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const GenerateJsonPlugin = require('generate-json-webpack-plugin')
-const MinifyPlugin = require('babel-minify-webpack-plugin')
 const path = require('path')
 const ROOT = path.resolve(__dirname)
 const root = path.join.bind(path, ROOT)
@@ -12,7 +11,9 @@ module.exports = function (env) {
   const [mode, platform] = env.split(':')
   let buildPath = root('build/' + mode + '/' + platform)
 
-  const config = {
+  // noinspection WebpackConfigHighlighting
+  return {
+    mode: mode,
     entry: {
       'index': './src/main/index.js',
       'background': './src/main/background.js',
@@ -25,7 +26,7 @@ module.exports = function (env) {
     },
     devtool: 'source-map',
     module: {
-      loaders: [
+      rules: [
         {
           test: /\.js$/,
           exclude: [
@@ -79,10 +80,4 @@ module.exports = function (env) {
       ), null, 2)
     ]
   }
-  if (mode === 'prod') {
-    config.plugins = config.plugins.concat([
-      new MinifyPlugin()
-    ])
-  }
-  return config
 }
