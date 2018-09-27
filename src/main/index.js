@@ -93,6 +93,7 @@ const optionsUrlSaveButton = $('#optionsUrlSaveButton')
 const optionsUrlSavedTable = $('#optionsUrlSavedTable')
 const optionsUrlStatus = $('#optionsUrlStatus')
 const urlInput = $('#urlInput')
+const protoInput = $('#protoInput')
 const urlSelect = $('#urlSelect')
 const url = document.location.toString()
 let editingUrl = false
@@ -523,7 +524,11 @@ clearMessagesButton.click(function () {
 // Open WebSocket connection
 APP.open = function () {
   let url = urlInput.val()
-  ws = new WebSocket(url)
+  let proto = protoInput.val()
+  if (proto)
+    ws = new WebSocket(url, proto)
+  else
+    ws = new WebSocket(url)
   ws.onopen = APP.onOpen
   ws.onclose = APP.onClose
   ws.onmessage = APP.onMessage
@@ -548,6 +553,7 @@ APP.onOpen = function () {
   disconnectButton.show()
   messageSendButton.prop('disabled', false)
   urlInput.prop('disabled', true)
+  protoInput.prop('disabled', true)
   wsPoliteDisconnection = false
 }
 
@@ -563,6 +569,7 @@ APP.onClose = function () {
   disconnectButton.hide()
   messageSendButton.prop('disabled', true)
   urlInput.prop('disabled', false)
+  protoInput.prop('disabled', false)
 }
 
 // WebSocket onMessage handler
