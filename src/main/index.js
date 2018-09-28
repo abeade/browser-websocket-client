@@ -559,13 +559,12 @@ APP.onOpen = function () {
 
 // WebSocket onClose handler
 APP.onClose = function () {
+  const disconnectionMessage = 'CLOSED';
+  disconnectionMessage += (wsPoliteDisconnection) ? '' : '. Disconnected by the server.';
   console.log('CLOSED: ' + urlInput.val())
   ws = null
-  if (!wsPoliteDisconnection) {
-    connectionStatus.text('CLOSED. You were disconnected by the server.')
-  }
   connectButton.show()
-  connectionStatus.text('CLOSED')
+  connectionStatus.text(disconnectionMessage)
   disconnectButton.hide()
   messageSendButton.prop('disabled', true)
   urlInput.prop('disabled', false)
