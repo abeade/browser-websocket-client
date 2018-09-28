@@ -17,13 +17,13 @@ function isOptionsUrl (url) {
 }
 
 function goToOptions () {
-  chrome.tabs.query({currentWindow: true}, function (tabs) {
+  chrome.tabs.query({ currentWindow: true }, function (tabs) {
     tabs.forEach(function (tab) {
       if (tab.url && isOptionsUrl(tab.url)) {
-        chrome.tabs.update(tab.id, {selected: true})
+        chrome.tabs.update(tab.id, { selected: true })
       }
     })
-    chrome.tabs.create({url: extensionUrl()})
+    chrome.tabs.create({ url: extensionUrl() })
   })
 }
 
