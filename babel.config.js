@@ -1,9 +1,10 @@
-{
+module.exports = {
   "sourceMaps": true,
   "presets": [
     [
-      "env",
+      "@babel/preset-env",
       {
+        "shippedProposals": true,
         "targets": {
           "browsers": [
             "> 1%",
@@ -15,6 +16,6 @@
     ]
   ],
   "plugins": [
-    "transform-object-rest-spread"
+    "@babel/plugin-proposal-object-rest-spread"
   ]
 }
