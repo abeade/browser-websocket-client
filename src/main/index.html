@@ -27,17 +27,17 @@
 				 data-parent="#accordion">
 				<div class="card-body">
 					<h4>
-						Server Connections
+						Server URLs
 					</h4>
 					<h5>
-						Saved Connections
+						Saved URLs
 					</h5>
 					<p id="optionsUrlNoneSaved">
-						You have not saved any connections.
+						You have not saved any URLs.
 					</p>
 					<div id="optionsUrlSavedTable" class="clearfix"></div>
 					<h5 class="bwc-margin-top">
-						Save a server connection
+						Save a server URL
 					</h5>
 					<label id="optionsUrlInputLabel" for="optionsUrlInput">
 						URL:
@@ -58,6 +58,42 @@
 						Save URL
 					</button>
 					<button id="optionsUrlCancelEditButton" class="btn btn-secondary">
+						Cancel
+					</button>
+					<hr/>
+					<h4>
+						Server Protocols
+					</h4>
+					<h5>
+						Saved Protocols
+					</h5>
+					<p id="optionsProtocolNoneSaved">
+						You have not saved any protocols.
+					</p>
+					<div id="optionsProtocolSavedTable" class="clearfix"></div>
+					<h5 class="bwc-margin-top">
+						Save a server protocol
+					</h5>
+					<label id="optionsProtocolInputLabel" for="optionsProtocolInput">
+						Protocol:
+					</label>
+					<input id="optionsProtocolInput"
+						   class="form-control"
+						   type="text"
+						   placeholder="Enter a single protocol name or multiple comma-separated names"/>
+					<p>If you enter multiple names, they will be saved as a single string with a space after each comma:
+						<code>protocol1, protocol2, protocol3</code>. However, this string will be converted into an
+						<code>array</code> when required by the
+						<a href="https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/WebSocket#Parameters">WebSocket()
+							constructor</a>.</p>
+					<p id="optionsProtocolStatus" class="hide"></p>
+					<p id="optionsProtocolInputEmpty" class="alert alert-danger rounded hide" role="alert">
+						You must enter a protocol name.
+					</p>
+					<button id="optionsProtocolSaveButton" class="btn btn-primary" disabled="disabled">
+						Save Protocol
+					</button>
+					<button id="optionsProtocolCancelEditButton" class="btn btn-secondary">
 						Cancel
 					</button>
 					<hr/>
@@ -120,17 +156,24 @@
 				 data-parent="#accordion">
 				<div class="card-body">
 					<h4>
-						Server Connection
+						Server URL (Required)
 					</h4>
-					<select id="urlSelect" class="custom-select"></select>
+					<p>Enter the server URL:</p>
+					<select id="urlSelect" class="hide custom-select"></select>
 					<input id="urlInput"
-						    class="form-control bwc-margin-top"
-						    type="text"
-						    placeholder="Enter the server URL here"/>
-					<input id="protoInput"
 						   class="form-control bwc-margin-top"
 						   type="text"
-						   placeholder="Enter the protocol name here (or leave empty)"/>
+						   placeholder="URL"/>
+					<h4>
+						Server Protocol (Optional)
+					</h4>
+					<p>Enter a single protocol name without quotes or multiple comma-separated names without quotes
+						(whitespace will be ignored):</p>
+					<select id="protocolSelect" class="hide custom-select"></select>
+					<input id="protocolInput"
+						   class="form-control bwc-margin-top"
+						   type="text"
+						   placeholder="Protocol"/>
 					<p>
 						Status:
 						<span id="connectionStatus">
@@ -147,10 +190,12 @@
 					<h4>
 						Send a Message
 					</h4>
+					<p>Enter JSON and press Ctrl + Enter or click the Send button after establishing a connection to a
+						server:</p>
 					<select id="messageSelect" class="custom-select"></select>
 					<textarea id="messageTextarea"
 							  class="form-control bwc-margin-top"
-							  placeholder="Enter JSON here and press Ctrl + Enter or click the Send button after establishing a connection to a server."></textarea>
+							  placeholder="JSON"></textarea>
 					<p id="messageJsonInvalidWarning" class="alert alert-warning rounded hide" role="alert">
 						Invalid JSON! You entered invalid JSON in the message body.
 					</p>

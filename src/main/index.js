@@ -2,6 +2,7 @@ import fontawesome from '@fortawesome/fontawesome'
 import faPencilAlt from '@fortawesome/fontawesome-free-solid/faPencilAlt'
 import faPrint from '@fortawesome/fontawesome-free-solid/faPrint'
 import faTrashAlt from '@fortawesome/fontawesome-free-solid/faTrashAlt'
+
 require('jquery')
 require('popper.js')
 require('bootstrap/js/src/button')
@@ -17,13 +18,21 @@ fontawesome.library.add(
   faTrashAlt
 )
 
+// Set namespace
 window.app = {}
 const APP = window.app
+
+// Define savedOptions object
 APP.savedOptions = {
-  urls: [],
-  messages: []
+  messages: [],
+  protocols: [],
+  urls: []
 }
+
+// Use Unicode BELL character as string separator
 const SEPARATOR = '\u0007'
+
+// HTML snippets for saved table row items
 const messageTableRow = `
 <div class="bwc-table-row rounded">
   <span>
@@ -40,6 +49,19 @@ const messageTableRow = `
   </span>
 </div>
 `
+const protocolTableRow = `
+<div class="bwc-table-row rounded">
+  <span>
+    REPLACE_PROTOCOL
+  </span>
+  <span class="deleteProtocol bwc-table-row-icon float-right" data-toggle="tooltip" data-placement="top" title="Click to delete this protocol" data-protocol='REPLACE_PROTOCOL'>
+    <i class="fa fa-trash-alt" aria-hidden="true"></i>
+  </span>
+  <span class="editProtocol bwc-table-row-icon float-right" data-toggle="tooltip" data-placement="top" title="Click to edit this protocol" data-protocol='REPLACE_PROTOCOL'>
+    <i class="fa fa-pencil-alt" aria-hidden="true"></i>
+  </span>
+</div>
+`
 const urlTableRow = `
 <div class="bwc-table-row rounded">
   <span>
@@ -53,6 +75,8 @@ const urlTableRow = `
   </span>
 </div>
 `
+
+// HTML elements
 const clearMessagesButton = $('#clearMessagesButton')
 const client = $('#client')
 const connectButton = $('#connectButton')
@@ -83,6 +107,14 @@ const optionsMessageSavedTable = $('#optionsMessageSavedTable')
 const optionsMessageStatus = $('#optionsMessageStatus')
 const optionsMessageTextarea = $('#optionsMessageTextarea')
 const optionsMessageTextareaEmpty = $('#optionsMessageTextareaEmpty')
+const optionsProtocolCancelEditButton = $('#optionsProtocolCancelEditButton')
+const optionsProtocolInput = $('#optionsProtocolInput')
+const optionsProtocolInputEmpty = $('#optionsProtocolInputEmpty')
+const optionsProtocolInputLabel = $('#optionsProtocolInputLabel')
+const optionsProtocolNoneSaved = $('#optionsProtocolNoneSaved')
+const optionsProtocolSaveButton = $('#optionsProtocolSaveButton')
+const optionsProtocolSavedTable = $('#optionsProtocolSavedTable')
+const optionsProtocolStatus = $('#optionsProtocolStatus')
 const optionsUrlCancelEditButton = $('#optionsUrlCancelEditButton')
 const optionsUrlInput = $('#optionsUrlInput')
 const optionsUrlInputEmpty = $('#optionsUrlInputEmpty')
@@ -92,14 +124,24 @@ const optionsUrlNoneSaved = $('#optionsUrlNoneSaved')
 const optionsUrlSaveButton = $('#optionsUrlSaveButton')
 const optionsUrlSavedTable = $('#optionsUrlSavedTable')
 const optionsUrlStatus = $('#optionsUrlStatus')
-const urlInput = $('#urlInput')
-const protoInput = $('#protoInput')
-const urlSelect = $('#urlSelect')
+const protocolInput = $('#protocolInput')
+const protocolSelect = $('#protocolSelect')
 const url = document.location.toString()
-let editingUrl = false
-let editingUrlTarget = ''
+const urlInput = $('#urlInput')
+const urlSelect = $('#urlSelect')
+
+// Immutable variables
+const messageSelectTitle = 'Saved Messages'
+const protocolSelectTitle = 'Saved Protocols'
+const urlSelectTitle = 'Saved URLs'
+
+// Mutable variables
 let editingMessage = false
 let editingMessageTarget = ''
+let editingProtocol = false
+let editingProtocolTarget = ''
+let editingUrl = false
+let editingUrlTarget = ''
 let isCtrlKey = false
 let ws = null
 let wsPoliteDisconnection = false
@@ -127,39 +169,42 @@ APP.saveOptions = function () {
 
 // Delete from APP.savedOptions
 APP.savedOptionsDelete = function (option, target) {
-  let messages, urls
+  let messages, protocols, urls
   switch (option) {
     case 'message':
       messages = APP.savedOptions.messages.filter(e => e !== target)
+      protocols = APP.savedOptions.protocols ? APP.savedOptions.protocols : []
+      urls = APP.savedOptions.urls ? APP.savedOptions.urls : []
+      break
+    case 'protocol':
+      messages = APP.savedOptions.messages ? APP.savedOptions.messages : []
+      protocols = APP.savedOptions.protocols.filter(e => e !== target)
       urls = APP.savedOptions.urls ? APP.savedOptions.urls : []
       break
     case 'url':
       messages = APP.savedOptions.messages ? APP.savedOptions.messages : []
+      protocols = APP.savedOptions.protocols ? APP.savedOptions.protocols : []
       urls = APP.savedOptions.urls.filter(e => e !== target)
       break
     default:
       return false
   }
   APP.savedOptions.messages = messages
+  APP.savedOptions.protocols = protocols
   APP.savedOptions.urls = urls
 }
 
 // Fetch extension options from storage and update all related objects and elements
 APP.loadOptions = function () {
   chrome.storage.sync.get('savedOptions', function (result) {
-    if (result['savedOptions']) {
-      APP.savedOptions = result['savedOptions']
+    if (result['savedOptions']['messages']) {
+      APP.savedOptions.messages = result['savedOptions']['messages']
     }
-    if (APP.savedOptions.urls.length > 0) {
-      APP.populateUrlTable()
-      APP.populateSavedUrlSelect()
-      optionsUrlNoneSaved.hide()
-      optionsUrlSavedTable.show()
-      urlSelect.show()
-    } else {
-      optionsUrlNoneSaved.show()
-      optionsUrlSavedTable.hide()
-      urlSelect.hide()
+    if (result['savedOptions']['protocols']) {
+      APP.savedOptions.protocols = result['savedOptions']['protocols']
+    }
+    if (result['savedOptions']['urls']) {
+      APP.savedOptions.urls = result['savedOptions']['urls']
     }
     if (APP.savedOptions.messages.length > 0) {
       APP.populateMessageTable()
@@ -171,6 +216,28 @@ APP.loadOptions = function () {
       messageSelect.hide()
       optionsMessageNoneSaved.show()
       optionsMessageSavedTable.hide()
+    }
+    if (APP.savedOptions.protocols.length > 0) {
+      APP.populateProtocolTable()
+      APP.populateSavedProtocolSelect()
+      optionsProtocolNoneSaved.hide()
+      optionsProtocolSavedTable.show()
+      protocolSelect.show()
+    } else {
+      optionsProtocolNoneSaved.show()
+      optionsProtocolSavedTable.hide()
+      protocolSelect.hide()
+    }
+    if (APP.savedOptions.urls.length > 0) {
+      APP.populateUrlTable()
+      APP.populateSavedUrlSelect()
+      optionsUrlNoneSaved.hide()
+      optionsUrlSavedTable.show()
+      urlSelect.show()
+    } else {
+      optionsUrlNoneSaved.show()
+      optionsUrlSavedTable.hide()
+      urlSelect.hide()
     }
   })
 }
@@ -199,7 +266,7 @@ APP.populateUrlTable = function () {
 }
 
 // Enable URL save button if input is not empty
-optionsUrlInput.keyup(function () {
+optionsUrlInput.on('keyup', function () {
   if (optionsUrlInput.val().length > 0) {
     optionsUrlInputEmpty.hide()
     optionsUrlSaveButton.prop('disabled', false)
@@ -210,7 +277,7 @@ optionsUrlInput.keyup(function () {
 })
 
 // Validate URL input on input change
-optionsUrlInput.keyup(function () {
+optionsUrlInput.on('keyup', function () {
   if (APP.isValidUrl(optionsUrlInput.val())) {
     optionsUrlInvalidWarning.hide()
   } else {
@@ -256,7 +323,7 @@ APP.deleteUrl = function (url) {
 }
 
 // Cancel URL edit and reset variables
-optionsUrlCancelEditButton.click(function () {
+optionsUrlCancelEditButton.on('click', function () {
   editingUrl = false
   editingUrlTarget = ''
   optionsUrlInput.val('')
@@ -267,7 +334,7 @@ optionsUrlCancelEditButton.click(function () {
 })
 
 // Persist URL to storage on save button click
-optionsUrlSaveButton.click(function () {
+optionsUrlSaveButton.on('click', function () {
   let url = optionsUrlInput.val()
   if (editingUrl) {
     APP.savedOptionsDelete('url', editingUrlTarget)
@@ -283,6 +350,119 @@ optionsUrlSaveButton.click(function () {
     .text('URL saved.')
     .show()
 })
+
+// OPTIONS: PROTOCOL PERSISTENCE
+
+// Populate the saved protocols table
+APP.populateProtocolTable = function () {
+  let table = ''
+  let protocols = APP.savedOptions.protocols.sort()
+  $.each(protocols, function (key, protocol) {
+    table += protocolTableRow.replace(/REPLACE_PROTOCOL/g, protocol)
+  })
+  optionsProtocolSavedTable
+    .html('')
+    .append(table)
+  $('.editProtocol').on('click', function () {
+    APP.editProtocol(jQuery(this).data('protocol'))
+  })
+  $('.deleteProtocol').on('click', function () {
+    APP.deleteProtocol(jQuery(this).data('protocol'))
+  })
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+  })
+}
+
+// Enable protocol save button if input is not empty
+// TODO test
+optionsProtocolInput.on('keyup', function () {
+  if (optionsProtocolInput.val().replace(/\s/g, '').length > 0) {
+    optionsProtocolInputEmpty.hide()
+    optionsProtocolSaveButton.prop('disabled', false)
+  } else {
+    optionsProtocolInputEmpty.show()
+    optionsProtocolSaveButton.prop('disabled', true)
+  }
+})
+
+// Copy a saved protocol to the input element and show cancel button
+APP.editProtocol = function (protocol) {
+  editingProtocol = true
+  editingProtocolTarget = protocol
+  optionsProtocolCancelEditButton.show()
+  optionsProtocolInput.val(protocol)
+  optionsProtocolInputEmpty.hide()
+  optionsProtocolInputLabel.text(`Editing protocol: ${protocol}`)
+  optionsProtocolSaveButton.prop('disabled', false)
+  optionsProtocolStatus.hide()
+}
+
+// Delete a saved protocol from storage
+APP.deleteProtocol = function (protocol) {
+  deleteModalBody.text('Are you sure you want to delete the protocol shown below?')
+  deleteModalName.text(protocol)
+  deleteModalDeleteButton.show()
+  deleteModalDeleteButton
+    .data('target', protocol)
+    .on('click', function () {
+      const protocol = jQuery(this).data('target')
+      APP.savedOptionsDelete('protocol', protocol)
+      APP.saveOptions()
+      deleteModalBody.text('Protocol deleted:')
+      deleteModalName.text(protocol)
+      deleteModalDeleteButton.hide()
+      deleteModalCancelButton.text('Close')
+    })
+  deleteModal.modal('show')
+}
+
+// Cancel protocol edit and reset variables
+optionsProtocolCancelEditButton.on('click', function () {
+  editingProtocol = false
+  editingProtocolTarget = ''
+  optionsProtocolInput.val('')
+  optionsProtocolInputLabel.text('Protocol:')
+  optionsProtocolInputEmpty.hide()
+  optionsProtocolSaveButton.prop('disabled', true)
+})
+
+// Persist protocol to storage on save button click
+optionsProtocolSaveButton.on('click', function () {
+  let protocol = APP.getProtocols(optionsProtocolInput)
+  if (editingProtocol) {
+    APP.savedOptionsDelete('protocol', editingProtocolTarget)
+  } else {
+    APP.savedOptionsDelete('protocol', protocol)
+  }
+  APP.savedOptions.protocols.push(protocol.toString().replace(/,/g, ', '))
+  APP.saveOptions()
+  optionsProtocolInput.val('')
+  optionsProtocolInputLabel.text('Protocol:')
+  optionsProtocolSaveButton.prop('disabled', true)
+  optionsProtocolStatus
+    .text('Protocol saved.')
+    .show()
+})
+
+// Convert protocol input value to an array if necessary and
+// trim unnecessary commas and spaces
+APP.getProtocols = function (input) {
+  const protocolsInput = input.val()
+  const protocolsResult = protocolsInput
+    .split(',')
+    .map(item => item.trim())
+    .filter(item => item !== '')
+  let protocols
+  if (protocolsResult.length === 1) {
+    protocols = protocolsResult[0].trim()
+  } else if (protocolsResult.length > 1) {
+    protocols = protocolsResult
+  } else {
+    protocols = null
+  }
+  return protocols
+}
 
 // OPTIONS: MESSAGE PERSISTENCE
 
@@ -355,7 +535,7 @@ APP.validateMessage = function () {
 }
 
 // Show, hide elements on display name input change
-optionsMessageNameInput.keyup(function () {
+optionsMessageNameInput.on('keyup', function () {
   if (optionsMessageNameInput.val().length > 0) {
     optionsMessageNameInvalid.hide()
     APP.validateMessage()
@@ -365,7 +545,7 @@ optionsMessageNameInput.keyup(function () {
 })
 
 // Show, hide elements on message body input change
-optionsMessageTextarea.keyup(function () {
+optionsMessageTextarea.on('keyup', function () {
   if (optionsMessageTextarea.val().length > 0) {
     optionsMessageTextareaEmpty.hide()
     APP.validateMessage()
@@ -375,7 +555,7 @@ optionsMessageTextarea.keyup(function () {
 })
 
 // Show, hide invalid JSON warning based on message body input
-optionsMessageTextarea.keyup(function () {
+optionsMessageTextarea.on('keyup', function () {
   if (APP.isValidJson(optionsMessageTextarea.val())) {
     optionsMessageJsonInvalidWarning.hide()
   } else {
@@ -429,7 +609,7 @@ APP.deleteMessage = function (all) {
 }
 
 // Cancel message edit and reset variables
-optionsMessageCancelEditButton.click(function () {
+optionsMessageCancelEditButton.on('click', function () {
   editingMessage = false
   editingMessageTarget = ''
   optionsMessageTextareaEmpty.hide()
@@ -443,7 +623,7 @@ optionsMessageCancelEditButton.click(function () {
 })
 
 // Persist URL to storage on save button click
-optionsMessageSaveButton.click(function () {
+optionsMessageSaveButton.on('click', function () {
   const name = optionsMessageNameInput.val()
   const body = optionsMessageTextarea.val()
   const message = `${name}${SEPARATOR}${body}`
@@ -471,7 +651,7 @@ optionsMessageSaveButton.click(function () {
 // Populate URL select menu
 APP.populateSavedUrlSelect = function () {
   const urls = APP.savedOptions.urls.sort()
-  let options = '<option selected>Saved connections</option>'
+  let options = `<option selected>${urlSelectTitle}</option>`
   $.each(urls, function (key, url) {
     options += `<option value='${url}'>${url}</option>`
   })
@@ -480,25 +660,22 @@ APP.populateSavedUrlSelect = function () {
     .append(options)
 }
 
-// Enable and disable connect button based on URL input length
-urlInput.keyup(function () {
-  if (urlInput.val().length === 0) {
-    connectButton.prop('disabled', true)
-  } else {
-    connectButton.prop('disabled', false)
-  }
-})
-
-// Update URL input value on select menu change
-urlSelect.on('change', function () {
-  connectButton.prop('disabled', false)
-  urlInput.val(this.value)
-})
+// Populate protocol select menu
+APP.populateSavedProtocolSelect = function () {
+  const protocols = APP.savedOptions.protocols.sort()
+  let options = `<option selected>${protocolSelectTitle}</option>`
+  $.each(protocols, function (key, protocol) {
+    options += `<option value='${protocol}'>${protocol}</option>`
+  })
+  protocolSelect
+    .html('')
+    .append(options)
+}
 
 // Populate message select menu
 APP.populateSavedMessageSelect = function () {
   const messages = APP.savedOptions.messages.sort()
-  let options = '<option selected>Saved messages</option>'
+  let options = `<option selected>${messageSelectTitle}</option>`
   $.each(messages, function (key, message) {
     const [name, body] = message.split(SEPARATOR)
     options += `<option value='${body}'>${name}</option>`
@@ -508,13 +685,48 @@ APP.populateSavedMessageSelect = function () {
     .append(options)
 }
 
+// Update URL input value on select menu change
+// TODO test
+urlSelect.on('change', function () {
+  if (this.value === urlSelectTitle) {
+    urlInput.val('')
+  } else {
+    connectButton.prop('disabled', false)
+    urlInput.val(this.value)
+  }
+})
+
+// Update protocol input value on select menu change
+// TODO test
+protocolSelect.on('change', function () {
+  if (this.value === protocolSelectTitle) {
+    protocolInput.val('')
+  } else {
+    protocolInput.val(this.value)
+  }
+})
+
 // Populate message textarea on select menu change
+// TODO test
 messageSelect.on('change', function () {
-  messageTextarea.val(this.value)
+  if (this.value === messageSelectTitle) {
+    messageTextarea.val('')
+  } else {
+    messageTextarea.val(this.value)
+  }
+})
+
+// Enable and disable connect button based on URL input length
+urlInput.on('keyup', function () {
+  if (urlInput.val().length === 0) {
+    connectButton.prop('disabled', true)
+  } else {
+    connectButton.prop('disabled', false)
+  }
 })
 
 // Clear message log
-clearMessagesButton.click(function () {
+clearMessagesButton.on('click', function () {
   messages.html('')
   clearMessagesButton.prop('disabled', true)
 })
@@ -523,9 +735,9 @@ clearMessagesButton.click(function () {
 
 // Open WebSocket connection
 APP.open = function () {
-  let url = urlInput.val()
-  let proto = protoInput.val()
-  if (proto) { ws = new WebSocket(url, proto) } else { ws = new WebSocket(url) }
+  let url = urlInput.val().toString()
+  let protocol = APP.getProtocols(protocolInput)
+  if (protocol) { ws = new WebSocket(url, protocol) } else { ws = new WebSocket(url) }
   ws.onopen = APP.onOpen
   ws.onclose = APP.onClose
   ws.onmessage = APP.onMessage
@@ -550,7 +762,7 @@ APP.onOpen = function () {
   disconnectButton.show()
   messageSendButton.prop('disabled', false)
   urlInput.prop('disabled', true)
-  protoInput.prop('disabled', true)
+  protocolInput.prop('disabled', true)
   wsPoliteDisconnection = false
 }
 
@@ -565,7 +777,7 @@ APP.onClose = function () {
   disconnectButton.hide()
   messageSendButton.prop('disabled', true)
   urlInput.prop('disabled', false)
-  protoInput.prop('disabled', false)
+  protocolInput.prop('disabled', false)
 }
 
 // WebSocket onMessage handler
@@ -621,24 +833,24 @@ APP.sendMessage = function () {
 }
 
 // Connect button click
-connectButton.click(function () {
+connectButton.on('click', function () {
   APP.close()
   APP.open()
 })
 
 // Disconnect button click
-disconnectButton.click(function () {
+disconnectButton.on('click', function () {
   APP.close()
 })
 
 // Send message button click
-messageSendButton.click(function () {
+messageSendButton.on('click', function () {
   APP.sendMessage()
 })
 
 // Allow Ctrl+Enter shortcut to send message from message body textarea
 // Test if message body is valid JSON on textarea keyup
-messageTextarea.keyup(function (e) {
+messageTextarea.on('keyup', function (e) {
   if (e.which === 17) {
     isCtrlKey = true
   } else {
@@ -649,7 +861,7 @@ messageTextarea.keyup(function (e) {
       messageJsonInvalidWarning.show()
     }
   }
-}).keydown(function (e) {
+}).on('keydown', function (e) {
   if (e.which === 17) isCtrlKey = true
   if (e.which === 13 && isCtrlKey === true) {
     APP.sendMessage()
