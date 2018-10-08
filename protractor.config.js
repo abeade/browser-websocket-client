@@ -14,6 +14,7 @@ exports.config = {
   capabilities: {
     browserName: 'chrome',
     chromeOptions: {
+      useAutomationExtension: false,
       args: [
         'load-extension=build/production/chrome'
       ]

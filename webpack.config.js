@@ -1,14 +1,18 @@
-const merge = require('webpack-merge')
-const webpack = require('webpack')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const GenerateJsonPlugin = require('generate-json-webpack-plugin')
+const merge = require('webpack-merge')
 const path = require('path')
+const webpack = require('webpack')
 const ROOT = path.resolve(__dirname)
 const root = path.join.bind(path, ROOT)
 const version = require('./src/manifest/common.json').version
 
+process.traceDeprecation = true
+
 module.exports = function (env) {
-  const [mode, platform] = env.split(':')
+  const environment = env.toString().split(':')
+  let mode = environment[0] ? environment[0] : 'development'
+  let platform = environment[1] ? environment[1] : 'chrome'
   let buildPath = root('build/' + mode + '/' + platform)
 
   // noinspection WebpackConfigHighlighting
@@ -76,7 +80,7 @@ module.exports = function (env) {
       new GenerateJsonPlugin('manifest.json', merge(
         require('./src/manifest/common.json'),
         require(`./src/manifest/${platform}.json`),
-        {version}
+        { version }
       ), null, 2)
     ]
   }

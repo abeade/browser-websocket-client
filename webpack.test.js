@@ -2,6 +2,8 @@ const path = require('path')
 const ROOT = path.resolve(__dirname)
 const root = path.join.bind(path, ROOT)
 
+process.traceDeprecation = true
+
 module.exports = function () {
   // noinspection WebpackConfigHighlighting
   return {

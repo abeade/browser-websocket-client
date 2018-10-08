@@ -46,17 +46,17 @@
     "popper.js": "1.14.4"
   },
   "devDependencies": {
-    "@babel/core": "7.1.0",
+    "@babel/core": "7.1.2",
     "@babel/plugin-proposal-object-rest-spread": "7.0.0",
     "@babel/preset-env": "7.1.0",
     "@types/chrome": "0.0.74",
-    "@types/jasmine": "2.8.8",
-    "@types/selenium-webdriver": "3.0.11",
+    "@types/jasmine": "2.8.9",
+    "@types/selenium-webdriver": "3.0.12",
     "autoprefixer": "9.1.5",
     "babel-loader": "8.0.4",
     "copy-webpack-plugin": "4.5.2",
     "css-loader": "1.0.0",
-    "eslint": "5.6.0",
+    "eslint": "5.6.1",
     "eslint-config-standard": "12.0.0",
     "eslint-config-standard-preact": "1.1.6",
     "eslint-plugin-import": "2.14.0",
@@ -74,7 +74,7 @@
     "karma-jasmine": "1.1.2",
     "karma-mocha-reporter": "2.2.5",
     "karma-sourcemap-loader": "0.3.7",
-    "karma-webpack": "3.0.5",
+    "karma-webpack": "4.0.0-rc.2",
     "less": "3.8.1",
     "less-loader": "4.1.0",
     "mkdirp": "0.5.1",
@@ -86,10 +86,10 @@
     "protractor-jasmine2-html-reporter": "0.0.7",
     "rimraf": "2.6.2",
     "sass-loader": "7.1.0",
-    "style-loader": "0.23.0",
+    "style-loader": "0.23.1",
     "url-loader": "1.1.1",
     "webpack": "4.20.2",
-    "webpack-cli": "3.1.1",
+    "webpack-cli": "3.1.2",
     "webpack-merge": "4.1.4"
   }
 }
