@@ -159,7 +159,20 @@
 						Server URL (Required)
 					</h4>
 					<p>Enter the server URL:</p>
-					<select id="urlSelect" class="hide custom-select"></select>
+					<div id="urlSelect" class="dropdown hide">
+						<button id="urlSelectMenu"
+								class="btn btn-primary dropdown-toggle"
+								type="button"
+								data-toggle="dropdown"
+								aria-haspopup="true"
+								aria-expanded="false">
+							Saved URLs
+						</button>
+						<div id="urlSelectItems"
+							 class="dropdown-menu"
+							 aria-labelledby="urlSelectMenu">
+						</div>
+					</div>
 					<input id="urlInput"
 						   class="form-control bwc-margin-top"
 						   type="text"
@@ -169,7 +182,20 @@
 					</h4>
 					<p>Enter a single protocol name without quotes or multiple comma-separated names without quotes
 						(whitespace will be ignored):</p>
-					<select id="protocolSelect" class="hide custom-select"></select>
+					<div id="protocolSelect" class="dropdown hide">
+						<button id="protocolSelectMenu"
+								class="btn btn-primary dropdown-toggle"
+								type="button"
+								data-toggle="dropdown"
+								aria-haspopup="true"
+								aria-expanded="false">
+							Saved Protocols
+						</button>
+						<div id="protocolSelectItems"
+							 class="dropdown-menu"
+							 aria-labelledby="protocolSelectMenu">
+						</div>
+					</div>
 					<input id="protocolInput"
 						   class="form-control bwc-margin-top"
 						   type="text"
@@ -192,7 +218,20 @@
 					</h4>
 					<p>Enter JSON and press Ctrl + Enter or click the Send button after establishing a connection to a
 						server:</p>
-					<select id="messageSelect" class="custom-select"></select>
+					<div id="messageSelect" class="dropdown hide">
+						<button id="messageSelectMenu"
+								class="btn btn-primary dropdown-toggle"
+								type="button"
+								data-toggle="dropdown"
+								aria-haspopup="true"
+								aria-expanded="false">
+							Saved Messages
+						</button>
+						<div id="messageSelectItems"
+							 class="dropdown-menu"
+							 aria-labelledby="messageSelectMenu">
+						</div>
+					</div>
 					<textarea id="messageTextarea"
 							  class="form-control bwc-margin-top"
 							  placeholder="JSON"></textarea>

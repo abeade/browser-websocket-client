@@ -7,6 +7,7 @@ require('jquery')
 require('popper.js')
 require('bootstrap/js/src/button')
 require('bootstrap/js/src/collapse')
+require('bootstrap/js/src/dropdown')
 require('bootstrap/js/src/modal')
 require('bootstrap/js/src/tooltip')
 require('bootstrap/js/src/util')
@@ -93,6 +94,7 @@ const jsonModalTitle = $('#jsonModalTitle')
 const messageJsonInvalidWarning = $('#messageJsonInvalidWarning')
 const messages = $('#messages')
 const messageSelect = $('#messageSelect')
+const messageSelectItems = $('#messageSelectItems')
 const messageSendButton = $('#messageSendButton')
 const messageTextarea = $('#messageTextarea')
 const options = $('#options')
@@ -126,14 +128,13 @@ const optionsUrlSavedTable = $('#optionsUrlSavedTable')
 const optionsUrlStatus = $('#optionsUrlStatus')
 const protocolInput = $('#protocolInput')
 const protocolSelect = $('#protocolSelect')
-const url = document.location.toString()
+const protocolSelectItems = $('#protocolSelectItems')
 const urlInput = $('#urlInput')
 const urlSelect = $('#urlSelect')
+const urlSelectItems = $('#urlSelectItems')
 
 // Immutable variables
-const messageSelectTitle = 'Saved Messages'
-const protocolSelectTitle = 'Saved Protocols'
-const urlSelectTitle = 'Saved URLs'
+const url = document.location.toString()
 
 // Mutable variables
 let editingMessage = false
@@ -651,70 +652,49 @@ optionsMessageSaveButton.on('click', function () {
 // Populate URL select menu
 APP.populateSavedUrlSelect = function () {
   const urls = APP.savedOptions.urls.sort()
-  let options = `<option selected>${urlSelectTitle}</option>`
+  let options = ''
   $.each(urls, function (key, url) {
-    options += `<option value='${url}'>${url}</option>`
+    options += `<button class="dropdown-item url" type="button" data-value="${url}">${url}</button>`
   })
-  urlSelect
+  urlSelectItems
     .html('')
     .append(options)
+  $('.dropdown-item.url').on('click', function () {
+    urlInput.val(jQuery(this).data('value'))
+  })
 }
 
 // Populate protocol select menu
 APP.populateSavedProtocolSelect = function () {
   const protocols = APP.savedOptions.protocols.sort()
-  let options = `<option selected>${protocolSelectTitle}</option>`
+  let options = ''
   $.each(protocols, function (key, protocol) {
-    options += `<option value='${protocol}'>${protocol}</option>`
+    options += `<button class="dropdown-item protocol" type="button" data-value="${protocol}">${protocol}</button>`
   })
-  protocolSelect
+  protocolSelectItems
     .html('')
     .append(options)
+  $('.dropdown-item.protocol').on('click', function () {
+    protocolInput.val(jQuery(this).data('value'))
+    connectButton.prop('disabled', false)
+  })
 }
 
 // Populate message select menu
 APP.populateSavedMessageSelect = function () {
   const messages = APP.savedOptions.messages.sort()
-  let options = `<option selected>${messageSelectTitle}</option>`
+  let options = ''
   $.each(messages, function (key, message) {
     const [name, body] = message.split(SEPARATOR)
-    options += `<option value='${body}'>${name}</option>`
+    options += `<button class="dropdown-item message" type="button" data-value='${body}'>${name}</button>`
   })
-  messageSelect
+  messageSelectItems
     .html('')
     .append(options)
+  $('.dropdown-item.message').on('click', function () {
+    messageTextarea.val(JSON.stringify(jQuery(this).data('value')))
+  })
 }
-
-// Update URL input value on select menu change
-// TODO test
-urlSelect.on('change', function () {
-  if (this.value === urlSelectTitle) {
-    urlInput.val('')
-  } else {
-    connectButton.prop('disabled', false)
-    urlInput.val(this.value)
-  }
-})
-
-// Update protocol input value on select menu change
-// TODO test
-protocolSelect.on('change', function () {
-  if (this.value === protocolSelectTitle) {
-    protocolInput.val('')
-  } else {
-    protocolInput.val(this.value)
-  }
-})
-
-// Populate message textarea on select menu change
-// TODO test
-messageSelect.on('change', function () {
-  if (this.value === messageSelectTitle) {
-    messageTextarea.val('')
-  } else {
-    messageTextarea.val(this.value)
-  }
-})
 
 // Enable and disable connect button based on URL input length
 urlInput.on('keyup', function () {
@@ -872,3 +852,9 @@ messageTextarea.on('keyup', function (e) {
 if (typeof chrome.storage !== 'undefined') {
   APP.loadOptions()
 }
+
+
+$('.dropdown-item.url').on('click', function () {
+  console.log(jQuery(this).data('value'))
+})
+
