@@ -173,7 +173,7 @@ APP.savedOptionsDelete = function (option, target) {
   let messages, protocols, urls
   switch (option) {
     case 'message':
-      messages = APP.savedOptions.messages.filter(e => e !== target)
+      messages = APP.savedOptions.messages.filter(e => !e.toString().startsWith(target))
       protocols = APP.savedOptions.protocols ? APP.savedOptions.protocols : []
       urls = APP.savedOptions.urls ? APP.savedOptions.urls : []
       break
@@ -495,6 +495,16 @@ APP.populateMessageTable = function () {
   })
 }
 
+// Validate message name input value
+optionsMessageNameInput.on('keyup', function () {
+  APP.validateMessage()
+})
+
+// Validate message textarea value
+optionsMessageTextarea.on('keyup', function () {
+  APP.validateMessage()
+})
+
 // Test a string to determine if it is valid JSON
 APP.isValidJson = function (string) {
   try {
@@ -506,72 +516,38 @@ APP.isValidJson = function (string) {
   return false
 }
 
-// Format JSON for pretty-print modal
-APP.syntaxHighlight = function (json) {
-  json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-  return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-    let cls = 'bwc-number'
-    if (/^"/.test(match)) {
-      if (/:$/.test(match)) {
-        cls = 'bwc-key'
-      } else {
-        cls = 'bwc-string'
-      }
-    } else if (/true|false/.test(match)) {
-      cls = 'bwc-boolean'
-    } else if (/null/.test(match)) {
-      cls = 'bwc-null'
-    }
-    return `<span class="${cls}">${match}</span>`
-  })
-}
-
-// Enable message save button if inputs are not empty
+// Validate message name input and message textarea values,
+// show user feedback, and enable or disable save button
 APP.validateMessage = function () {
-  if (optionsMessageNameInput.val().length > 0 && optionsMessageTextarea.val().length > 0) {
-    optionsMessageSaveButton.prop('disabled', false)
-  } else {
-    optionsMessageSaveButton.prop('disabled', true)
-  }
-}
-
-// Show, hide elements on display name input change
-optionsMessageNameInput.on('keyup', function () {
-  if (optionsMessageNameInput.val().length > 0) {
+  const validMessageName = optionsMessageNameInput.val().trim().length > 0
+  const validMessageLength = optionsMessageTextarea.val().trim().length > 0
+  const validMessageJson = APP.isValidJson(optionsMessageTextarea.val())
+  let valid = true
+  if (validMessageName) {
     optionsMessageNameInvalid.hide()
-    APP.validateMessage()
   } else {
+    valid = false
     optionsMessageNameInvalid.show()
   }
-})
-
-// Show, hide elements on message body input change
-optionsMessageTextarea.on('keyup', function () {
-  if (optionsMessageTextarea.val().length > 0) {
+  if (validMessageLength) {
     optionsMessageTextareaEmpty.hide()
-    APP.validateMessage()
   } else {
+    valid = false
     optionsMessageTextareaEmpty.show()
   }
-})
-
-// Show, hide invalid JSON warning based on message body input
-optionsMessageTextarea.on('keyup', function () {
-  if (APP.isValidJson(optionsMessageTextarea.val())) {
+  if (validMessageJson) {
     optionsMessageJsonInvalidWarning.hide()
   } else {
+    valid = false
     optionsMessageJsonInvalidWarning.show()
   }
-})
-
-// Pretty-print a saved message body
-APP.printMessage = function (message) {
-  const [name, body] = message.split(SEPARATOR)
-  const json = JSON.parse(body)
-  const html = $('<pre>').html(APP.syntaxHighlight(JSON.stringify(json, null, 2)))
-  jsonModalTitle.html(name)
-  jsonModalBody.html(html)
-  jsonModal.modal('show')
+  if (valid) {
+    console.log('VALID')
+    optionsMessageSaveButton.prop('disabled', false)
+  } else {
+    console.log('INVALID')
+    optionsMessageSaveButton.prop('disabled', true)
+  }
 }
 
 // Copy a saved message to the input elements
@@ -591,6 +567,7 @@ APP.editMessage = function (message) {
 
 // Delete a saved message from storage
 APP.deleteMessage = function (all) {
+  // TODO delete by name only
   const name = all.split(SEPARATOR)[0]
   deleteModalBody.text('Are you sure you want to delete the message shown below?')
   deleteModalName.text(name)
@@ -599,7 +576,7 @@ APP.deleteMessage = function (all) {
     .data('target', all)
     .on('click', function () {
       const message = jQuery(this).data('target')
-      APP.savedOptionsDelete('message', message)
+      APP.savedOptionsDelete('message', `${name}${SEPARATOR}`)
       APP.saveOptions()
       deleteModalBody.text('Message deleted:')
       deleteModalName.text(name)
@@ -623,7 +600,7 @@ optionsMessageCancelEditButton.on('click', function () {
   optionsMessageTextarea.val('')
 })
 
-// Persist URL to storage on save button click
+// Persist message to storage on save button click
 optionsMessageSaveButton.on('click', function () {
   const name = optionsMessageNameInput.val()
   const body = optionsMessageTextarea.val()
@@ -647,6 +624,36 @@ optionsMessageSaveButton.on('click', function () {
   optionsMessageTextarea.val('')
 })
 
+// Format JSON for pretty-print modal
+APP.syntaxHighlight = function (json) {
+  json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+    let cls = 'bwc-number'
+    if (/^"/.test(match)) {
+      if (/:$/.test(match)) {
+        cls = 'bwc-key'
+      } else {
+        cls = 'bwc-string'
+      }
+    } else if (/true|false/.test(match)) {
+      cls = 'bwc-boolean'
+    } else if (/null/.test(match)) {
+      cls = 'bwc-null'
+    }
+    return `<span class="${cls}">${match}</span>`
+  })
+}
+
+// Pretty-print a saved message body
+APP.printMessage = function (message) {
+  const [name, body] = message.split(SEPARATOR)
+  const json = JSON.parse(body)
+  const html = $('<pre>').html(APP.syntaxHighlight(JSON.stringify(json, null, 2)))
+  jsonModalTitle.html(name)
+  jsonModalBody.html(html)
+  jsonModal.modal('show')
+}
+
 // CLIENT SECTION
 
 // Populate URL select menu
@@ -661,6 +668,7 @@ APP.populateSavedUrlSelect = function () {
     .append(options)
   $('.dropdown-item.url').on('click', function () {
     urlInput.val(jQuery(this).data('value'))
+    connectButton.prop('disabled', false)
   })
 }
 
@@ -676,7 +684,6 @@ APP.populateSavedProtocolSelect = function () {
     .append(options)
   $('.dropdown-item.protocol').on('click', function () {
     protocolInput.val(jQuery(this).data('value'))
-    connectButton.prop('disabled', false)
   })
 }
 
@@ -692,7 +699,8 @@ APP.populateSavedMessageSelect = function () {
     .html('')
     .append(options)
   $('.dropdown-item.message').on('click', function () {
-    messageTextarea.val(JSON.stringify(jQuery(this).data('value')))
+    messageTextarea.val(JSON.stringify(jQuery(this).data('value'), null, ' '))
+    // TODO JSON.parse then JSON.stringify(); think about upgrading
   })
 }
 
@@ -852,9 +860,3 @@ messageTextarea.on('keyup', function (e) {
 if (typeof chrome.storage !== 'undefined') {
   APP.loadOptions()
 }
-
-
-$('.dropdown-item.url').on('click', function () {
-  console.log(jQuery(this).data('value'))
-})
-
