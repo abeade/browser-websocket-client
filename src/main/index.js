@@ -97,6 +97,7 @@ const messageSelect = $('#messageSelect')
 const messageSelectItems = $('#messageSelectItems')
 const messageSendButton = $('#messageSendButton')
 const messageTextarea = $('#messageTextarea')
+const messageTextareaFormatToggle = $('#messageTextareaFormatToggle')
 const options = $('#options')
 const optionsMessageCancelEditButton = $('#optionsMessageCancelEditButton')
 const optionsMessageJsonInvalidWarning = $('#optionsMessageJsonInvalidWarning')
@@ -109,6 +110,7 @@ const optionsMessageSavedTable = $('#optionsMessageSavedTable')
 const optionsMessageStatus = $('#optionsMessageStatus')
 const optionsMessageTextarea = $('#optionsMessageTextarea')
 const optionsMessageTextareaEmpty = $('#optionsMessageTextareaEmpty')
+const optionsMessageTextareaFormatToggle = $('#optionsMessageTextareaFormatToggle')
 const optionsProtocolCancelEditButton = $('#optionsProtocolCancelEditButton')
 const optionsProtocolInput = $('#optionsProtocolInput')
 const optionsProtocolInputEmpty = $('#optionsProtocolInputEmpty')
@@ -143,8 +145,11 @@ let editingProtocol = false
 let editingProtocolTarget = ''
 let editingUrl = false
 let editingUrlTarget = ''
+let formatClientMessageTextarea = false
+let formatOptionsMessageTextarea = false
 let isCtrlKey = false
 let ws = null
+let wsConnected = false
 let wsPoliteDisconnection = false
 
 // Used only by background.js to show the options card
@@ -153,9 +158,6 @@ if (url.match(/#options/)) {
   client.removeClass('show')
   options.addClass('show')
 }
-
-// Hide some elements on startup
-$('.hide').hide()
 
 // OPTIONS SECTION
 
@@ -495,16 +497,6 @@ APP.populateMessageTable = function () {
   })
 }
 
-// Validate message name input value
-optionsMessageNameInput.on('keyup', function () {
-  APP.validateMessage()
-})
-
-// Validate message textarea value
-optionsMessageTextarea.on('keyup', function () {
-  APP.validateMessage()
-})
-
 // Test a string to determine if it is valid JSON
 APP.isValidJson = function (string) {
   try {
@@ -516,9 +508,36 @@ APP.isValidJson = function (string) {
   return false
 }
 
+// TODO test
+// Convert JSON to a string for saving and copying to textareas
+APP.convertJsonToString = function (input) {
+  let string
+  if (typeof input === 'object') {
+    string = JSON.stringify(input)
+  } else {
+    string = JSON.stringify(JSON.parse(input))
+  }
+  return string
+}
+
+// TODO test
+// Toggle JSON formatting from single line to multi-line and vice versa
+APP.formatTextarea = function(checkbox, textarea) {
+  const checked = checkbox.is(':checked')
+  const message = textarea.val()
+  const valid = APP.isValidJson(message)
+  if (!valid) {
+    checkbox.prop('checked', false)
+  } else if (valid && checked) {
+    textarea.val(JSON.stringify(JSON.parse(message), null, 2))
+  } else {
+    textarea.val(APP.convertJsonToString(message))
+  }
+}
+
 // Validate message name input and message textarea values,
 // show user feedback, and enable or disable save button
-APP.validateMessage = function () {
+APP.validateOptionsMessage = function () {
   const validMessageName = optionsMessageNameInput.val().trim().length > 0
   const validMessageLength = optionsMessageTextarea.val().trim().length > 0
   const validMessageJson = APP.isValidJson(optionsMessageTextarea.val())
@@ -542,19 +561,29 @@ APP.validateMessage = function () {
     optionsMessageJsonInvalidWarning.show()
   }
   if (valid) {
-    console.log('VALID')
     optionsMessageSaveButton.prop('disabled', false)
+    $('.bwc-slider').removeClass('bwc-disabled')
   } else {
-    console.log('INVALID')
     optionsMessageSaveButton.prop('disabled', true)
+    $('.bwc-slider').addClass('bwc-disabled')
   }
 }
+
+// Validate message name input value
+optionsMessageNameInput.on('keyup', function () {
+  APP.validateOptionsMessage()
+})
+
+// Validate message textarea value
+optionsMessageTextarea.on('keyup', function () {
+  APP.validateOptionsMessage()
+})
 
 // Copy a saved message to the input elements
 APP.editMessage = function (message) {
   const [name, body] = message.split(SEPARATOR)
   editingMessage = true
-  editingMessageTarget = message
+  editingMessageTarget = `${name}${SEPARATOR}`
   optionsMessageCancelEditButton.show()
   optionsMessageTextareaEmpty.hide()
   optionsMessageNameInput.val(name)
@@ -567,7 +596,6 @@ APP.editMessage = function (message) {
 
 // Delete a saved message from storage
 APP.deleteMessage = function (all) {
-  // TODO delete by name only
   const name = all.split(SEPARATOR)[0]
   deleteModalBody.text('Are you sure you want to delete the message shown below?')
   deleteModalName.text(name)
@@ -586,6 +614,11 @@ APP.deleteMessage = function (all) {
   deleteModal.modal('show')
 }
 
+// Toggle message textarea JSON formatting
+optionsMessageTextareaFormatToggle.on('change', function () {
+  APP.formatTextarea($(this), optionsMessageTextarea)
+})
+
 // Cancel message edit and reset variables
 optionsMessageCancelEditButton.on('click', function () {
   editingMessage = false
@@ -603,12 +636,12 @@ optionsMessageCancelEditButton.on('click', function () {
 // Persist message to storage on save button click
 optionsMessageSaveButton.on('click', function () {
   const name = optionsMessageNameInput.val()
-  const body = optionsMessageTextarea.val()
+  const body = APP.convertJsonToString(optionsMessageTextarea.val())
   const message = `${name}${SEPARATOR}${body}`
   if (editingMessage) {
     APP.savedOptionsDelete('message', editingMessageTarget)
   } else {
-    APP.savedOptionsDelete('message', message)
+    APP.savedOptionsDelete('message', `${name}${SEPARATOR}`)
   }
   APP.savedOptions.messages.push(message)
   APP.saveOptions()
@@ -622,6 +655,7 @@ optionsMessageSaveButton.on('click', function () {
     .text('Message saved.')
     .show()
   optionsMessageTextarea.val('')
+  optionsMessageTextareaFormatToggle.prop('checked', false)
 })
 
 // Format JSON for pretty-print modal
@@ -699,9 +733,28 @@ APP.populateSavedMessageSelect = function () {
     .html('')
     .append(options)
   $('.dropdown-item.message').on('click', function () {
-    messageTextarea.val(JSON.stringify(jQuery(this).data('value'), null, ' '))
-    // TODO JSON.parse then JSON.stringify(); think about upgrading
+    messageTextarea.val(APP.convertJsonToString(jQuery(this).data('value')))
+    APP.validateClientMessage()
   })
+}
+
+// Validate message textarea value, show user feedback,
+// and enable or disable send button
+APP.validateClientMessage = function () {
+  const validMessageJson = APP.isValidJson(messageTextarea.val())
+  if (validMessageJson) {
+    if (wsConnected) {
+      messageSendButton.prop('disabled', false)
+    } else {
+      messageSendButton.prop('disabled', true)
+    }
+    messageJsonInvalidWarning.hide()
+    $('.bwc-slider').removeClass('bwc-disabled')
+  } else {
+    messageSendButton.prop('disabled', true)
+    messageJsonInvalidWarning.show()
+    $('.bwc-slider').addClass('bwc-disabled')
+  }
 }
 
 // Enable and disable connect button based on URL input length
@@ -711,6 +764,16 @@ urlInput.on('keyup', function () {
   } else {
     connectButton.prop('disabled', false)
   }
+})
+
+// Validate message textarea value on change
+messageTextarea.on('keyup', function () {
+  APP.validateClientMessage()
+})
+
+// Toggle message textarea JSON formatting
+messageTextareaFormatToggle.on('change', function () {
+  APP.formatTextarea($(this), messageTextarea)
 })
 
 // Clear message log
@@ -748,9 +811,9 @@ APP.onOpen = function () {
   connectButton.hide()
   connectionStatus.text('OPENED')
   disconnectButton.show()
-  messageSendButton.prop('disabled', false)
   urlInput.prop('disabled', true)
   protocolInput.prop('disabled', true)
+  wsConnected = true
   wsPoliteDisconnection = false
 }
 
@@ -766,6 +829,7 @@ APP.onClose = function () {
   messageSendButton.prop('disabled', true)
   urlInput.prop('disabled', false)
   protocolInput.prop('disabled', false)
+  wsConnected = false
 }
 
 // WebSocket onMessage handler
@@ -860,3 +924,17 @@ messageTextarea.on('keyup', function (e) {
 if (typeof chrome.storage !== 'undefined') {
   APP.loadOptions()
 }
+
+$(document).ready(function () {
+  $('.hide').hide()
+  optionsUrlInput.val('')
+  optionsProtocolInput.val('')
+  optionsMessageNameInput.val('')
+  optionsMessageTextarea.val('')
+  urlInput.val('')
+  messageTextarea.val('')
+  optionsMessageTextareaFormatToggle.prop('checked', false)
+  optionsMessageSaveButton.prop('disabled', true)
+  messageTextareaFormatToggle.prop('checked', false)
+  messageSendButton.prop('disabled', true)
+})
