@@ -12,9 +12,9 @@ describe('index.js', function () {
     optionsUrlSavedTable = $('#optionsUrlSavedTable')
     savedOptions = {
       messages: [
-        `ONE${SEPARATOR}{"type":"CHAT_MESSAGE","payload":{"chatUser":{"alias": "one"},"message":"one"}}`,
-        `TWO${SEPARATOR}{"type":"CHAT_MESSAGE","payload":{"chatUser":{"alias": "two"},"message":"two"}}`,
-        `THREE${SEPARATOR}{"type":"CHAT_MESSAGE","payload":{"chatUser":{"alias": "three"},"message":"three"}}`
+        `ONE${SEPARATOR}{"type":"CHAT_MESSAGE","payload":{"chatUser":{"alias":"one"},"message":"one"}}`,
+        `TWO${SEPARATOR}{"type":"CHAT_MESSAGE","payload":{"chatUser":{"alias":"two"},"message":"two"}}`,
+        `THREE${SEPARATOR}{"type":"CHAT_MESSAGE","payload":{"chatUser":{"alias":"three"},"message":"three"}}`
       ],
       protocols: [
         'protocol1',
@@ -68,6 +68,18 @@ describe('index.js', function () {
     expect(children[8].innerHTML).toBe('false')
   })
 
+  describe('convertJsonToString()', function () {
+    const object = {'question': 'answer'}
+    const string = '{"question": "answer"}'
+    const result = '{"question":"answer"}'
+    it('should return a string if passed an object', function () {
+      expect(APP.convertJsonToString(object)).toBe(result)
+    })
+    it('should return a string without spaces if passed a string', function () {
+      expect(APP.convertJsonToString(string)).toBe(result)
+    })
+  })
+
   describe('isValidJson()', function () {
     it('should return false if invalid', function () {
       expect(APP.isValidJson(jsonMessageInvalid)).toBe(false)
@@ -96,10 +108,34 @@ describe('index.js', function () {
     })
   })
 
+  describe('getProtocols()', function () {
+    const string = 'protocol1'
+    const array = 'protocol1, protocol2, protocol3'
+    let input
+    beforeEach(function () {
+      input = $('<input>')
+      $(document.body).append(input)
+    })
+    it('should return a string', function () {
+      input.val(string)
+      expect(APP.getProtocols(input)).toBe('protocol1')
+    })
+    it('should return an array', function () {
+      input.val(array)
+      const result = APP.getProtocols(input)
+      expect(typeof result).toBe('object')
+      expect(result.length).toBe(3)
+    })
+    it('should return null', function () {
+      input.val('')
+      expect(APP.getProtocols(input)).toBe(null)
+    })
+  })
+
   describe('savedOptionsDelete()', function () {
     it('switch.message', function () {
       APP.savedOptions = savedOptions
-      APP.savedOptionsDelete('message', `ONE${SEPARATOR}{"type":"CHAT_MESSAGE","payload":{"chatUser":{"alias": "one"},"message":"one"}}`)
+      APP.savedOptionsDelete('message', `ONE${SEPARATOR}`)
       expect(APP.savedOptions.messages.length).toBe(2, 'messages')
       expect(APP.savedOptions.protocols.length).toBe(2, 'protocols')
       expect(APP.savedOptions.urls.length).toBe(3, 'urls')

@@ -381,7 +381,6 @@ APP.populateProtocolTable = function () {
 }
 
 // Enable protocol save button if input is not empty
-// TODO test
 optionsProtocolInput.on('keyup', function () {
   if (optionsProtocolInput.val().replace(/\s/g, '').length > 0) {
     optionsProtocolInputEmpty.hide()
@@ -511,7 +510,6 @@ APP.isValidJson = function (string) {
   return false
 }
 
-// TODO test
 // Convert JSON to a string for saving and copying to textareas
 APP.convertJsonToString = function (input) {
   let string
@@ -635,6 +633,7 @@ APP.deleteMessage = function (all) {
   deleteModal.modal('show')
 }
 
+// TODO test
 // Toggle message textarea JSON formatting
 optionsMessageTextareaFormatToggle.on('change', function () {
   APP.formatTextarea($(this), optionsMessageTextarea)
@@ -793,6 +792,7 @@ messageTextarea.on('keyup', function () {
   APP.validateClientMessage()
 })
 
+// TODO test
 // Toggle message textarea JSON formatting
 messageTextareaFormatToggle.on('change', function () {
   APP.formatTextarea($(this), messageTextarea)
