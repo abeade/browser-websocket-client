@@ -3,24 +3,32 @@ describe('index.js', function () {
   const SEPARATOR = '\u0007'
   const jsonMessageInvalid = '"missingLeadingBracket": true}'
   const jsonMessageValid = '{"syntaxHighlight() test": {"null": null, "number": 42, "string": "is the answer to everything", "boolean": false }}'
-  const savedOptions = {
-    messages: [
-      `ONE${SEPARATOR}{"type":"CHAT_MESSAGE","payload":{"chatUser":{"alias": "one"},"message":"one"}}`,
-      `TWO${SEPARATOR}{"type":"CHAT_MESSAGE","payload":{"chatUser":{"alias": "two"},"message":"two"}}`,
-      `THREE${SEPARATOR}{"type":"CHAT_MESSAGE","payload":{"chatUser":{"alias": "three"},"message":"three"}}`
-    ],
-    urls: [
-      'ws://localhost:8080/ws/one',
-      'ws://localhost:8080/ws/two',
-      'ws://localhost:8080/ws/three'
-    ]
-  }
   let optionsMessageSavedTable
   let optionsUrlSavedTable
+  let savedOptions
 
   beforeEach(function () {
     optionsMessageSavedTable = $('#optionsMessageSavedTable')
     optionsUrlSavedTable = $('#optionsUrlSavedTable')
+    savedOptions = {
+      messages: [
+        `ONE${SEPARATOR}{"type":"CHAT_MESSAGE","payload":{"chatUser":{"alias": "one"},"message":"one"}}`,
+        `TWO${SEPARATOR}{"type":"CHAT_MESSAGE","payload":{"chatUser":{"alias": "two"},"message":"two"}}`,
+        `THREE${SEPARATOR}{"type":"CHAT_MESSAGE","payload":{"chatUser":{"alias": "three"},"message":"three"}}`
+      ],
+      protocols: [
+        'protocol1',
+        [
+          'protocol2',
+          'protocol3'
+        ]
+      ],
+      urls: [
+        'ws://localhost:8080/ws/one',
+        'ws://localhost:8080/ws/two',
+        'ws://localhost:8080/ws/three'
+      ]
+    }
   })
 
   it('populateMessageTable() should populate #optionsMessageSavedTable', function () {
@@ -92,14 +100,23 @@ describe('index.js', function () {
     it('switch.message', function () {
       APP.savedOptions = savedOptions
       APP.savedOptionsDelete('message', `ONE${SEPARATOR}{"type":"CHAT_MESSAGE","payload":{"chatUser":{"alias": "one"},"message":"one"}}`)
-      expect(APP.savedOptions.messages.length).toBe(2)
-      expect(APP.savedOptions.urls.length).toBe(3)
+      expect(APP.savedOptions.messages.length).toBe(2, 'messages')
+      expect(APP.savedOptions.protocols.length).toBe(2, 'protocols')
+      expect(APP.savedOptions.urls.length).toBe(3, 'urls')
+    })
+    it('switch.protocol', function () {
+      APP.savedOptions = savedOptions
+      APP.savedOptionsDelete('protocol', 'protocol1')
+      expect(APP.savedOptions.messages.length).toBe(3, 'messages')
+      expect(APP.savedOptions.protocols.length).toBe(1, 'protocols')
+      expect(APP.savedOptions.urls.length).toBe(3, 'urls')
     })
     it('switch.url', function () {
       APP.savedOptions = savedOptions
       APP.savedOptionsDelete('url', 'ws://localhost:8080/ws/one')
-      expect(APP.savedOptions.messages.length).toBe(2)
-      expect(APP.savedOptions.urls.length).toBe(2)
+      expect(APP.savedOptions.messages.length).toBe(3, 'messages')
+      expect(APP.savedOptions.protocols.length).toBe(2, 'protocols')
+      expect(APP.savedOptions.urls.length).toBe(2, 'urls')
     })
   })
 })

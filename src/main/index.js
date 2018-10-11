@@ -137,6 +137,8 @@ const urlSelectItems = $('#urlSelectItems')
 
 // Immutable variables
 const url = document.location.toString()
+const optionsUrlInputLabelDefaultText = 'The URL should begin with <code>ws://</code> or <code>wss://</code>:'
+const optionsMessageNameInputLabelDefaultText = 'The display name appears in the "Saved Messages" table and client drop-down menu:'
 
 // Mutable variables
 let editingMessage = false
@@ -330,7 +332,7 @@ optionsUrlCancelEditButton.on('click', function () {
   editingUrl = false
   editingUrlTarget = ''
   optionsUrlInput.val('')
-  optionsUrlInputLabel.text('URL:')
+  optionsUrlInputLabel.text(optionsUrlInputLabelDefaultText)
   optionsUrlInputEmpty.hide()
   optionsUrlInvalidWarning.hide()
   optionsUrlSaveButton.prop('disabled', true)
@@ -347,7 +349,7 @@ optionsUrlSaveButton.on('click', function () {
   APP.savedOptions.urls.push(url)
   APP.saveOptions()
   optionsUrlInput.val('')
-  optionsUrlInputLabel.text('URL:')
+  optionsUrlInputLabel.text(optionsUrlInputLabelDefaultText)
   optionsUrlSaveButton.prop('disabled', true)
   optionsUrlStatus
     .text('URL saved.')
@@ -535,12 +537,24 @@ APP.formatTextarea = function(checkbox, textarea) {
   }
 }
 
-// Validate message name input and message textarea values,
-// show user feedback, and enable or disable save button
+// Validate message name input and message textarea values
+// Enable or disable save button and JSON formatting toggle
 APP.validateOptionsMessage = function () {
   const validMessageName = optionsMessageNameInput.val().trim().length > 0
   const validMessageLength = optionsMessageTextarea.val().trim().length > 0
   const validMessageJson = APP.isValidJson(optionsMessageTextarea.val())
+  if (validMessageName && validMessageLength && validMessageJson) {
+    optionsMessageSaveButton.prop('disabled', false)
+    $('.bwc-slider').removeClass('bwc-disabled')
+  } else {
+    optionsMessageSaveButton.prop('disabled', true)
+    $('.bwc-slider').addClass('bwc-disabled')
+  }
+}
+
+// Validate message name input and show user feedback
+APP.validateOptionsMessageName = function () {
+  const validMessageName = optionsMessageNameInput.val().trim().length > 0
   let valid = true
   if (validMessageName) {
     optionsMessageNameInvalid.hide()
@@ -548,6 +562,16 @@ APP.validateOptionsMessage = function () {
     valid = false
     optionsMessageNameInvalid.show()
   }
+  if (valid) {
+    APP.validateOptionsMessage()
+  }
+}
+
+// Validate message textarea value and show user feedback
+APP.validateOptionsMessageTextarea = function () {
+  const validMessageLength = optionsMessageTextarea.val().trim().length > 0
+  const validMessageJson = APP.isValidJson(optionsMessageTextarea.val())
+  let valid = true
   if (validMessageLength) {
     optionsMessageTextareaEmpty.hide()
   } else {
@@ -561,22 +585,18 @@ APP.validateOptionsMessage = function () {
     optionsMessageJsonInvalidWarning.show()
   }
   if (valid) {
-    optionsMessageSaveButton.prop('disabled', false)
-    $('.bwc-slider').removeClass('bwc-disabled')
-  } else {
-    optionsMessageSaveButton.prop('disabled', true)
-    $('.bwc-slider').addClass('bwc-disabled')
+    APP.validateOptionsMessage()
   }
 }
 
 // Validate message name input value
 optionsMessageNameInput.on('keyup', function () {
-  APP.validateOptionsMessage()
+  APP.validateOptionsMessageName()
 })
 
 // Validate message textarea value
 optionsMessageTextarea.on('keyup', function () {
-  APP.validateOptionsMessage()
+  APP.validateOptionsMessageTextarea()
 })
 
 // Copy a saved message to the input elements
@@ -626,7 +646,7 @@ optionsMessageCancelEditButton.on('click', function () {
   optionsMessageTextareaEmpty.hide()
   optionsMessageJsonInvalidWarning.hide()
   optionsMessageNameInput.val('')
-  optionsMessageNameInputLabel.text(`Display Name:`)
+  optionsMessageNameInputLabel.text(optionsMessageNameInputLabelDefaultText)
   optionsMessageNameInvalid.hide()
   optionsMessageSaveButton.prop('disabled', true)
   optionsMessageStatus.hide()
@@ -649,7 +669,7 @@ optionsMessageSaveButton.on('click', function () {
   optionsMessageTextareaEmpty.hide()
   optionsMessageJsonInvalidWarning.hide()
   optionsMessageNameInput.val('')
-  optionsMessageNameInputLabel.text(`Display Name:`)
+  optionsMessageNameInputLabel.text(optionsMessageNameInputLabelDefaultText)
   optionsMessageNameInvalid.hide()
   optionsMessageSaveButton.prop('disabled', true)
   optionsMessageStatus
