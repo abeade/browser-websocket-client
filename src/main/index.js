@@ -139,6 +139,7 @@ const urlSelectItems = $('#urlSelectItems')
 const url = document.location.toString()
 const optionsUrlInputLabelDefaultText = 'The URL should begin with <code>ws://</code> or <code>wss://</code>:'
 const optionsMessageNameInputLabelDefaultText = 'The display name appears in the "Saved Messages" table and client drop-down menu:'
+const optionsProtocolInputLabelDefaultText = 'Enter a single protocol name or multiple comma-separated names:'
 
 // Mutable variables
 let editingMessage = false
@@ -427,7 +428,7 @@ optionsProtocolCancelEditButton.on('click', function () {
   editingProtocol = false
   editingProtocolTarget = ''
   optionsProtocolInput.val('')
-  optionsProtocolInputLabel.text('Protocol:')
+  optionsProtocolInputLabel.text(optionsProtocolInputLabelDefaultText)
   optionsProtocolInputEmpty.hide()
   optionsProtocolSaveButton.prop('disabled', true)
 })
@@ -443,7 +444,7 @@ optionsProtocolSaveButton.on('click', function () {
   APP.savedOptions.protocols.push(protocol.toString().replace(/,/g, ', '))
   APP.saveOptions()
   optionsProtocolInput.val('')
-  optionsProtocolInputLabel.text('Protocol:')
+  optionsProtocolInputLabel.text(optionsProtocolInputLabelDefaultText)
   optionsProtocolSaveButton.prop('disabled', true)
   optionsProtocolStatus
     .text('Protocol saved.')
@@ -941,13 +942,8 @@ messageTextarea.on('keyup', function (e) {
   }
 })
 
-// Prevent tests from failing
-if (typeof chrome.storage !== 'undefined') {
-  APP.loadOptions()
-}
-
 $(document).ready(function () {
-  APP.loadOptions() // TODO why is this now necessary?
+  APP.loadOptions()
   $('.hide').hide()
   optionsUrlInput.val('')
   optionsProtocolInput.val('')
