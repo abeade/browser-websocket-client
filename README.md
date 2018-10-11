@@ -38,11 +38,13 @@ The screenshot below shows the result of clicking on an incoming message. The me
 
 #### Options Section
 
-The "Options" section allows you to save server URLs and messages that you can select from drop-down menus in the "Client" section. They are saved to [storage.sync](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/storage/sync) so they remain available after a browser restart. You can edit and delete both URLs and messages. Additionally, you can pretty-print a saved message body.
+The "Options" section allows you to save server URLs and messages that you can select from drop-down menus in the "Client" section. They are saved to [storage.sync](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/storage/sync) so they remain available after a browser restart. You can edit and delete URLs, protocols, and messages. Additionally, you can pretty-print a saved message body. 
+
+Note the toggle switch under the message body textarea. Use it to change the JSON formatting from single line to multi-line and vice versa.
 
 ![screenshot_4](screenshots/screenshot_4.png?raw=true)
 
-Below you can see an example of choosing a saved server URL and then a saved message.
+Below is the Client section again. However, now you can see dropdown menus with the saved items from the Options section.
 
 ![screenshot_5](screenshots/screenshot_5.png?raw=true)
 
