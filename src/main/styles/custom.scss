@@ -11,12 +11,22 @@ body {
   margin: 10px 0 20px 0;
 }
 
+hr {
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
 input {
   font-family: monospace;
   min-width: 300px;
   width: 50%;
   padding: 1px 3px;
   margin-bottom: 10px;
+}
+
+label {
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 textarea {
@@ -32,6 +42,10 @@ textarea {
 
 .card-header {
   padding: 0;
+}
+
+.dropdown {
+  margin-bottom: 10px;
 }
 
 .mb-0 > a {
@@ -58,7 +72,11 @@ textarea {
 // Custom class styles
 
 .bwc-margin-top {
-  margin-top: 10px;
+  margin-top: 15px;
+}
+
+.bwc-margin-bottom {
+  margin-bottom: 10px;
 }
 
 .bwc-pointer {
@@ -71,6 +89,8 @@ textarea {
 
 .bwc-table-row {
   padding: 5px 20px;
+  margin-bottom: -1px;
+  border: solid 1px $primary;
 }
 
 .bwc-table-row:hover {

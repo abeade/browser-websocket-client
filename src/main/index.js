@@ -631,6 +631,7 @@ optionsMessageCancelEditButton.on('click', function () {
   optionsMessageSaveButton.prop('disabled', true)
   optionsMessageStatus.hide()
   optionsMessageTextarea.val('')
+  optionsMessageTextareaFormatToggle.prop('checked', false)
 })
 
 // Persist message to storage on save button click
@@ -926,15 +927,18 @@ if (typeof chrome.storage !== 'undefined') {
 }
 
 $(document).ready(function () {
+  APP.loadOptions() // TODO why is this now necessary?
   $('.hide').hide()
   optionsUrlInput.val('')
   optionsProtocolInput.val('')
   optionsMessageNameInput.val('')
   optionsMessageTextarea.val('')
   urlInput.val('')
+  protocolInput.val('')
   messageTextarea.val('')
   optionsMessageTextareaFormatToggle.prop('checked', false)
   optionsMessageSaveButton.prop('disabled', true)
+  connectButton.prop('disabled', true)
   messageTextareaFormatToggle.prop('checked', false)
   messageSendButton.prop('disabled', true)
 })

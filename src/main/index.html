@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<!--suppress HtmlFormInputWithoutLabel, HtmlUnknownTarget -->
-<html>
+<!--suppress HtmlUnknownTarget -->
+<html lang="en">
 <head>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -29,9 +29,6 @@
 					<h4>
 						Server URLs
 					</h4>
-					<h5>
-						Saved URLs
-					</h5>
 					<p id="optionsUrlNoneSaved">
 						You have not saved any URLs.
 					</p>
@@ -40,12 +37,12 @@
 						Save a server URL
 					</h5>
 					<label id="optionsUrlInputLabel" for="optionsUrlInput">
-						URL:
+						The URL should begin with <code>ws://</code> or <code>wss://</code>:
 					</label>
 					<input id="optionsUrlInput"
 						   class="form-control"
 						   type="text"
-						   placeholder="The URL usually begins with ws:// or wss://"/>
+						   placeholder="URL"/>
 					<p id="optionsUrlStatus" class="hide"></p>
 					<p id="optionsUrlInputEmpty" class="alert alert-danger rounded hide" role="alert">
 						You must enter a URL.
@@ -64,9 +61,6 @@
 					<h4>
 						Server Protocols
 					</h4>
-					<h5>
-						Saved Protocols
-					</h5>
 					<p id="optionsProtocolNoneSaved">
 						You have not saved any protocols.
 					</p>
@@ -75,12 +69,12 @@
 						Save a server protocol
 					</h5>
 					<label id="optionsProtocolInputLabel" for="optionsProtocolInput">
-						Protocol:
+						Enter a single protocol name or multiple comma-separated names:
 					</label>
 					<input id="optionsProtocolInput"
 						   class="form-control"
 						   type="text"
-						   placeholder="Enter a single protocol name or multiple comma-separated names"/>
+						   placeholder="Protocol"/>
 					<p>If you enter multiple names, they will be saved as a single string with a space after each comma:
 						<code>protocol1, protocol2, protocol3</code>. However, this string will be converted into an
 						<code>array</code> when required by the
@@ -100,9 +94,6 @@
 					<h4>
 						Messages
 					</h4>
-					<h5>
-						Saved Messages
-					</h5>
 					<p id="optionsMessageNoneSaved">
 						You have not saved any messages.
 					</p>
@@ -111,18 +102,18 @@
 						Save a message
 					</h4>
 					<label id="optionsMessageNameInputLabel" for="optionsMessageNameInput">
-						Display Name:
+						The display name appears in the 'Saved Messages' table and client drop-down menu:
 					</label>
 					<input id="optionsMessageNameInput"
 						   class="form-control"
 						   type="text"
-						   placeholder="The display name appears in the 'Saved Messages' table and client drop-down menu."/>
+						   placeholder="Display Name"/>
 					<label for="optionsMessageTextarea">
-						Message Body:
+						The message body does not appear in the 'Saved Messages' table or drop-down menu:
 					</label>
 					<textarea id="optionsMessageTextarea"
 							  class="form-control"
-							  placeholder="The message body does not appear in the 'Saved Messages' table or drop-down menu."></textarea>
+							  placeholder="Message Body (JSON)"></textarea>
 					<p id="optionsMessageStatus" class="hide"></p>
 					<p id="optionsMessageNameInvalid" class="alert alert-danger rounded hide" role="alert">
 						You must enter a display name.
@@ -133,7 +124,7 @@
 					<p id="optionsMessageJsonInvalidWarning" class="alert alert-warning rounded hide" role="alert">
 						Invalid JSON! You entered invalid JSON in the message body.
 					</p>
-					<div>
+					<div class="bwc-margin-bottom">
 						<label class="bwc-switch" for="optionsMessageTextareaFormatToggle">
 							<input id="optionsMessageTextareaFormatToggle" type="checkbox">
 							<span class="bwc-slider bwc-disabled"></span>
@@ -167,7 +158,6 @@
 					<h4>
 						Server URL (Required)
 					</h4>
-					<p>Enter the server URL:</p>
 					<div id="urlSelect" class="dropdown hide">
 						<button id="urlSelectMenu"
 								class="btn btn-primary dropdown-toggle"
@@ -182,15 +172,16 @@
 							 aria-labelledby="urlSelectMenu">
 						</div>
 					</div>
+					<label for="urlInput">
+						Enter the server URL:
+					</label>
 					<input id="urlInput"
-						   class="form-control bwc-margin-top"
+						   class="form-control"
 						   type="text"
 						   placeholder="URL"/>
 					<h4>
 						Server Protocol (Optional)
 					</h4>
-					<p>Enter a single protocol name without quotes or multiple comma-separated names without quotes
-						(whitespace will be ignored):</p>
 					<div id="protocolSelect" class="dropdown hide">
 						<button id="protocolSelectMenu"
 								class="btn btn-primary dropdown-toggle"
@@ -205,12 +196,16 @@
 							 aria-labelledby="protocolSelectMenu">
 						</div>
 					</div>
+					<label for="protocolInput">
+						Enter a single protocol name or multiple comma-separated names without quotes (whitespace will
+						be ignored):
+					</label>
 					<input id="protocolInput"
-						   class="form-control bwc-margin-top"
+						   class="form-control"
 						   type="text"
 						   placeholder="Protocol"/>
 					<p>
-						Status:
+						Connection Status:
 						<span id="connectionStatus">
 							CLOSED
 						</span>
@@ -225,8 +220,6 @@
 					<h4>
 						Send a Message
 					</h4>
-					<p>Enter JSON and press Ctrl + Enter or click the Send button after establishing a connection to a
-						server:</p>
 					<div id="messageSelect" class="dropdown hide">
 						<button id="messageSelectMenu"
 								class="btn btn-primary dropdown-toggle"
@@ -241,13 +234,17 @@
 							 aria-labelledby="messageSelectMenu">
 						</div>
 					</div>
+					<label for="messageTextarea">
+						Enter JSON and press Ctrl + Enter or click the Send button after establishing a connection to a
+						server:
+					</label>
 					<textarea id="messageTextarea"
-							  class="form-control bwc-margin-top"
-							  placeholder="JSON"></textarea>
+							  class="form-control"
+							  placeholder="Message"></textarea>
 					<p id="messageJsonInvalidWarning" class="alert alert-warning rounded hide" role="alert">
 						Invalid JSON! You entered invalid JSON in the message body.
 					</p>
-					<div>
+					<div class="bwc-margin-bottom">
 						<label class="bwc-switch" for="messageTextareaFormatToggle">
 							<input id="messageTextareaFormatToggle" type="checkbox">
 							<span class="bwc-slider bwc-disabled"></span>
@@ -332,7 +329,7 @@
 	</div>
 </div>
 
-<script type="text/javascript" src="index.js"></script>
-<script type="text/javascript" src="styles.js"></script>
+<script src="index.js"></script>
+<script src="styles.js"></script>
 </body>
 </html>
