@@ -333,7 +333,7 @@ optionsUrlCancelEditButton.on('click', function () {
   editingUrl = false
   editingUrlTarget = ''
   optionsUrlInput.val('')
-  optionsUrlInputLabel.text(optionsUrlInputLabelDefaultText)
+  optionsUrlInputLabel.html(optionsUrlInputLabelDefaultText)
   optionsUrlInputEmpty.hide()
   optionsUrlInvalidWarning.hide()
   optionsUrlSaveButton.prop('disabled', true)
@@ -350,7 +350,7 @@ optionsUrlSaveButton.on('click', function () {
   APP.savedOptions.urls.push(url)
   APP.saveOptions()
   optionsUrlInput.val('')
-  optionsUrlInputLabel.text(optionsUrlInputLabelDefaultText)
+  optionsUrlInputLabel.html(optionsUrlInputLabelDefaultText)
   optionsUrlSaveButton.prop('disabled', true)
   optionsUrlStatus
     .text('URL saved.')
@@ -521,7 +521,6 @@ APP.convertJsonToString = function (input) {
   return string
 }
 
-// TODO test
 // Toggle JSON formatting from single line to multi-line and vice versa
 APP.formatTextarea = function(checkbox, textarea) {
   const checked = checkbox.is(':checked')
@@ -544,10 +543,10 @@ APP.validateOptionsMessage = function () {
   const validMessageJson = APP.isValidJson(optionsMessageTextarea.val())
   if (validMessageName && validMessageLength && validMessageJson) {
     optionsMessageSaveButton.prop('disabled', false)
-    $('.bwc-slider').removeClass('bwc-disabled')
+    $('.bwc-slider').removeClass('bwc-slider-disabled')
   } else {
     optionsMessageSaveButton.prop('disabled', true)
-    $('.bwc-slider').addClass('bwc-disabled')
+    $('.bwc-slider').addClass('bwc-slider-disabled')
   }
 }
 
@@ -633,7 +632,6 @@ APP.deleteMessage = function (all) {
   deleteModal.modal('show')
 }
 
-// TODO test
 // Toggle message textarea JSON formatting
 optionsMessageTextareaFormatToggle.on('change', function () {
   APP.formatTextarea($(this), optionsMessageTextarea)
@@ -770,11 +768,11 @@ APP.validateClientMessage = function () {
       messageSendButton.prop('disabled', true)
     }
     messageJsonInvalidWarning.hide()
-    $('.bwc-slider').removeClass('bwc-disabled')
+    $('.bwc-slider').removeClass('bwc-slider-disabled')
   } else {
     messageSendButton.prop('disabled', true)
     messageJsonInvalidWarning.show()
-    $('.bwc-slider').addClass('bwc-disabled')
+    $('.bwc-slider').addClass('bwc-slider-disabled')
   }
 }
 
@@ -792,7 +790,6 @@ messageTextarea.on('keyup', function () {
   APP.validateClientMessage()
 })
 
-// TODO test
 // Toggle message textarea JSON formatting
 messageTextareaFormatToggle.on('change', function () {
   APP.formatTextarea($(this), messageTextarea)

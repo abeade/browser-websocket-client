@@ -126,10 +126,6 @@ textarea {
 
 // Slider checkbox
 
-.bwc-disabled {
-  cursor: default !important;
-}
-
 .bwc-switch {
   position: relative;
   display: inline-block;
@@ -158,10 +154,15 @@ textarea {
   right: 0;
   bottom: 0;
   left: 0;
-  background-color: rgb(204, 204, 204);
+  background-color: rgb(90, 98, 104);
   border-radius: $bwc-switch-height;
   -webkit-transition: $bwc-switch-transition;
   transition: $bwc-switch-transition;
+}
+
+.bwc-slider-disabled {
+  cursor: default !important;
+  background-color: rgb(204, 204, 204);
 }
 
 .bwc-slider:before {

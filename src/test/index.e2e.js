@@ -33,6 +33,8 @@ describe('Browser WebSocket Client', function () {
   const messageSelectMenu = element(by.id('messageSelectMenu'))
   const messageSendButton = element(by.id('messageSendButton'))
   const messageTextarea = element(by.id('messageTextarea'))
+  const messageTextareaFormatSlider = element(by.id('messageTextareaFormatSlider'))
+  const messageTextareaFormatToggle = element(by.id('messageTextareaFormatToggle'))
   const options = element(by.id('options'))
   const optionsAnchor = element(by.id('optionsAnchor'))
   const optionsMessageCancelEditButton = element(by.id('optionsMessageCancelEditButton'))
@@ -46,6 +48,8 @@ describe('Browser WebSocket Client', function () {
   const optionsMessageStatus = element(by.id('optionsMessageStatus'))
   const optionsMessageTextarea = element(by.id('optionsMessageTextarea'))
   const optionsMessageTextareaEmpty = element(by.id('optionsMessageTextareaEmpty'))
+  const optionsMessageTextareaFormatSlider = element(by.id('optionsMessageTextareaFormatSlider'))
+  const optionsMessageTextareaFormatToggle = element(by.id('optionsMessageTextareaFormatToggle'))
   const optionsProtocolCancelEditButton = element(by.id('optionsProtocolCancelEditButton'))
   const optionsProtocolInput = element(by.id('optionsProtocolInput'))
   const optionsProtocolInputEmpty = element(by.id('optionsProtocolInputEmpty'))
@@ -167,7 +171,7 @@ describe('Browser WebSocket Client', function () {
       optionsUrlSaveButton.click()
       expect(optionsUrlInput.getAttribute('value')).toBe('')
       expect(optionsUrlInputEmpty.isDisplayed()).toBe(false)
-      expect(optionsUrlInputLabel.getText()).toBe('The URL should begin with <code>ws://</code> or <code>wss://</code>:')
+      expect(optionsUrlInputLabel.getText()).toBe('The URL should begin with ws:// or wss://:')
       expect(optionsUrlInvalidWarning.isDisplayed()).toBe(false)
       expect(optionsUrlNoneSaved.isDisplayed()).toBe(false)
       expect(optionsUrlSavedTable.isDisplayed()).toBe(true)
@@ -184,7 +188,7 @@ describe('Browser WebSocket Client', function () {
       browser.sleep(SLEEP)
       expect(optionsUrlInput.getAttribute('value')).toBe('')
       expect(optionsUrlInputEmpty.isDisplayed()).toBe(false)
-      expect(optionsUrlInputLabel.getText()).toBe('The URL should begin with <code>ws://</code> or <code>wss://</code>:')
+      expect(optionsUrlInputLabel.getText()).toBe('The URL should begin with ws:// or wss://:')
       expect(optionsUrlInvalidWarning.isDisplayed()).toBe(false)
       expect(optionsUrlNoneSaved.isDisplayed()).toBe(false)
       expect(optionsUrlSavedTable.isDisplayed()).toBe(true)
@@ -199,12 +203,12 @@ describe('Browser WebSocket Client', function () {
         optionsUrlSaveButton.click().then(function () {
           browser.sleep(SLEEP)
           expect(optionsUrlInput.getAttribute('value')).toBe('')
-          expect(optionsUrlInputLabel.getText()).toBe('The URL should begin with <code>ws://</code> or <code>wss://</code>:')
+          expect(optionsUrlInputLabel.getText()).toBe('The URL should begin with ws:// or wss://:')
           expect(optionsUrlStatus.getText()).toBe('URL saved.')
           expect($('.bwc-table-row').getText()).toBe(`${echoServer}/test`)
           expect(optionsUrlInput.getAttribute('value')).toBe('')
           expect(optionsUrlInputEmpty.isDisplayed()).toBe(false)
-          expect(optionsUrlInputLabel.getText()).toBe('The URL should begin with <code>ws://</code> or <code>wss://</code>:')
+          expect(optionsUrlInputLabel.getText()).toBe('The URL should begin with ws:// or wss://:')
           expect(optionsUrlInvalidWarning.isDisplayed()).toBe(false)
           expect(optionsUrlNoneSaved.isDisplayed()).toBe(false)
           expect(optionsUrlSavedTable.isDisplayed()).toBe(true)
@@ -266,7 +270,7 @@ describe('Browser WebSocket Client', function () {
     beforeEach(function () {
       browser.get(`chrome-extension://${EXTENSION_ID}/index.html`)
       optionsAnchor.click()
-      browser.wait(EC.visibilityOf(optionsUrlInput), WAIT)
+      browser.wait(EC.visibilityOf(optionsProtocolInput), WAIT)
     })
     it('entering and then deleting text in #optionsProtocolInput should show #optionsProtocolIEmpty', function () {
       optionsProtocolInput.clear().sendKeys('a', KEY_BACKSPACE)
@@ -549,6 +553,25 @@ describe('Browser WebSocket Client', function () {
       expect(optionsMessageTextareaEmpty.isDisplayed()).toBe(false)
       expect(optionsMessageSaveButton.isEnabled()).toBe(false)
     })
+    it('toggling JSON formatting', function () {
+      optionsMessageNameInput.clear().sendKeys('One').then(function () {
+        optionsMessageTextarea.clear().sendKeys(message1).then(function () {
+          optionsMessageTextarea.getAttribute('value').then(function (value) {
+            expect(value.split(/\r*\n/).length).toBe(1)
+          })
+          optionsMessageTextareaFormatSlider.click()
+          browser.sleep(SLEEP)
+          optionsMessageTextarea.getAttribute('value').then(function (value) {
+            expect(value.split(/\r*\n/).length).toBeGreaterThan(1)
+          })
+          optionsMessageTextareaFormatSlider.click()
+          browser.sleep(SLEEP)
+          optionsMessageTextarea.getAttribute('value').then(function (value) {
+            expect(value.split(/\r*\n/).length).toBe(1)
+          })
+        })
+      })
+    })
     it('add three messages for client tests', function () {
       optionsMessageNameInput.clear().sendKeys('One')
       optionsMessageTextarea.clear().sendKeys(message1)
@@ -628,6 +651,23 @@ describe('Browser WebSocket Client', function () {
       expect(messageSendButton.isEnabled()).toBe(false)
       expect(clearMessagesButton.isEnabled()).toBe(false)
       expect(messages.getText()).toBe('')
+    })
+    it('toggling JSON formatting', function () {
+      messageTextarea.clear().sendKeys(message1).then(function () {
+        messageTextarea.getAttribute('value').then(function (value) {
+          expect(value.split(/\r*\n/).length).toBe(1)
+        })
+        messageTextareaFormatSlider.click()
+        browser.sleep(SLEEP)
+        messageTextarea.getAttribute('value').then(function (value) {
+          expect(value.split(/\r*\n/).length).toBeGreaterThan(1)
+        })
+        messageTextareaFormatSlider.click()
+        browser.sleep(SLEEP)
+        messageTextarea.getAttribute('value').then(function (value) {
+          expect(value.split(/\r*\n/).length).toBe(1)
+        })
+      })
     })
   })
 
