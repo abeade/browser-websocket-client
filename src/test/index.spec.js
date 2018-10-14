@@ -2,7 +2,7 @@ describe('index.js', function () {
   const APP = window.app
   const SEPARATOR = '\u0007'
   const jsonMessageInvalid = '"missingLeadingBracket": true}'
-  const jsonMessageValid = '{"syntaxHighlight() test": {"null": null, "number": 42, "string": "is the answer to everything", "boolean": false }}'
+  const jsonMessageValid = '{"syntaxHighlight() test":{"null":null,"number":42,"string":"is the answer to everything","boolean":false}}'
   let optionsMessageSavedTable
   let optionsUrlSavedTable
   let savedOptions
@@ -69,7 +69,7 @@ describe('index.js', function () {
   })
 
   describe('convertJsonToString()', function () {
-    const object = {'question': 'answer'}
+    const object = { 'question': 'answer' }
     const string = '{"question": "answer"}'
     const result = '{"question":"answer"}'
     it('should return a string if passed an object', function () {

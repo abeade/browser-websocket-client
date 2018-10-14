@@ -1,6 +1,6 @@
 ## Browser-WebSocket-Client
 
-Browser WebSocket Client is an extension for Chrome and Firefox that provides a simple method for testing a WebSocket server. It allows you to send and receive raw JSON messages as well as save server URLs and messages for later use.
+Browser WebSocket Client is an extension for Chrome and Firefox that provides a simple method for testing a WebSocket server. It allows you to send and receive raw JSON messages as well as save server URLs, protocols,  and messages for later use.
 
 ### Browser Installation
 
@@ -15,7 +15,7 @@ After installing look for the icon in the toolbar:
 ### Advantages
 
 * Bootstrap 4 user interface
-* Save server URLs and JSON messages for later use
+* Save server URLs, protocols, and JSON messages for later use
 * Pretty-print incoming JSON messages and saved message bodies
 
 ### Screenshots
@@ -32,13 +32,13 @@ The screenshot below shows a manually entered URL and the result of sending a me
 
 #### JSON Pretty-Print
 
-The screenshot below shows the result of clicking on an incoming message. The message is formatted as a JavaScript Object with a single color for keys and different colors for values based on the type: null, number, string, and boolean.
+The screenshot below shows the result of clicking on an incoming message. The message is formatted as a JavaScript Object with a single color for keys and different colors for values based on the type: boolean, null, number, and string.
 
 ![screenshot_3](screenshots/screenshot_3.png?raw=true)
 
 #### Options Section
 
-The "Options" section allows you to save server URLs and messages that you can select from drop-down menus in the "Client" section. They are saved to [storage.sync](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/storage/sync) so they remain available after a browser restart. You can edit and delete URLs, protocols, and messages. Additionally, you can pretty-print a saved message body. 
+The "Options" section allows you to save server URLs, protocols, and messages that you can select from drop-down menus in the "Client" section. They are saved to [storage.sync](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/storage/sync) so they remain available after a browser restart. You can edit and delete URLs, protocols, and messages. Additionally, you can pretty-print a saved message body. 
 
 Note the toggle switch under the message body textarea. Use it to change the JSON formatting from single line to multi-line and vice versa.
 

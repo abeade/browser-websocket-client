@@ -77,27 +77,12 @@ const urlTableRow = `
 </div>
 `
 
-// HTML elements
-const clearMessagesButton = $('#clearMessagesButton')
-const client = $('#client')
-const connectButton = $('#connectButton')
-const connectionStatus = $('#connectionStatus')
+// Options HTML elements
 const deleteModal = $('#deleteModal')
 const deleteModalBody = $('#deleteModalBody')
 const deleteModalCancelButton = $('#deleteModalCancelButton')
 const deleteModalDeleteButton = $('#deleteModalDeleteButton')
 const deleteModalName = $('#deleteModalName')
-const disconnectButton = $('#disconnectButton')
-const jsonModal = $('#jsonModal')
-const jsonModalBody = $('#jsonModalBody')
-const jsonModalTitle = $('#jsonModalTitle')
-const messageJsonInvalidWarning = $('#messageJsonInvalidWarning')
-const messages = $('#messages')
-const messageSelect = $('#messageSelect')
-const messageSelectItems = $('#messageSelectItems')
-const messageSendButton = $('#messageSendButton')
-const messageTextarea = $('#messageTextarea')
-const messageTextareaFormatToggle = $('#messageTextareaFormatToggle')
 const options = $('#options')
 const optionsMessageCancelEditButton = $('#optionsMessageCancelEditButton')
 const optionsMessageJsonInvalidWarning = $('#optionsMessageJsonInvalidWarning')
@@ -128,6 +113,23 @@ const optionsUrlNoneSaved = $('#optionsUrlNoneSaved')
 const optionsUrlSaveButton = $('#optionsUrlSaveButton')
 const optionsUrlSavedTable = $('#optionsUrlSavedTable')
 const optionsUrlStatus = $('#optionsUrlStatus')
+
+// Client HTML elements
+const clearMessagesButton = $('#clearMessagesButton')
+const client = $('#client')
+const connectButton = $('#connectButton')
+const connectionStatus = $('#connectionStatus')
+const disconnectButton = $('#disconnectButton')
+const jsonModal = $('#jsonModal')
+const jsonModalBody = $('#jsonModalBody')
+const jsonModalTitle = $('#jsonModalTitle')
+const messageJsonInvalidWarning = $('#messageJsonInvalidWarning')
+const messages = $('#messages')
+const messageSelect = $('#messageSelect')
+const messageSelectItems = $('#messageSelectItems')
+const messageSendButton = $('#messageSendButton')
+const messageTextarea = $('#messageTextarea')
+const messageTextareaFormatToggle = $('#messageTextareaFormatToggle')
 const protocolInput = $('#protocolInput')
 const protocolSelect = $('#protocolSelect')
 const protocolSelectItems = $('#protocolSelectItems')
@@ -148,8 +150,6 @@ let editingProtocol = false
 let editingProtocolTarget = ''
 let editingUrl = false
 let editingUrlTarget = ''
-let formatClientMessageTextarea = false
-let formatOptionsMessageTextarea = false
 let isCtrlKey = false
 let ws = null
 let wsConnected = false
@@ -522,7 +522,7 @@ APP.convertJsonToString = function (input) {
 }
 
 // Toggle JSON formatting from single line to multi-line and vice versa
-APP.formatTextarea = function(checkbox, textarea) {
+APP.formatTextarea = function (checkbox, textarea) {
   const checked = checkbox.is(':checked')
   const message = textarea.val()
   const valid = APP.isValidJson(message)
@@ -610,6 +610,7 @@ APP.editMessage = function (message) {
   optionsMessageSaveButton.prop('disabled', false)
   optionsMessageStatus.hide()
   optionsMessageTextarea.val(body)
+  APP.validateOptionsMessage()
 }
 
 // Delete a saved message from storage
@@ -621,7 +622,6 @@ APP.deleteMessage = function (all) {
   deleteModalDeleteButton
     .data('target', all)
     .on('click', function () {
-      const message = jQuery(this).data('target')
       APP.savedOptionsDelete('message', `${name}${SEPARATOR}`)
       APP.saveOptions()
       deleteModalBody.text('Message deleted:')
@@ -771,7 +771,9 @@ APP.validateClientMessage = function () {
     $('.bwc-slider').removeClass('bwc-slider-disabled')
   } else {
     messageSendButton.prop('disabled', true)
-    messageJsonInvalidWarning.show()
+    if (messageTextarea.isFocused) {
+      messageJsonInvalidWarning.show()
+    }
     $('.bwc-slider').addClass('bwc-slider-disabled')
   }
 }
@@ -834,6 +836,7 @@ APP.onOpen = function () {
   protocolInput.prop('disabled', true)
   wsConnected = true
   wsPoliteDisconnection = false
+  APP.validateClientMessage()
 }
 
 // WebSocket onClose handler
@@ -940,7 +943,10 @@ messageTextarea.on('keyup', function (e) {
 })
 
 $(document).ready(function () {
-  APP.loadOptions()
+  // Prevent unit tests from failing
+  if (typeof chrome.storage !== 'undefined') {
+    APP.loadOptions()
+  }
   $('.hide').hide()
   optionsUrlInput.val('')
   optionsProtocolInput.val('')
