@@ -195,7 +195,7 @@ describe('Browser WebSocket Client', function () {
   }
 
   beforeEach(function () {
-    browser.waitForAngularEnabled(false)
+    browser.ignoreSynchronization = true
   })
 
   it('#options should be visible if "#options" is in URL', function () {
@@ -283,12 +283,12 @@ describe('Browser WebSocket Client', function () {
       input.optionsUrlInputValue = echoServer
       input.optionsUrlSaveButtonEnabled = true
       checkOptions(input)
-      optionsUrlCancelEditButton.click()
-      browser.sleep(SLEEP)
-      input.optionsUrlInputLabelText = optionsUrlInputLabelDefaultText
-      input.optionsUrlInputValue = ''
-      input.optionsUrlSaveButtonEnabled = false
-      checkOptions(input)
+      optionsUrlCancelEditButton.click().then(function () {
+        input.optionsUrlInputLabelText = optionsUrlInputLabelDefaultText
+        input.optionsUrlInputValue = ''
+        input.optionsUrlSaveButtonEnabled = false
+        checkOptions(input)
+      })
     })
     it('clicking URL edit icon and then save button', function () {
       let input = JSON.parse(JSON.stringify(optionsDefaults))
@@ -301,7 +301,6 @@ describe('Browser WebSocket Client', function () {
       checkOptions(input)
       optionsUrlInput.sendKeys('/test').then(function () {
         optionsUrlSaveButton.click().then(function () {
-          browser.sleep(SLEEP)
           input.optionsUrlNoneSavedDisplayed = false
           input.optionsUrlSavedTableDisplayed = true
           input.optionsUrlInputLabelText = optionsUrlInputLabelDefaultText
@@ -317,7 +316,6 @@ describe('Browser WebSocket Client', function () {
     it('clicking URL delete icon and then cancel button', function () {
       let input = JSON.parse(JSON.stringify(optionsDefaults))
       $('.deleteUrl').click()
-      browser.wait(EC.visibilityOf(deleteModalCancelButton), WAIT)
       browser.sleep(SLEEP)
       deleteModalCancelButton.click()
       browser.wait(EC.invisibilityOf(deleteModal), WAIT)
@@ -335,7 +333,6 @@ describe('Browser WebSocket Client', function () {
       expect(deleteModalDeleteButton.getText()).toBe('Delete!')
       expect(deleteModalCancelButton.getText()).toBe('Cancel')
       deleteModalDeleteButton.click()
-      browser.wait(EC.elementToBeClickable(deleteModalCancelButton), WAIT)
       expect(deleteModalBody.getText()).toBe('URL deleted:')
       expect(deleteModalName.getText()).toBe(url)
       expect(deleteModalDeleteButton.isDisplayed()).toBe(false)
@@ -405,13 +402,13 @@ describe('Browser WebSocket Client', function () {
       input.optionsProtocolInputValue = 'protocol1'
       input.optionsProtocolSaveButtonEnabled = true
       checkOptions(input)
-      optionsProtocolCancelEditButton.click()
-      browser.sleep(SLEEP)
-      input.optionsProtocolInputValue = ''
-      input.optionsProtocolInputLabelText = optionsProtocolInputLabelDefaultText
-      input.optionsProtocolStatusDisplayed = false
-      input.optionsProtocolSaveButtonEnabled = false
-      checkOptions(input)
+      optionsProtocolCancelEditButton.click().then(function () {
+        input.optionsProtocolInputValue = ''
+        input.optionsProtocolInputLabelText = optionsProtocolInputLabelDefaultText
+        input.optionsProtocolStatusDisplayed = false
+        input.optionsProtocolSaveButtonEnabled = false
+        checkOptions(input)
+      })
     })
     it('clicking protocol edit icon and then save button', function () {
       let input = JSON.parse(JSON.stringify(optionsDefaults))
@@ -426,7 +423,6 @@ describe('Browser WebSocket Client', function () {
       checkOptions(input)
       optionsProtocolInput.sendKeys(', protocol2').then(function () {
         optionsProtocolSaveButton.click().then(function () {
-          browser.sleep(SLEEP)
           input.optionsProtocolInputValue = ''
           input.optionsProtocolInputLabelText = optionsProtocolInputLabelDefaultText
           input.optionsProtocolStatusDisplayed = true
@@ -444,7 +440,6 @@ describe('Browser WebSocket Client', function () {
       input.optionsProtocolNoneSavedDisplayed = false
       input.optionsProtocolSavedTableDisplayed = true
       $('.deleteProtocol').click()
-      browser.wait(EC.visibilityOf(deleteModalCancelButton), WAIT)
       browser.sleep(SLEEP)
       deleteModalCancelButton.click()
       browser.wait(EC.invisibilityOf(deleteModal), WAIT)
@@ -458,21 +453,21 @@ describe('Browser WebSocket Client', function () {
       input.optionsProtocolNoneSavedDisplayed = true
       input.optionsProtocolSavedTableDisplayed = false
       $('.deleteProtocol').click()
-      browser.wait(EC.elementToBeClickable(deleteModalDeleteButton), WAIT)
+      browser.sleep(SLEEP)
       expect(deleteModalBody.getText()).toBe('Are you sure you want to delete the protocol shown below?')
       expect(deleteModalName.getText()).toBe('protocol1, protocol2')
       expect(deleteModalDeleteButton.getText()).toBe('Delete!')
       expect(deleteModalCancelButton.getText()).toBe('Cancel')
       deleteModalDeleteButton.click()
-      browser.wait(EC.elementToBeClickable(deleteModalCancelButton), WAIT)
       expect(deleteModalBody.getText()).toBe('Protocol deleted:')
       expect(deleteModalName.getText()).toBe('protocol1, protocol2')
       expect(deleteModalDeleteButton.isDisplayed()).toBe(false)
       expect(deleteModalCancelButton.getText()).toBe('Close')
       deleteModalCancelButton.click()
-      browser.wait(EC.invisibilityOf(deleteModal), WAIT)
-      checkOptions(input)
-      expect(deleteModal.isDisplayed()).toBe(false)
+      browser.wait(EC.invisibilityOf(deleteModal), WAIT).then(function () {
+        checkOptions(input)
+        expect(deleteModal.isDisplayed()).toBe(false)
+      })
     })
     it('add three protocols for client tests', function () {
       let input = JSON.parse(JSON.stringify(optionsDefaults))
@@ -556,6 +551,7 @@ describe('Browser WebSocket Client', function () {
       })
     })
     it('clicking printer icon should show JSON modal', function () {
+      const printMessage = element(by.css('.printMessage'))
       let input = JSON.parse(JSON.stringify(optionsDefaults))
       input.optionsUrlNoneSavedDisplayed = false
       input.optionsUrlSavedTableDisplayed = true
@@ -564,7 +560,7 @@ describe('Browser WebSocket Client', function () {
       input.optionsMessageNoneSavedDisplayed = false
       input.optionsMessageSavedTableDislayed = true
       browser.sleep(SLEEP)
-      $('.printMessage').click()
+      printMessage.click()
       browser.wait(EC.visibilityOf(jsonModal), WAIT)
       expect(jsonModalTitle.getText()).toBe('Echo One')
       expect(jsonModalBody.all(by.className('bwc-key')).count()).toBe(5)
@@ -573,13 +569,12 @@ describe('Browser WebSocket Client', function () {
       expect(jsonModalBody.all(by.className('bwc-string')).count()).toBe(1)
       expect(jsonModalBody.all(by.className('bwc-boolean')).count()).toBe(1)
       browser.wait(EC.elementToBeClickable(jsonModalCloseButton), WAIT)
-      browser.sleep(SLEEP)
       jsonModalCloseButton.click()
-      browser.wait(EC.invisibilityOf(jsonModal), WAIT)
       browser.sleep(SLEEP)
       checkOptions(input)
     })
     it('clicking edit icon and then cancel button', function () {
+      const editMessage = element(by.css('.editMessage'))
       let input = JSON.parse(JSON.stringify(optionsDefaults))
       input.optionsUrlNoneSavedDisplayed = false
       input.optionsUrlSavedTableDisplayed = true
@@ -588,22 +583,23 @@ describe('Browser WebSocket Client', function () {
       input.optionsMessageNoneSavedDisplayed = false
       input.optionsMessageSavedTableDislayed = true
       browser.sleep(SLEEP)
-      $('.editMessage').click()
-      browser.sleep(SLEEP)
-      input.optionsMessageNameInputLabelText = 'Editing message: Echo One'
-      input.optionsMessageNameInputValue = 'Echo One'
-      input.optionsMessageTextareaValue = message1
-      input.optionsMessageTextareaFormatSliderClass = textareaFormatSliderEnabledClass
-      input.optionsMessageSaveButtonEnabled = true
-      checkOptions(input)
-      optionsMessageCancelEditButton.click()
-      browser.sleep(SLEEP)
-      input.optionsMessageNameInputLabelText = optionsMessageNameInputLabelDefaultText
-      input.optionsMessageNameInputValue = ''
-      input.optionsMessageTextareaValue = ''
-      input.optionsMessageTextareaFormatSliderClass = textareaFormatSliderDisabledClass
-      input.optionsMessageSaveButtonEnabled = false
-      checkOptions(input)
+      browser.wait(EC.visibilityOf(editMessage), WAIT)
+      editMessage.click().then(function () {
+        input.optionsMessageNameInputLabelText = 'Editing message: Echo One'
+        input.optionsMessageNameInputValue = 'Echo One'
+        input.optionsMessageTextareaValue = message1
+        input.optionsMessageTextareaFormatSliderClass = textareaFormatSliderEnabledClass
+        input.optionsMessageSaveButtonEnabled = true
+        checkOptions(input)
+        optionsMessageCancelEditButton.click().then(function () {
+          input.optionsMessageNameInputLabelText = optionsMessageNameInputLabelDefaultText
+          input.optionsMessageNameInputValue = ''
+          input.optionsMessageTextareaValue = ''
+          input.optionsMessageTextareaFormatSliderClass = textareaFormatSliderDisabledClass
+          input.optionsMessageSaveButtonEnabled = false
+          checkOptions(input)
+        })
+      })
     })
     it('clicking edit icon and then save button', function () {
       let input = JSON.parse(JSON.stringify(optionsDefaults))
@@ -617,7 +613,6 @@ describe('Browser WebSocket Client', function () {
       $('.editMessage').click()
       optionsMessageNameInput.sendKeys(' Test').then(function () {
         optionsMessageSaveButton.click().then(function () {
-          browser.sleep(SLEEP)
           input.optionsMessageStatusDisplayed = true
           input.optionsMessageStatusText = 'Message saved.'
           checkOptions(input)
@@ -635,10 +630,8 @@ describe('Browser WebSocket Client', function () {
       input.optionsMessageSavedTableDislayed = true
       browser.sleep(SLEEP)
       $('.deleteMessage').click()
-      browser.wait(EC.visibilityOf(deleteModalCancelButton), WAIT)
       browser.sleep(SLEEP)
       deleteModalCancelButton.click()
-      browser.wait(EC.invisibilityOf(deleteModal), WAIT)
       browser.sleep(SLEEP)
       checkOptions(input)
       expect(deleteModal.isDisplayed()).toBe(false)
@@ -653,20 +646,18 @@ describe('Browser WebSocket Client', function () {
       input.optionsMessageSavedTableDislayed = false
       browser.sleep(SLEEP)
       $('.deleteMessage').click()
-      browser.wait(EC.visibilityOf(deleteModalCancelButton), WAIT)
       browser.wait(EC.elementToBeClickable(deleteModalDeleteButton), WAIT)
       expect(deleteModalBody.getText()).toBe('Are you sure you want to delete the message shown below?')
       expect(deleteModalName.getText()).toBe('Echo One Test')
       expect(deleteModalDeleteButton.getText()).toBe('Delete!')
       expect(deleteModalCancelButton.getText()).toBe('Cancel')
       deleteModalDeleteButton.click()
-      browser.sleep(SLEEP)
       expect(deleteModalBody.getText()).toBe('Message deleted:')
       expect(deleteModalName.getText()).toBe('Echo One Test')
       expect(deleteModalDeleteButton.isDisplayed()).toBe(false)
       expect(deleteModalCancelButton.getText()).toBe('Close')
+      browser.wait(EC.elementToBeClickable(deleteModalCancelButton), WAIT)
       deleteModalCancelButton.click()
-      browser.wait(EC.invisibilityOf(deleteModal), WAIT)
       browser.sleep(SLEEP)
       checkOptions(input)
       expect(deleteModal.isDisplayed()).toBe(false)
@@ -681,7 +672,6 @@ describe('Browser WebSocket Client', function () {
       input.optionsMessageSavedTableDislayed = false
       optionsMessageNameInput.clear().sendKeys('One').then(function () {
         optionsMessageTextarea.clear().sendKeys(message1).then(function () {
-          browser.sleep(SLEEP)
           input.optionsMessageTextareaFormatSliderClass = textareaFormatSliderEnabledClass
           input.optionsMessageNameInputValue = 'One'
           input.optionsMessageTextareaValue = message1
@@ -878,7 +868,7 @@ describe('Browser WebSocket Client', function () {
           checkClient(input)
           expect($('.bwc-sent').getText()).toBe(message1)
           receivedMessage.click()
-          browser.sleep(SLEEP)
+          browser.wait(EC.visibilityOf(jsonModal), WAIT)
           expect(jsonModal.isDisplayed()).toBe(true)
           expect(jsonModalTitle.getText()).toBe('Incoming Message')
           expect(jsonModalBody.getText()).toContain('Message 1')

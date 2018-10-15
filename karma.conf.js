@@ -1,5 +1,5 @@
 module.exports = function (config) {
-  let webpackConfig = require('./webpack.test.js')({env: 'test'})
+  let webpackConfig = require('./webpack.test.js')({ env: 'test' })
   let configuration = {
     autoWatch: false,
     basePath: '.',

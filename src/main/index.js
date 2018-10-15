@@ -948,6 +948,7 @@ messageTextarea.on('keyup', function (e) {
   }
 })
 
+// Ensure status messages are not persistent
 $('*').focus(function () {
   optionsUrlStatus.text('').hide()
   optionsProtocolStatus.text('').hide()

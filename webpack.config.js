@@ -80,7 +80,7 @@ module.exports = function (env) {
       new GenerateJsonPlugin('manifest.json', merge(
         require('./src/manifest/common.json'),
         require(`./src/manifest/${platform}.json`),
-        {version}
+        { version }
       ), null, 2)
     ]
   }
