@@ -248,27 +248,30 @@ describe('Browser WebSocket Client', function () {
     it('entering an invalid URL in #optionsUrlInput should show #optionsUrlInvalidWarning', function () {
       const test = 's://test'
       let input = JSON.parse(JSON.stringify(optionsDefaults))
-      optionsUrlInput.clear().sendKeys(test)
-      input.optionsUrlInputValue = test
-      input.optionsUrlInvalidWarningDisplayed = true
-      checkOptions(input)
+      optionsUrlInput.clear().sendKeys(test).then(function () {
+        input.optionsUrlInputValue = test
+        input.optionsUrlInvalidWarningDisplayed = true
+        checkOptions(input)
+      })
     })
     it('entering and then deleting text in #optionsUrlInput should show #optionsUrlInputEmpty', function () {
       let input = JSON.parse(JSON.stringify(optionsDefaults))
-      optionsUrlInput.clear().sendKeys('a', KEY_BACKSPACE)
-      input.optionsUrlInputEmptyDisplayed = true
-      input.optionsUrlInvalidWarningDisplayed = true
-      checkOptions(input)
+      optionsUrlInput.clear().sendKeys('a', KEY_BACKSPACE).then(function () {
+        input.optionsUrlInputEmptyDisplayed = true
+        input.optionsUrlInvalidWarningDisplayed = true
+        checkOptions(input)
+      })
     })
     it('saving a URL adds it to #optionsUrlSavedTable', function () {
       let input = JSON.parse(JSON.stringify(optionsDefaults))
-      optionsUrlInput.clear().sendKeys(echoServer)
-      optionsUrlSaveButton.click()
-      input.optionsUrlNoneSavedDisplayed = false
-      input.optionsUrlSavedTableDisplayed = true
-      input.optionsUrlStatusDisplayed = true
-      input.optionsUrlStatusText = 'URL saved.'
-      checkOptions(input)
+      optionsUrlInput.clear().sendKeys(echoServer).then(function () {
+        optionsUrlSaveButton.click()
+        input.optionsUrlNoneSavedDisplayed = false
+        input.optionsUrlSavedTableDisplayed = true
+        input.optionsUrlStatusDisplayed = true
+        input.optionsUrlStatusText = 'URL saved.'
+        checkOptions(input)
+      })
     })
 
     it('clicking URL edit icon and then cancel button', function () {
@@ -348,17 +351,17 @@ describe('Browser WebSocket Client', function () {
       input.optionsUrlSavedTableDisplayed = true
       input.optionsUrlStatusDisplayed = true
       input.optionsUrlStatusText = 'URL saved.'
-      optionsUrlInput.clear().sendKeys(echoServer)
-      optionsUrlSaveButton.click()
-      browser.sleep(SLEEP)
-      optionsUrlInput.clear().sendKeys(`${echoServer}/test1`)
-      optionsUrlSaveButton.click()
-      browser.sleep(SLEEP)
-      optionsUrlInput.clear().sendKeys(`${echoServer}/test2`)
-      optionsUrlSaveButton.click()
-      browser.sleep(SLEEP)
-      checkOptions(input)
-      expect(optionsUrlSavedTable.all(by.className('editUrl')).count()).toBe(3)
+      optionsUrlInput.clear().sendKeys(echoServer).then(function () {
+        optionsUrlSaveButton.click()
+        optionsUrlInput.clear().sendKeys(`${echoServer}/test1`).then(function () {
+          optionsUrlSaveButton.click()
+          optionsUrlInput.clear().sendKeys(`${echoServer}/test2`).then(function () {
+            optionsUrlSaveButton.click()
+            checkOptions(input)
+            expect(optionsUrlSavedTable.all(by.className('editUrl')).count()).toBe(3)
+          })
+        })
+      })
     })
   })
 
@@ -372,21 +375,23 @@ describe('Browser WebSocket Client', function () {
       let input = JSON.parse(JSON.stringify(optionsDefaults))
       input.optionsUrlNoneSavedDisplayed = false
       input.optionsUrlSavedTableDisplayed = true
-      optionsProtocolInput.clear().sendKeys('a', KEY_BACKSPACE)
-      input.optionsProtocolInputEmptyDisplayed = true
-      checkOptions(input)
+      optionsProtocolInput.clear().sendKeys('a', KEY_BACKSPACE).then(function () {
+        input.optionsProtocolInputEmptyDisplayed = true
+        checkOptions(input)
+      })
     })
     it('saving a protocol adds it to #optionsProtocolSavedTable', function () {
       let input = JSON.parse(JSON.stringify(optionsDefaults))
       input.optionsUrlNoneSavedDisplayed = false
       input.optionsUrlSavedTableDisplayed = true
-      optionsProtocolInput.clear().sendKeys('protocol1')
-      optionsProtocolSaveButton.click()
-      input.optionsProtocolNoneSavedDisplayed = false
-      input.optionsProtocolSavedTableDisplayed = true
-      input.optionsProtocolStatusDisplayed = true
-      input.optionsProtocolStatusText = 'Protocol saved.'
-      checkOptions(input)
+      optionsProtocolInput.clear().sendKeys('protocol1').then(function () {
+        optionsProtocolSaveButton.click()
+        input.optionsProtocolNoneSavedDisplayed = false
+        input.optionsProtocolSavedTableDisplayed = true
+        input.optionsProtocolStatusDisplayed = true
+        input.optionsProtocolStatusText = 'Protocol saved.'
+        checkOptions(input)
+      })
     })
 
     it('clicking protocol edit icon and then cancel button', function () {
@@ -477,17 +482,17 @@ describe('Browser WebSocket Client', function () {
       input.optionsProtocolSavedTableDisplayed = true
       input.optionsProtocolStatusDisplayed = true
       input.optionsProtocolStatusText = 'Protocol saved.'
-      optionsProtocolInput.clear().sendKeys('protocol1')
-      optionsProtocolSaveButton.click()
-      browser.sleep(SLEEP)
-      optionsProtocolInput.clear().sendKeys('protocol2')
-      optionsProtocolSaveButton.click()
-      browser.sleep(SLEEP)
-      optionsProtocolInput.clear().sendKeys('protocol3')
-      optionsProtocolSaveButton.click()
-      browser.sleep(SLEEP)
-      checkOptions(input)
-      expect(optionsProtocolSavedTable.all(by.className('editProtocol')).count()).toBe(3)
+      optionsProtocolInput.clear().sendKeys('protocol1').then(function () {
+        optionsProtocolSaveButton.click()
+        optionsProtocolInput.clear().sendKeys('protocol2').then(function () {
+          optionsProtocolSaveButton.click()
+          optionsProtocolInput.clear().sendKeys('protocol3').then(function () {
+            optionsProtocolSaveButton.click()
+            checkOptions(input)
+            expect(optionsProtocolSavedTable.all(by.className('editProtocol')).count()).toBe(3)
+          })
+        })
+      })
     })
   })
 
@@ -504,10 +509,10 @@ describe('Browser WebSocket Client', function () {
       input.optionsUrlSavedTableDisplayed = true
       input.optionsProtocolNoneSavedDisplayed = false
       input.optionsProtocolSavedTableDisplayed = true
-      optionsMessageNameInput.clear().sendKeys('a', KEY_BACKSPACE)
-      browser.sleep(SLEEP)
-      input.optionsMessageNameInvalidDisplayed = true
-      checkOptions(input)
+      optionsMessageNameInput.clear().sendKeys('a', KEY_BACKSPACE).then(function () {
+        input.optionsMessageNameInvalidDisplayed = true
+        checkOptions(input)
+      })
     })
     it('entering a message with invalid JSON in #optionsMessageTextarea should show #optionsMessageJsonInvalidWarning', function () {
       let input = JSON.parse(JSON.stringify(optionsDefaults))
@@ -515,10 +520,11 @@ describe('Browser WebSocket Client', function () {
       input.optionsUrlSavedTableDisplayed = true
       input.optionsProtocolNoneSavedDisplayed = false
       input.optionsProtocolSavedTableDisplayed = true
-      optionsMessageTextarea.clear().sendKeys(messageInvalid)
-      input.optionsMessageTextareaValue = '"missingLeadingBracket": true}'
-      input.optionsMessageJsonInvalidWarningDisplayed = true
-      checkOptions(input)
+      optionsMessageTextarea.clear().sendKeys(messageInvalid).then(function () {
+        input.optionsMessageTextareaValue = '"missingLeadingBracket": true}'
+        input.optionsMessageJsonInvalidWarningDisplayed = true
+        checkOptions(input)
+      })
     })
     it('entering and then deleting text in #optionsMessageTextarea should show #optionsMessageTextareaEmpty', function () {
       let input = JSON.parse(JSON.stringify(optionsDefaults))
@@ -526,10 +532,10 @@ describe('Browser WebSocket Client', function () {
       input.optionsUrlSavedTableDisplayed = true
       input.optionsProtocolNoneSavedDisplayed = false
       input.optionsProtocolSavedTableDisplayed = true
-      optionsMessageTextarea.clear().sendKeys('a', KEY_BACKSPACE)
-      browser.sleep(SLEEP)
-      input.optionsMessageTextareaEmptyDisplayed = true
-      checkOptions(input)
+      optionsMessageTextarea.clear().sendKeys('a', KEY_BACKSPACE).then(function () {
+        input.optionsMessageTextareaEmptyDisplayed = true
+        checkOptions(input)
+      })
     })
     it('saving a message adds it to #optionsMessageSavedTable', function () {
       let input = JSON.parse(JSON.stringify(optionsDefaults))
@@ -537,15 +543,17 @@ describe('Browser WebSocket Client', function () {
       input.optionsUrlSavedTableDisplayed = true
       input.optionsProtocolNoneSavedDisplayed = false
       input.optionsProtocolSavedTableDisplayed = true
-      optionsMessageNameInput.clear().sendKeys('Echo One')
-      optionsMessageTextarea.clear().sendKeys(message1)
-      optionsMessageSaveButton.click()
-      input.optionsMessageNoneSavedDisplayed = false
-      input.optionsMessageSavedTableDislayed = true
-      input.optionsMessageStatusDisplayed = true
-      input.optionsMessageTextareaFormatSliderClass = textareaFormatSliderDisabledClass
-      input.optionsMessageStatusText = 'Message saved.'
-      checkOptions(input)
+      optionsMessageNameInput.clear().sendKeys('Echo One').then(function () {
+        optionsMessageTextarea.clear().sendKeys(message1).then(function () {
+          optionsMessageSaveButton.click()
+          input.optionsMessageNoneSavedDisplayed = false
+          input.optionsMessageSavedTableDislayed = true
+          input.optionsMessageStatusDisplayed = true
+          input.optionsMessageTextareaFormatSliderClass = textareaFormatSliderDisabledClass
+          input.optionsMessageStatusText = 'Message saved.'
+          checkOptions(input)
+        })
+      })
     })
     it('clicking printer icon should show JSON modal', function () {
       let input = JSON.parse(JSON.stringify(optionsDefaults))
@@ -706,20 +714,23 @@ describe('Browser WebSocket Client', function () {
       input.optionsMessageSavedTableDislayed = true
       input.optionsMessageStatusDisplayed = true
       input.optionsMessageStatusText = 'Message saved.'
-      optionsMessageNameInput.clear().sendKeys('One')
-      optionsMessageTextarea.clear().sendKeys(message1)
-      optionsMessageSaveButton.click()
-      browser.sleep(SLEEP)
-      optionsMessageNameInput.clear().sendKeys('Two')
-      optionsMessageTextarea.clear().sendKeys(message2)
-      optionsMessageSaveButton.click()
-      browser.sleep(SLEEP)
-      optionsMessageNameInput.clear().sendKeys('Three')
-      optionsMessageTextarea.clear().sendKeys(message3)
-      optionsMessageSaveButton.click()
-      browser.sleep(SLEEP)
-      checkOptions(input)
-      expect(optionsMessageSavedTable.all(by.className('editMessage')).count()).toBe(3)
+      optionsMessageNameInput.clear().sendKeys('One').then(function () {
+        optionsMessageTextarea.clear().sendKeys(message1).then(function () {
+          optionsMessageSaveButton.click()
+          optionsMessageNameInput.clear().sendKeys('Two').then(function () {
+            optionsMessageTextarea.clear().sendKeys(message2).then(function () {
+              optionsMessageSaveButton.click()
+              optionsMessageNameInput.clear().sendKeys('Three').then(function () {
+                optionsMessageTextarea.clear().sendKeys(message3).then(function () {
+                  optionsMessageSaveButton.click()
+                  checkOptions(input)
+                  expect(optionsMessageSavedTable.all(by.className('editMessage')).count()).toBe(3)
+                })
+              })
+            })
+          })
+        })
+      })
     })
   })
 
@@ -777,15 +788,17 @@ describe('Browser WebSocket Client', function () {
       input.urlSelectMenuDisplayed = true
       input.protocolSelectMenuDisplayed = true
       input.messageSelectMenuDisplayed = true
-      messageTextarea.clear().sendKeys(messageInvalid)
-      input.messageJsonInvalidWarningDisplayed = true
-      input.messageTextareaValue = messageInvalid
-      checkClient(input)
-      messageTextarea.clear().sendKeys(message1)
-      input.messageJsonInvalidWarningDisplayed = false
-      input.messageTextareaValue = message1
-      input.messageTextareaFormatSliderclass = textareaFormatSliderEnabledClass
-      checkClient(input)
+      messageTextarea.clear().sendKeys(messageInvalid).then(function () {
+        input.messageJsonInvalidWarningDisplayed = true
+        input.messageTextareaValue = messageInvalid
+        checkClient(input)
+        messageTextarea.clear().sendKeys(message1).then(function () {
+          input.messageJsonInvalidWarningDisplayed = false
+          input.messageTextareaValue = message1
+          input.messageTextareaFormatSliderclass = textareaFormatSliderEnabledClass
+          checkClient(input)
+        })
+      })
     })
     it('toggling JSON formatting', function () {
       let input = JSON.parse(JSON.stringify(clientDefaults))
@@ -823,21 +836,22 @@ describe('Browser WebSocket Client', function () {
       input.urlSelectMenuDisplayed = true
       input.protocolSelectMenuDisplayed = true
       input.messageSelectMenuDisplayed = true
-      urlInput.clear().sendKeys(echoServer)
-      connectButton.click()
-      browser.wait(EC.textToBePresentInElement(connectionStatus, 'OPENED'), WAIT)
-      input.urlInputValue = echoServer
-      input.connectionStatusText = 'OPENED'
-      input.connectButtonDisplayed = false
-      input.disconnectButtonDisplayed = true
-      checkClient(input)
-      disconnectButton.click()
-      browser.wait(EC.textToBePresentInElement(connectionStatus, 'CLOSED'), WAIT)
-      input.connectionStatusText = 'CLOSED'
-      input.connectButtonDisplayed = true
-      input.connectButtonEnabled = true
-      input.disconnectButtonDisplayed = false
-      checkClient(input)
+      urlInput.clear().sendKeys(echoServer).then(function () {
+        connectButton.click()
+        browser.wait(EC.textToBePresentInElement(connectionStatus, 'OPENED'), WAIT)
+        input.urlInputValue = echoServer
+        input.connectionStatusText = 'OPENED'
+        input.connectButtonDisplayed = false
+        input.disconnectButtonDisplayed = true
+        checkClient(input)
+        disconnectButton.click()
+        browser.wait(EC.textToBePresentInElement(connectionStatus, 'CLOSED'), WAIT)
+        input.connectionStatusText = 'CLOSED'
+        input.connectButtonDisplayed = true
+        input.connectButtonEnabled = true
+        input.disconnectButtonDisplayed = false
+        checkClient(input)
+      })
     })
     it('send message using send button and open with JSON modal', function () {
       const receivedMessage = $('.bwc-received')
@@ -845,58 +859,63 @@ describe('Browser WebSocket Client', function () {
       input.urlSelectMenuDisplayed = true
       input.protocolSelectMenuDisplayed = true
       input.messageSelectMenuDisplayed = true
-      urlInput.clear().sendKeys(echoServer)
-      connectButton.click()
-      browser.wait(EC.textToBePresentInElement(connectionStatus, 'OPENED'), WAIT)
-      messageTextarea.clear().sendKeys(message1)
-      input.urlInputValue = echoServer
-      input.connectionStatusText = 'OPENED'
-      input.connectButtonDisplayed = false
-      input.connectButtonEnabled = false
-      input.disconnectButtonDisplayed = true
-      input.messageTextareaValue = message1
-      input.messageTextareaFormatSliderclass = textareaFormatSliderEnabledClass
-      input.messageSendButtonEnabled = true
-      messageSendButton.click()
-      browser.wait(EC.textToBePresentInElement(receivedMessage, message1), WAIT)
-      input.clearMessagesButtonEnabled = true
-      input.messagesText = `${message1}\n${message1}`
-      checkClient(input)
-      expect($('.bwc-sent').getText()).toBe(message1)
-      receivedMessage.click()
-      browser.sleep(SLEEP)
-      expect(jsonModal.isDisplayed()).toBe(true)
-      expect(jsonModalTitle.getText()).toBe('Incoming Message')
-      expect(jsonModalBody.getText()).toContain('Message 1')
+      urlInput.clear().sendKeys(echoServer).then(function () {
+        connectButton.click()
+        browser.wait(EC.textToBePresentInElement(connectionStatus, 'OPENED'), WAIT)
+        messageTextarea.clear().sendKeys(message1).then(function () {
+          input.urlInputValue = echoServer
+          input.connectionStatusText = 'OPENED'
+          input.connectButtonDisplayed = false
+          input.connectButtonEnabled = false
+          input.disconnectButtonDisplayed = true
+          input.messageTextareaValue = message1
+          input.messageTextareaFormatSliderclass = textareaFormatSliderEnabledClass
+          input.messageSendButtonEnabled = true
+          messageSendButton.click()
+          browser.wait(EC.textToBePresentInElement(receivedMessage, message1), WAIT)
+          input.clearMessagesButtonEnabled = true
+          input.messagesText = `${message1}\n${message1}`
+          checkClient(input)
+          expect($('.bwc-sent').getText()).toBe(message1)
+          receivedMessage.click()
+          browser.sleep(SLEEP)
+          expect(jsonModal.isDisplayed()).toBe(true)
+          expect(jsonModalTitle.getText()).toBe('Incoming Message')
+          expect(jsonModalBody.getText()).toContain('Message 1')
+        })
+      })
     })
     it('send two messages with Ctrl + Enter, open and close each with JSON modal, clear messages', function () {
       const ctrlEnter = protractor.Key.chord(KEY_CTRL, KEY_ENTER)
       const receivedMessages = element.all(by.css('.bwc-received'))
-      urlInput.clear().sendKeys(echoServer)
-      connectButton.click()
-      browser.wait(EC.textToBePresentInElement(connectionStatus, 'OPENED'), WAIT)
-      messageTextarea.clear().sendKeys(message1, ctrlEnter)
-      browser.wait(EC.textToBePresentInElement(receivedMessages.get(0), message1), WAIT)
-      messageTextarea.clear().sendKeys(message2, ctrlEnter)
-      browser.wait(EC.textToBePresentInElement(receivedMessages.get(1), message2), WAIT)
-      receivedMessages.get(0).click()
-      browser.sleep(SLEEP)
-      expect(jsonModal.isDisplayed()).toBe(true)
-      expect(jsonModalTitle.getText()).toBe('Incoming Message')
-      expect(jsonModalBody.getText()).toContain('Message 1')
-      jsonModalCloseButton.click()
-      browser.sleep(SLEEP)
-      expect(jsonModal.isDisplayed()).toBe(false)
-      receivedMessages.get(1).click()
-      browser.sleep(SLEEP)
-      expect(jsonModal.isDisplayed()).toBe(true)
-      expect(jsonModalTitle.getText()).toBe('Incoming Message')
-      expect(jsonModalBody.getText()).toContain('Message 2')
-      jsonModalCloseButton.click()
-      browser.sleep(SLEEP)
-      expect(jsonModal.isDisplayed()).toBe(false)
-      clearMessagesButton.click()
-      expect(messages.getText()).toBe('')
+      urlInput.clear().sendKeys(echoServer).then(function () {
+        connectButton.click()
+        browser.wait(EC.textToBePresentInElement(connectionStatus, 'OPENED'), WAIT)
+        messageTextarea.clear().sendKeys(message1, ctrlEnter).then(function () {
+          browser.wait(EC.textToBePresentInElement(receivedMessages.get(0), message1), WAIT)
+          messageTextarea.clear().sendKeys(message2, ctrlEnter).then(function () {
+            browser.wait(EC.textToBePresentInElement(receivedMessages.get(1), message2), WAIT)
+            receivedMessages.get(0).click()
+            browser.sleep(SLEEP)
+            expect(jsonModal.isDisplayed()).toBe(true)
+            expect(jsonModalTitle.getText()).toBe('Incoming Message')
+            expect(jsonModalBody.getText()).toContain('Message 1')
+            jsonModalCloseButton.click()
+            browser.sleep(SLEEP)
+            expect(jsonModal.isDisplayed()).toBe(false)
+            receivedMessages.get(1).click()
+            browser.sleep(SLEEP)
+            expect(jsonModal.isDisplayed()).toBe(true)
+            expect(jsonModalTitle.getText()).toBe('Incoming Message')
+            expect(jsonModalBody.getText()).toContain('Message 2')
+            jsonModalCloseButton.click()
+            browser.sleep(SLEEP)
+            expect(jsonModal.isDisplayed()).toBe(false)
+            clearMessagesButton.click()
+            expect(messages.getText()).toBe('')
+          })
+        })
+      })
     })
   })
 })
