@@ -44,7 +44,7 @@
 						   type="text"
 						   placeholder="URL"/>
 					<p id="optionsUrlStatus" class="hide"></p>
-					<p id="optionsUrlInputEmpty" class="alert alert-danger rounded hide" role="alert">
+					<p id="optionsUrlInputEmpty" class="alert alert-warning rounded hide" role="alert">
 						You must enter a URL.
 					</p>
 					<p id="optionsUrlInvalidWarning" class="alert alert-warning rounded hide" role="alert">
@@ -81,7 +81,7 @@
 						<a href="https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/WebSocket#Parameters">WebSocket()
 							constructor</a>.</p>
 					<p id="optionsProtocolStatus" class="hide"></p>
-					<p id="optionsProtocolInputEmpty" class="alert alert-danger rounded hide" role="alert">
+					<p id="optionsProtocolInputEmpty" class="alert alert-warning rounded hide" role="alert">
 						You must enter a protocol name.
 					</p>
 					<button id="optionsProtocolSaveButton" class="btn btn-primary" disabled="disabled">
@@ -108,17 +108,17 @@
 						   class="form-control"
 						   type="text"
 						   placeholder="Display Name"/>
-					<label for="optionsMessageTextarea">
+					<label id="optionsMessageTextareaLabel" for="optionsMessageTextarea">
 						The message body does not appear in the "Saved Messages" table or drop-down menu:
 					</label>
 					<textarea id="optionsMessageTextarea"
 							  class="form-control"
 							  placeholder="Message Body (JSON)"></textarea>
 					<p id="optionsMessageStatus" class="hide"></p>
-					<p id="optionsMessageNameInvalid" class="alert alert-danger rounded hide" role="alert">
+					<p id="optionsMessageNameInvalid" class="alert alert-warning rounded hide" role="alert">
 						You must enter a display name.
 					</p>
-					<p id="optionsMessageTextareaEmpty" class="alert alert-danger rounded hide" role="alert">
+					<p id="optionsMessageTextareaEmpty" class="alert alert-warning rounded hide" role="alert">
 						You must enter a message body.
 					</p>
 					<p id="optionsMessageJsonInvalidWarning" class="alert alert-warning rounded hide" role="alert">
@@ -168,7 +168,7 @@
 								aria-expanded="false">
 							Saved URLs
 						</button>
-						<div id="urlSelectItems"
+						<div id="urlSelectOptions"
 							 class="dropdown-menu"
 							 aria-labelledby="urlSelectMenu">
 						</div>
@@ -192,7 +192,7 @@
 								aria-expanded="false">
 							Saved Protocols
 						</button>
-						<div id="protocolSelectItems"
+						<div id="protocolSelectOptions"
 							 class="dropdown-menu"
 							 aria-labelledby="protocolSelectMenu">
 						</div>
@@ -230,7 +230,7 @@
 								aria-expanded="false">
 							Saved Messages
 						</button>
-						<div id="messageSelectItems"
+						<div id="messageSelectOptions"
 							 class="dropdown-menu"
 							 aria-labelledby="messageSelectMenu">
 						</div>

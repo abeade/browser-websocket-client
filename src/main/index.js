@@ -95,6 +95,7 @@ const optionsMessageSavedTable = $('#optionsMessageSavedTable')
 const optionsMessageStatus = $('#optionsMessageStatus')
 const optionsMessageTextarea = $('#optionsMessageTextarea')
 const optionsMessageTextareaEmpty = $('#optionsMessageTextareaEmpty')
+const optionsMessageTextareaFormatSlider = $('#optionsMessageTextareaFormatSlider')
 const optionsMessageTextareaFormatToggle = $('#optionsMessageTextareaFormatToggle')
 const optionsProtocolCancelEditButton = $('#optionsProtocolCancelEditButton')
 const optionsProtocolInput = $('#optionsProtocolInput')
@@ -126,16 +127,17 @@ const jsonModalTitle = $('#jsonModalTitle')
 const messageJsonInvalidWarning = $('#messageJsonInvalidWarning')
 const messages = $('#messages')
 const messageSelect = $('#messageSelect')
-const messageSelectItems = $('#messageSelectItems')
+const messageSelectOptions = $('#messageSelectOptions')
 const messageSendButton = $('#messageSendButton')
 const messageTextarea = $('#messageTextarea')
 const messageTextareaFormatToggle = $('#messageTextareaFormatToggle')
+const messageTextareaFormatSlider = $('#messageTextareaFormatSlider')
 const protocolInput = $('#protocolInput')
 const protocolSelect = $('#protocolSelect')
-const protocolSelectItems = $('#protocolSelectItems')
+const protocolSelectOptions = $('#protocolSelectOptions')
 const urlInput = $('#urlInput')
 const urlSelect = $('#urlSelect')
-const urlSelectItems = $('#urlSelectItems')
+const urlSelectOptions = $('#urlSelectOptions')
 
 // Immutable variables
 const url = document.location.toString()
@@ -271,23 +273,22 @@ APP.populateUrlTable = function () {
   })
 }
 
-// Enable URL save button if input is not empty
+// Validate URL input on input change
 optionsUrlInput.on('keyup', function () {
   if (optionsUrlInput.val().length > 0) {
     optionsUrlInputEmpty.hide()
-    optionsUrlSaveButton.prop('disabled', false)
   } else {
     optionsUrlInputEmpty.show()
-    optionsUrlSaveButton.prop('disabled', true)
   }
-})
-
-// Validate URL input on input change
-optionsUrlInput.on('keyup', function () {
   if (APP.isValidUrl(optionsUrlInput.val())) {
     optionsUrlInvalidWarning.hide()
   } else {
     optionsUrlInvalidWarning.show()
+  }
+  if (optionsUrlInput.val().length > 0 && APP.isValidUrl(optionsUrlInput.val())) {
+    optionsUrlSaveButton.prop('disabled', false)
+  } else {
+    optionsUrlSaveButton.prop('disabled', true)
   }
 })
 
@@ -543,10 +544,10 @@ APP.validateOptionsMessage = function () {
   const validMessageJson = APP.isValidJson(optionsMessageTextarea.val())
   if (validMessageName && validMessageLength && validMessageJson) {
     optionsMessageSaveButton.prop('disabled', false)
-    $('.bwc-slider').removeClass('bwc-slider-disabled')
+    optionsMessageTextareaFormatSlider.removeClass('bwc-slider-disabled')
   } else {
     optionsMessageSaveButton.prop('disabled', true)
-    $('.bwc-slider').addClass('bwc-slider-disabled')
+    optionsMessageTextareaFormatSlider.addClass('bwc-slider-disabled')
   }
 }
 
@@ -570,17 +571,16 @@ APP.validateOptionsMessageTextarea = function () {
   const validMessageLength = optionsMessageTextarea.val().trim().length > 0
   const validMessageJson = APP.isValidJson(optionsMessageTextarea.val())
   let valid = true
+  optionsMessageJsonInvalidWarning.hide()
   if (validMessageLength) {
     optionsMessageTextareaEmpty.hide()
+    if (!validMessageJson) {
+      valid = false
+      optionsMessageJsonInvalidWarning.show()
+    }
   } else {
     valid = false
     optionsMessageTextareaEmpty.show()
-  }
-  if (validMessageJson) {
-    optionsMessageJsonInvalidWarning.hide()
-  } else {
-    valid = false
-    optionsMessageJsonInvalidWarning.show()
   }
   if (valid) {
     APP.validateOptionsMessage()
@@ -649,6 +649,7 @@ optionsMessageCancelEditButton.on('click', function () {
   optionsMessageSaveButton.prop('disabled', true)
   optionsMessageStatus.hide()
   optionsMessageTextarea.val('')
+  optionsMessageTextareaFormatSlider.addClass('bwc-slider-disabled')
   optionsMessageTextareaFormatToggle.prop('checked', false)
 })
 
@@ -674,6 +675,7 @@ optionsMessageSaveButton.on('click', function () {
     .text('Message saved.')
     .show()
   optionsMessageTextarea.val('')
+  optionsMessageTextareaFormatSlider.addClass('bwc-slider-disabled')
   optionsMessageTextareaFormatToggle.prop('checked', false)
 })
 
@@ -716,7 +718,7 @@ APP.populateSavedUrlSelect = function () {
   $.each(urls, function (key, url) {
     options += `<button class="dropdown-item url" type="button" data-value="${url}">${url}</button>`
   })
-  urlSelectItems
+  urlSelectOptions
     .html('')
     .append(options)
   $('.dropdown-item.url').on('click', function () {
@@ -732,7 +734,7 @@ APP.populateSavedProtocolSelect = function () {
   $.each(protocols, function (key, protocol) {
     options += `<button class="dropdown-item protocol" type="button" data-value="${protocol}">${protocol}</button>`
   })
-  protocolSelectItems
+  protocolSelectOptions
     .html('')
     .append(options)
   $('.dropdown-item.protocol').on('click', function () {
@@ -748,7 +750,7 @@ APP.populateSavedMessageSelect = function () {
     const [name, body] = message.split(SEPARATOR)
     options += `<button class="dropdown-item message" type="button" data-value='${body}'>${name}</button>`
   })
-  messageSelectItems
+  messageSelectOptions
     .html('')
     .append(options)
   $('.dropdown-item.message').on('click', function () {
@@ -768,13 +770,13 @@ APP.validateClientMessage = function () {
       messageSendButton.prop('disabled', true)
     }
     messageJsonInvalidWarning.hide()
-    $('.bwc-slider').removeClass('bwc-slider-disabled')
+    messageTextareaFormatSlider.removeClass('bwc-slider-disabled')
   } else {
     messageSendButton.prop('disabled', true)
     if (messageTextarea.isFocused) {
       messageJsonInvalidWarning.show()
     }
-    $('.bwc-slider').addClass('bwc-slider-disabled')
+    messageTextareaFormatSlider.addClass('bwc-slider-disabled')
   }
 }
 
@@ -829,7 +831,9 @@ APP.close = function () {
 // WebSocket onOpen handler
 APP.onOpen = function () {
   console.log('OPENED: ' + urlInput.val())
-  connectButton.hide()
+  connectButton
+    .prop('disabled', true)
+    .hide()
   connectionStatus.text('OPENED')
   disconnectButton.show()
   urlInput.prop('disabled', true)
@@ -845,7 +849,9 @@ APP.onClose = function () {
   disconnectionMessage += (wsPoliteDisconnection) ? '' : '. Disconnected by the server.'
   console.log('CLOSED: ' + urlInput.val())
   ws = null
-  connectButton.show()
+  connectButton
+    .prop('disabled', false)
+    .show()
   connectionStatus.text(disconnectionMessage)
   disconnectButton.hide()
   messageSendButton.prop('disabled', true)
@@ -940,6 +946,12 @@ messageTextarea.on('keyup', function (e) {
   if (e.which === 13 && isCtrlKey === true) {
     APP.sendMessage()
   }
+})
+
+$('*').focus(function () {
+  optionsUrlStatus.text('').hide()
+  optionsProtocolStatus.text('').hide()
+  optionsMessageStatus.text('').hide()
 })
 
 $(document).ready(function () {
