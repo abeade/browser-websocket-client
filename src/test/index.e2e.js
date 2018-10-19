@@ -1,17 +1,23 @@
 describe('Browser WebSocket Client', function () {
   const EC = protractor.ExpectedConditions
-  const EXTENSION_ID = 'bekcoofjhbhgplgbiemoeopghmholjel'
+  const EXTENSION_ID = 'pdimljnainelbgkgdeclaealcgfghgeg'
   const KEY_BACKSPACE = protractor.Key.BACK_SPACE
   const KEY_CTRL = protractor.Key.CONTROL
   const KEY_ENTER = protractor.Key.ENTER
   const SLEEP = 500
   const WAIT = 5000
-  const echoServer = 'ws://demos.kaazing.com/echo'
   const element = protractor.element
-  const messageInvalid = '"missingLeadingBracket": true}'
-  const message1 = '{"Message 1":{"null":null,"number":42,"string":"is the answer to everything","boolean":false}}'
-  const message2 = '{"Message 2":{"null":null,"number":42,"string":"is the answer to everything","boolean":false}}'
-  const message3 = '{"Message 3":{"null":null,"number":42,"string":"is the answer to everything","boolean":false}}'
+
+  // Preferences HTML elements
+  const preferencesAnchor = element(by.id('preferencesAnchor'))
+  const preferencesOptionsUrlCheckbox = element(by.id('preferencesOptionsUrlCheckbox'))
+  const preferencesOptionsUrlSlider = element(by.id('preferencesOptionsUrlSlider'))
+  const preferencesClientUrlCheckbox = element(by.id('preferencesClientUrlCheckbox'))
+  const preferencesClientUrlSlider = element(by.id('preferencesClientUrlSlider'))
+  const preferencesOptionsMessageCheckbox = element(by.id('preferencesOptionsMessageCheckbox'))
+  const preferencesOptionsMessageSlider = element(by.id('preferencesOptionsMessageSlider'))
+  const preferencesClientMessageCheckbox = element(by.id('preferencesClientMessageCheckbox'))
+  const preferencesClientMessageSlider = element(by.id('preferencesClientMessageSlider'))
 
   // Options HTML elements
   const deleteModal = element(by.id('deleteModal'))
@@ -75,10 +81,15 @@ describe('Browser WebSocket Client', function () {
   const urlSelectMenu = element(by.id('urlSelectMenu'))
 
   // Immutable variables
-  const optionsUrlInputLabelDefaultText = 'The URL should begin with ws:// or wss://:'
-  const optionsProtocolInputLabelDefaultText = 'Enter a single protocol name or multiple comma-separated names:'
+  const echoServer = 'ws://demos.kaazing.com/echo'
+  const message1 = '{"Message 1":{"null":null,"number":42,"string":"is the answer to everything","boolean":false}}'
+  const message2 = '{"Message 2":{"null":null,"number":42,"string":"is the answer to everything","boolean":false}}'
+  const message3 = '{"Message 3":{"null":null,"number":42,"string":"is the answer to everything","boolean":false}}'
+  const messageInvalid = '"missingLeadingBracket": true}'
   const optionsMessageNameInputLabelDefaultText = 'The display name appears in the "Saved Messages" table and client drop-down menu:'
   const optionsMessageTextareaLabelDefaultText = 'The message body does not appear in the "Saved Messages" table or drop-down menu:'
+  const optionsProtocolInputLabelDefaultText = 'Enter a single protocol name or multiple comma-separated names:'
+  const optionsUrlInputLabelDefaultText = 'The URL should begin with ws:// or wss://:'
   const textareaFormatSliderDisabledClass = 'bwc-slider bwc-slider-disabled'
   const textareaFormatSliderEnabledClass = 'bwc-slider'
 
@@ -236,6 +247,156 @@ describe('Browser WebSocket Client', function () {
       browser.get(`chrome-extension://${EXTENSION_ID}/index.html`)
       browser.wait(EC.visibilityOf(client), WAIT)
       checkClient(clientDefaults)
+    })
+  })
+
+  describe('preferences', function () {
+    beforeEach(function () {
+      browser.get(`chrome-extension://${EXTENSION_ID}/index.html`)
+      preferencesAnchor.click()
+      browser.wait(EC.visibilityOf(preferencesClientMessageSlider), WAIT)
+    })
+    const isChecked = function (element) {
+      return element.getAttribute('checked')
+    }
+    const openOptions = function () {
+      optionsAnchor.click()
+      browser.wait(EC.visibilityOf(optionsUrlInput), WAIT)
+    }
+    const openClient = function () {
+      browser.get(`chrome-extension://${EXTENSION_ID}/index.html`)
+    }
+    it('prevent saving an invalid URL in the Options section', function () {
+      const url = 's://test'
+      let input = JSON.parse(JSON.stringify(optionsDefaults))
+      if (!isChecked(preferencesOptionsUrlCheckbox)) {
+        preferencesOptionsUrlSlider.click().then(function () {
+          openOptions()
+          optionsUrlInput.clear().sendKeys(url).then(function () {
+            input.optionsUrlInputValue = url
+            input.optionsUrlInvalidWarningDisplayed = true
+            input.optionsUrlSaveButtonEnabled = false
+            checkOptions(input)
+          })
+        })
+      }
+    })
+    it('allow saving an invalid URL in the Options section', function () {
+      const url = 's://test'
+      let input = JSON.parse(JSON.stringify(optionsDefaults))
+      if (isChecked(preferencesOptionsUrlCheckbox)) {
+        preferencesOptionsUrlSlider.click().then(function () {
+          openOptions()
+          optionsUrlInput.clear().sendKeys(url).then(function () {
+            input.optionsUrlInputValue = url
+            input.optionsUrlInvalidWarningDisplayed = true
+            input.optionsUrlSaveButtonEnabled = true
+            checkOptions(input)
+          })
+        })
+      }
+    })
+    it('prevent saving an invalid message body in the Options section', function () {
+      const body = messageInvalid
+      const name = 'name'
+      let input = JSON.parse(JSON.stringify(optionsDefaults))
+      if (!isChecked(preferencesOptionsMessageCheckbox)) {
+        preferencesOptionsMessageSlider.click().then(function () {
+          openOptions()
+          browser.executeScript('arguments[0].scrollIntoView();', optionsMessageSaveButton)
+          optionsMessageNameInput.clear().sendKeys(name).then(function () {
+            optionsMessageTextarea.clear().sendKeys(body).then(function () {
+              input.optionsMessageNameInputValue = name
+              input.optionsMessageTextareaValue = body
+              input.optionsMessageJsonInvalidWarningDisplayed = true
+              input.optionsMessageSaveButtonEnabled = false
+              checkOptions(input)
+            })
+          })
+        })
+      }
+    })
+    it('allow saving an invalid message body in the Options section', function () {
+      const body = messageInvalid
+      const name = 'name'
+      let input = JSON.parse(JSON.stringify(optionsDefaults))
+      if (isChecked(preferencesOptionsMessageCheckbox)) {
+        preferencesOptionsMessageSlider.click().then(function () {
+          openOptions()
+          browser.executeScript('arguments[0].scrollIntoView();', optionsMessageSaveButton)
+          optionsMessageNameInput.clear().sendKeys(name).then(function () {
+            optionsMessageTextarea.clear().sendKeys(body).then(function () {
+              input.optionsMessageNameInputValue = name
+              input.optionsMessageTextareaValue = body
+              input.optionsMessageJsonInvalidWarningDisplayed = true
+              input.optionsMessageSaveButtonEnabled = true
+              checkOptions(input)
+            })
+          })
+        })
+      }
+    })
+    it('prevent using an invalid URL in the Client section', function () {
+      const url = 's://test'
+      let input = JSON.parse(JSON.stringify(clientDefaults))
+      if (!isChecked(preferencesClientUrlCheckbox)) {
+        preferencesClientUrlSlider.click().then(function () {
+          openClient()
+          urlInput.clear().sendKeys(url).then(function () {
+            input.urlInputValue = url
+            input.urlInvalidWarningDisplayed = true
+            input.connectButtonEnabled = false
+            checkClient(input)
+          })
+        })
+      }
+    })
+    it('allow using an invalid URL in the Client section', function () {
+      const url = 's://test'
+      let input = JSON.parse(JSON.stringify(clientDefaults))
+      if (isChecked(preferencesClientUrlCheckbox)) {
+        preferencesClientUrlSlider.click().then(function () {
+          openClient()
+          urlInput.clear().sendKeys(url).then(function () {
+            input.urlInputValue = url
+            input.urlInvalidWarningDisplayed = true
+            input.connectButtonEnabled = true
+            checkClient(input)
+          })
+        })
+      }
+    })
+    it('prevent using an invalid message body in the Client section', function () {
+      const body = messageInvalid
+      let input = JSON.parse(JSON.stringify(clientDefaults))
+      if (!isChecked(preferencesClientMessageCheckbox)) {
+        preferencesClientMessageSlider.click().then(function () {
+          openClient()
+          browser.executeScript('arguments[0].scrollIntoView();', messageSendButton)
+          messageTextarea.clear().sendKeys(body).then(function () {
+            input.messageTextareaValue = body
+            input.messageJsonInvalidWarningDisplayed = true
+            input.messageSendButtonEnabled = false
+            checkClient(input)
+          })
+        })
+      }
+    })
+    it('allow using an invalid message body in the Client section', function () {
+      const body = messageInvalid
+      let input = JSON.parse(JSON.stringify(clientDefaults))
+      if (isChecked(preferencesClientMessageCheckbox)) {
+        preferencesClientMessageSlider.click().then(function () {
+          openClient()
+          browser.executeScript('arguments[0].scrollIntoView();', messageSendButton)
+          messageTextarea.clear().sendKeys(body).then(function () {
+            input.messageTextareaValue = body
+            input.messageJsonInvalidWarningDisplayed = true
+            input.messageSendButtonEnabled = true
+            checkClient(input)
+          })
+        })
+      }
     })
   })
 
