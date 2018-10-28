@@ -6,12 +6,13 @@
   "env": {
     "es6": true,
     "browser": true,
-    "jasmine": true,
+    "cypress/globals": true,
     "jquery": true,
-    "protractor": true,
     "webextensions": true
   },
   "plugins": [
+    "chai-friendly",
+    "cypress",
     "promise",
     "standard"
   ],
@@ -31,7 +32,11 @@
     "window": true
   },
   "rules": {
+    "chai-friendly/no-unused-expressions": 2,
+    "no-unused-expressions": 0,
     "no-useless-escape": "off",
-    "quotes": "off"
+    "object-curly-spacing": "off",
+    "quotes": "off",
+    "standard/no-callback-literal": "off"
   }
 }

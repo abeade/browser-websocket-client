@@ -1,0 +1,19 @@
+{
+  "clearMessagesButtonDisabled": "",
+  "connectButtonDisabled": "",
+  "connectButtonVisible": "",
+  "connectionStatusText": "CLOSED",
+  "disconnectButtonVisible": "not.",
+  "jsonModalVisible": "not.",
+  "messageJsonInvalidWarningVisible": "not.",
+  "messageSelectMenuVisible": "not.",
+  "messageSendButtonDisabled": "",
+  "messagesText": "",
+  "messageTextareaFormatSliderClass": "bwc-slider bwc-slider-disabled",
+  "messageTextareaValue": "",
+  "protocolInputValue": "",
+  "protocolSelectMenuVisible": "not.",
+  "urlInputValue": "",
+  "urlInvalidWarningVisible": "not.",
+  "urlSelectMenuVisible": "not."
+}

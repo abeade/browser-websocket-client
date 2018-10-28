@@ -1,12 +1,13 @@
 .DS_Store
 .idea
 *.iml
-*.log
-package-lock.json
+/Logo.pxm
+/package-lock.json
+/TODO.md
 /build/
 /dist/
 /karma_html/
 /node_modules/
 /protractor_html/
-/Logo.pxm
-/TODO.md
+/src/test/cypress/screenshots/
+/src/test/cypress/videos/
