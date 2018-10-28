@@ -1,34 +1,71 @@
+import $ from 'jquery'
 import fontawesome from '@fortawesome/fontawesome'
+import faChevronDown from '@fortawesome/fontawesome-free-solid/faChevronDown'
+import faChevronUp from '@fortawesome/fontawesome-free-solid/faChevronUp'
+import faInfoCircle from '@fortawesome/fontawesome-free-solid/faInfoCircle'
 import faPencilAlt from '@fortawesome/fontawesome-free-solid/faPencilAlt'
 import faPrint from '@fortawesome/fontawesome-free-solid/faPrint'
 import faTrashAlt from '@fortawesome/fontawesome-free-solid/faTrashAlt'
 
-require('jquery')
 require('popper.js')
 require('bootstrap/js/src/button')
 require('bootstrap/js/src/collapse')
 require('bootstrap/js/src/dropdown')
 require('bootstrap/js/src/modal')
+require('bootstrap/js/src/popover')
 require('bootstrap/js/src/tooltip')
 require('bootstrap/js/src/util')
 
-// Add Font Awesome icons to its library
-fontawesome.library.add(
-  faPencilAlt,
-  faPrint,
-  faTrashAlt
-)
-
-// Set namespace
-window.app = {}
-const APP = window.app
+// Configure jquery
+window.$ = $
+window.jQuery = $
 
 // Define savedOptions object
-APP.savedOptions = {
+const savedOptions = {
+  preferences: {
+    preventSavingUrl: true,
+    preventUsingUrl: false,
+    preventSavingMessage: true,
+    preventUsingMessage: true
+  },
   messages: [],
   protocols: [],
   urls: []
 }
+
+// Mock chrome.storage.sync
+const mockChromeStorage = function () {
+  window.chrome = {}
+  window.chrome.storage = {}
+  window.chrome.storage.sync = {
+    data: {
+      savedOptions: savedOptions
+    },
+    get: function (key, callback) {
+      callback({key: window.chrome.storage.sync.data[key]})
+    },
+    set: function ({key, value}, callback) {
+      window.chrome.storage.sync.data[key] = value
+      callback()
+    }
+  }
+}
+
+// Use mock if not running as extension, works only for Firefox
+if (typeof chrome === 'undefined') {
+  console.warn('Using mocked chrome.storage.sync')
+  mockChromeStorage()
+}
+
+// Add Font Awesome icons to its library
+fontawesome.library.add(
+  faChevronDown,
+  faChevronUp,
+  faInfoCircle,
+  faPencilAlt,
+  faPrint,
+  faTrashAlt
+)
 
 // Use Unicode BELL character as string separator
 const SEPARATOR = '\u0007'
@@ -77,6 +114,12 @@ const urlTableRow = `
 </div>
 `
 
+// Preferences HTML elements
+const preferencesOptionsUrlCheckbox = $('#preferencesOptionsUrlCheckbox')
+const preferencesClientUrlCheckbox = $('#preferencesClientUrlCheckbox')
+const preferencesOptionsMessageCheckbox = $('#preferencesOptionsMessageCheckbox')
+const preferencesClientMessageCheckbox = $('#preferencesClientMessageCheckbox')
+
 // Options HTML elements
 const deleteModal = $('#deleteModal')
 const deleteModalBody = $('#deleteModalBody')
@@ -96,7 +139,7 @@ const optionsMessageStatus = $('#optionsMessageStatus')
 const optionsMessageTextarea = $('#optionsMessageTextarea')
 const optionsMessageTextareaEmpty = $('#optionsMessageTextareaEmpty')
 const optionsMessageTextareaFormatSlider = $('#optionsMessageTextareaFormatSlider')
-const optionsMessageTextareaFormatToggle = $('#optionsMessageTextareaFormatToggle')
+const optionsMessageTextareaFormatCheckbox = $('#optionsMessageTextareaFormatCheckbox')
 const optionsProtocolCancelEditButton = $('#optionsProtocolCancelEditButton')
 const optionsProtocolInput = $('#optionsProtocolInput')
 const optionsProtocolInputEmpty = $('#optionsProtocolInputEmpty')
@@ -130,12 +173,13 @@ const messageSelect = $('#messageSelect')
 const messageSelectOptions = $('#messageSelectOptions')
 const messageSendButton = $('#messageSendButton')
 const messageTextarea = $('#messageTextarea')
-const messageTextareaFormatToggle = $('#messageTextareaFormatToggle')
+const messageTextareaFormatCheckbox = $('#messageTextareaFormatCheckbox')
 const messageTextareaFormatSlider = $('#messageTextareaFormatSlider')
 const protocolInput = $('#protocolInput')
 const protocolSelect = $('#protocolSelect')
 const protocolSelectOptions = $('#protocolSelectOptions')
 const urlInput = $('#urlInput')
+const urlInvalidWarning = $('#urlInvalidWarning')
 const urlSelect = $('#urlSelect')
 const urlSelectOptions = $('#urlSelectOptions')
 
@@ -152,7 +196,6 @@ let editingProtocol = false
 let editingProtocolTarget = ''
 let editingUrl = false
 let editingUrlTarget = ''
-let isCtrlKey = false
 let ws = null
 let wsConnected = false
 let wsPoliteDisconnection = false
@@ -164,59 +207,73 @@ if (url.match(/#options/)) {
   options.addClass('show')
 }
 
+// PREFERENCES SECTION
+
+// Set checkbox properties
+const setPreferencesCheckboxes = function () {
+  const preferences = savedOptions.preferences
+  preferencesOptionsUrlCheckbox.prop('checked', preferences.preventSavingUrl)
+  preferencesClientUrlCheckbox.prop('checked', preferences.preventUsingUrl)
+  preferencesOptionsMessageCheckbox.prop('checked', preferences.preventSavingMessage)
+  preferencesClientMessageCheckbox.prop('checked', preferences.preventUsingMessage)
+}
+
+// React to preventSavingUrl checkbox changes
+preferencesOptionsUrlCheckbox.on('change', function () {
+  savedOptions.preferences.preventSavingUrl = preferencesOptionsUrlCheckbox.is(':checked')
+  saveOptions()
+})
+
+// React to preventUsingUrl checkbox changes
+preferencesClientUrlCheckbox.on('change', function () {
+  savedOptions.preferences.preventUsingUrl = preferencesClientUrlCheckbox.is(':checked')
+  saveOptions()
+})
+
+// React to preventSavingMessage checkbox changes
+preferencesOptionsMessageCheckbox.on('change', function () {
+  savedOptions.preferences.preventSavingMessage = preferencesOptionsMessageCheckbox.is(':checked')
+  saveOptions()
+})
+
+// React to preventUsingMessage checkbox changes
+preferencesClientMessageCheckbox.on('change', function () {
+  savedOptions.preferences.preventUsingMessage = preferencesClientMessageCheckbox.is(':checked')
+  saveOptions()
+})
+
 // OPTIONS SECTION
 
 // Save options to storage
-APP.saveOptions = function () {
+const saveOptions = function () {
   chrome.storage.sync.set({
-    'savedOptions': APP.savedOptions
+    'savedOptions': savedOptions
   }, function () {
-    APP.loadOptions()
+    loadOptions()
   })
 }
 
-// Delete from APP.savedOptions
-APP.savedOptionsDelete = function (option, target) {
-  let messages, protocols, urls
-  switch (option) {
-    case 'message':
-      messages = APP.savedOptions.messages.filter(e => !e.toString().startsWith(target))
-      protocols = APP.savedOptions.protocols ? APP.savedOptions.protocols : []
-      urls = APP.savedOptions.urls ? APP.savedOptions.urls : []
-      break
-    case 'protocol':
-      messages = APP.savedOptions.messages ? APP.savedOptions.messages : []
-      protocols = APP.savedOptions.protocols.filter(e => e !== target)
-      urls = APP.savedOptions.urls ? APP.savedOptions.urls : []
-      break
-    case 'url':
-      messages = APP.savedOptions.messages ? APP.savedOptions.messages : []
-      protocols = APP.savedOptions.protocols ? APP.savedOptions.protocols : []
-      urls = APP.savedOptions.urls.filter(e => e !== target)
-      break
-    default:
-      return false
-  }
-  APP.savedOptions.messages = messages
-  APP.savedOptions.protocols = protocols
-  APP.savedOptions.urls = urls
-}
-
 // Fetch extension options from storage and update all related objects and elements
-APP.loadOptions = function () {
+const loadOptions = function () {
   chrome.storage.sync.get('savedOptions', function (result) {
-    if (result['savedOptions']['messages']) {
-      APP.savedOptions.messages = result['savedOptions']['messages']
+    if (result['savedOptions']) {
+      if (result['savedOptions']['preferences']) {
+        savedOptions.preferences = result['savedOptions']['preferences']
+      }
+      if (result['savedOptions']['messages']) {
+        savedOptions.messages = result['savedOptions']['messages']
+      }
+      if (result['savedOptions']['protocols']) {
+        savedOptions.protocols = result['savedOptions']['protocols']
+      }
+      if (result['savedOptions']['urls']) {
+        savedOptions.urls = result['savedOptions']['urls']
+      }
     }
-    if (result['savedOptions']['protocols']) {
-      APP.savedOptions.protocols = result['savedOptions']['protocols']
-    }
-    if (result['savedOptions']['urls']) {
-      APP.savedOptions.urls = result['savedOptions']['urls']
-    }
-    if (APP.savedOptions.messages.length > 0) {
-      APP.populateMessageTable()
-      APP.populateSavedMessageSelect()
+    setPreferencesCheckboxes()
+    if (savedOptions.messages.length > 0) {
+      populateMessageTable()
+      populateSavedMessageSelect()
       messageSelect.show()
       optionsMessageNoneSaved.hide()
       optionsMessageSavedTable.show()
@@ -225,9 +282,9 @@ APP.loadOptions = function () {
       optionsMessageNoneSaved.show()
       optionsMessageSavedTable.hide()
     }
-    if (APP.savedOptions.protocols.length > 0) {
-      APP.populateProtocolTable()
-      APP.populateSavedProtocolSelect()
+    if (savedOptions.protocols.length > 0) {
+      populateProtocolTable()
+      populateSavedProtocolSelect()
       optionsProtocolNoneSaved.hide()
       optionsProtocolSavedTable.show()
       protocolSelect.show()
@@ -236,9 +293,9 @@ APP.loadOptions = function () {
       optionsProtocolSavedTable.hide()
       protocolSelect.hide()
     }
-    if (APP.savedOptions.urls.length > 0) {
-      APP.populateUrlTable()
-      APP.populateSavedUrlSelect()
+    if (savedOptions.urls.length > 0) {
+      populateUrlTable()
+      populateSavedUrlSelect()
       optionsUrlNoneSaved.hide()
       optionsUrlSavedTable.show()
       urlSelect.show()
@@ -250,12 +307,45 @@ APP.loadOptions = function () {
   })
 }
 
+// Delete from savedOptions
+const deleteSavedOptions = function (option, target) {
+  const options = deleteOptions(option, target, savedOptions)
+  savedOptions.messages = options.messages
+  savedOptions.protocols = options.protocols
+  savedOptions.urls = options.urls
+}
+
+// Delete options
+const deleteOptions = function (option, target, options) {
+  let messages, protocols, urls
+  switch (option) {
+    case 'message':
+      messages = options.messages.filter(e => !e.toString().startsWith(target))
+      protocols = options.protocols ? options.protocols : []
+      urls = options.urls ? options.urls : []
+      break
+    case 'protocol':
+      messages = options.messages ? options.messages : []
+      protocols = options.protocols.filter(e => e !== target)
+      urls = options.urls ? options.urls : []
+      break
+    case 'url':
+      messages = options.messages ? options.messages : []
+      protocols = options.protocols ? options.protocols : []
+      urls = options.urls.filter(e => e !== target)
+      break
+    default:
+      return false
+  }
+  return {messages, protocols, urls}
+}
+
 // OPTIONS: URL PERSISTENCE
 
 // Populate the saved URLs table
-APP.populateUrlTable = function () {
+const populateUrlTable = function () {
   let table = ''
-  let urls = APP.savedOptions.urls.sort()
+  let urls = savedOptions.urls.sort()
   $.each(urls, function (key, url) {
     table += urlTableRow.replace(/REPLACE_URL/g, url)
   })
@@ -263,42 +353,23 @@ APP.populateUrlTable = function () {
     .html('')
     .append(table)
   $('.editUrl').on('click', function () {
-    APP.editUrl(jQuery(this).data('url'))
+    editUrl(jQuery(this).data('url'))
   })
   $('.deleteUrl').on('click', function () {
-    APP.deleteUrl(jQuery(this).data('url'))
+    deleteUrl(jQuery(this).data('url'))
   })
   $(function () {
     $('[data-toggle="tooltip"]').tooltip()
   })
 }
 
-// Validate URL input on input change
-optionsUrlInput.on('keyup', function () {
-  if (optionsUrlInput.val().length > 0) {
-    optionsUrlInputEmpty.hide()
-  } else {
-    optionsUrlInputEmpty.show()
-  }
-  if (APP.isValidUrl(optionsUrlInput.val())) {
-    optionsUrlInvalidWarning.hide()
-  } else {
-    optionsUrlInvalidWarning.show()
-  }
-  if (optionsUrlInput.val().length > 0 && APP.isValidUrl(optionsUrlInput.val())) {
-    optionsUrlSaveButton.prop('disabled', false)
-  } else {
-    optionsUrlSaveButton.prop('disabled', true)
-  }
-})
-
 // Test if URL begins with ws:// or wss:// and has no spaces
-APP.isValidUrl = function (url) {
+const isValidUrl = function (url) {
   return /^(ws|wss):\/\/[^ "]+$/.test(url)
 }
 
 // Copy a saved URL to the input element and show cancel button
-APP.editUrl = function (url) {
+const editUrl = function (url) {
   editingUrl = true
   editingUrlTarget = url
   optionsUrlCancelEditButton.show()
@@ -311,7 +382,7 @@ APP.editUrl = function (url) {
 }
 
 // Delete a saved URL from storage
-APP.deleteUrl = function (url) {
+const deleteUrl = function (url) {
   deleteModalBody.text('Are you sure you want to delete the URL shown below?')
   deleteModalName.text(url)
   deleteModalDeleteButton.show()
@@ -319,8 +390,8 @@ APP.deleteUrl = function (url) {
     .data('target', url)
     .on('click', function () {
       const url = jQuery(this).data('target')
-      APP.savedOptionsDelete('url', url)
-      APP.saveOptions()
+      deleteSavedOptions('url', url)
+      saveOptions()
       deleteModalBody.text('URL deleted:')
       deleteModalName.text(url)
       deleteModalDeleteButton.hide()
@@ -328,6 +399,25 @@ APP.deleteUrl = function (url) {
     })
   deleteModal.modal('show')
 }
+
+// Validate URL input on input change
+optionsUrlInput.on('keyup', function () {
+  if (optionsUrlInput.val().length > 0) {
+    optionsUrlInputEmpty.hide()
+  } else {
+    optionsUrlInputEmpty.show()
+  }
+  if (isValidUrl(optionsUrlInput.val())) {
+    optionsUrlInvalidWarning.hide()
+  } else {
+    optionsUrlInvalidWarning.show()
+  }
+  if (optionsUrlInput.val().length > 0 && isValidUrl(optionsUrlInput.val())) {
+    optionsUrlSaveButton.prop('disabled', false)
+  } else {
+    optionsUrlSaveButton.prop('disabled', savedOptions.preferences.preventSavingUrl)
+  }
+})
 
 // Cancel URL edit and reset variables
 optionsUrlCancelEditButton.on('click', function () {
@@ -337,22 +427,22 @@ optionsUrlCancelEditButton.on('click', function () {
   optionsUrlInputLabel.html(optionsUrlInputLabelDefaultText)
   optionsUrlInputEmpty.hide()
   optionsUrlInvalidWarning.hide()
-  optionsUrlSaveButton.prop('disabled', true)
+  optionsUrlSaveButton.prop('disabled', savedOptions.preferences.preventSavingUrl)
 })
 
 // Persist URL to storage on save button click
 optionsUrlSaveButton.on('click', function () {
   let url = optionsUrlInput.val()
   if (editingUrl) {
-    APP.savedOptionsDelete('url', editingUrlTarget)
+    deleteSavedOptions('url', editingUrlTarget)
   } else {
-    APP.savedOptionsDelete('url', url)
+    deleteSavedOptions('url', url)
   }
-  APP.savedOptions.urls.push(url)
-  APP.saveOptions()
+  savedOptions.urls.push(url)
+  saveOptions()
   optionsUrlInput.val('')
   optionsUrlInputLabel.html(optionsUrlInputLabelDefaultText)
-  optionsUrlSaveButton.prop('disabled', true)
+  optionsUrlSaveButton.prop('disabled', savedOptions.preferences.preventSavingUrl)
   optionsUrlStatus
     .text('URL saved.')
     .show()
@@ -360,100 +450,9 @@ optionsUrlSaveButton.on('click', function () {
 
 // OPTIONS: PROTOCOL PERSISTENCE
 
-// Populate the saved protocols table
-APP.populateProtocolTable = function () {
-  let table = ''
-  let protocols = APP.savedOptions.protocols.sort()
-  $.each(protocols, function (key, protocol) {
-    table += protocolTableRow.replace(/REPLACE_PROTOCOL/g, protocol)
-  })
-  optionsProtocolSavedTable
-    .html('')
-    .append(table)
-  $('.editProtocol').on('click', function () {
-    APP.editProtocol(jQuery(this).data('protocol'))
-  })
-  $('.deleteProtocol').on('click', function () {
-    APP.deleteProtocol(jQuery(this).data('protocol'))
-  })
-  $(function () {
-    $('[data-toggle="tooltip"]').tooltip()
-  })
-}
-
-// Enable protocol save button if input is not empty
-optionsProtocolInput.on('keyup', function () {
-  if (optionsProtocolInput.val().replace(/\s/g, '').length > 0) {
-    optionsProtocolInputEmpty.hide()
-    optionsProtocolSaveButton.prop('disabled', false)
-  } else {
-    optionsProtocolInputEmpty.show()
-    optionsProtocolSaveButton.prop('disabled', true)
-  }
-})
-
-// Copy a saved protocol to the input element and show cancel button
-APP.editProtocol = function (protocol) {
-  editingProtocol = true
-  editingProtocolTarget = protocol
-  optionsProtocolCancelEditButton.show()
-  optionsProtocolInput.val(protocol)
-  optionsProtocolInputEmpty.hide()
-  optionsProtocolInputLabel.text(`Editing protocol: ${protocol}`)
-  optionsProtocolSaveButton.prop('disabled', false)
-  optionsProtocolStatus.hide()
-}
-
-// Delete a saved protocol from storage
-APP.deleteProtocol = function (protocol) {
-  deleteModalBody.text('Are you sure you want to delete the protocol shown below?')
-  deleteModalName.text(protocol)
-  deleteModalDeleteButton.show()
-  deleteModalDeleteButton
-    .data('target', protocol)
-    .on('click', function () {
-      const protocol = jQuery(this).data('target')
-      APP.savedOptionsDelete('protocol', protocol)
-      APP.saveOptions()
-      deleteModalBody.text('Protocol deleted:')
-      deleteModalName.text(protocol)
-      deleteModalDeleteButton.hide()
-      deleteModalCancelButton.text('Close')
-    })
-  deleteModal.modal('show')
-}
-
-// Cancel protocol edit and reset variables
-optionsProtocolCancelEditButton.on('click', function () {
-  editingProtocol = false
-  editingProtocolTarget = ''
-  optionsProtocolInput.val('')
-  optionsProtocolInputLabel.text(optionsProtocolInputLabelDefaultText)
-  optionsProtocolInputEmpty.hide()
-  optionsProtocolSaveButton.prop('disabled', true)
-})
-
-// Persist protocol to storage on save button click
-optionsProtocolSaveButton.on('click', function () {
-  let protocol = APP.getProtocols(optionsProtocolInput)
-  if (editingProtocol) {
-    APP.savedOptionsDelete('protocol', editingProtocolTarget)
-  } else {
-    APP.savedOptionsDelete('protocol', protocol)
-  }
-  APP.savedOptions.protocols.push(protocol.toString().replace(/,/g, ', '))
-  APP.saveOptions()
-  optionsProtocolInput.val('')
-  optionsProtocolInputLabel.text(optionsProtocolInputLabelDefaultText)
-  optionsProtocolSaveButton.prop('disabled', true)
-  optionsProtocolStatus
-    .text('Protocol saved.')
-    .show()
-})
-
 // Convert protocol input value to an array if necessary and
 // trim unnecessary commas and spaces
-APP.getProtocols = function (input) {
+const getProtocols = function (input) {
   const protocolsInput = input.val()
   const protocolsResult = protocolsInput
     .split(',')
@@ -470,11 +469,102 @@ APP.getProtocols = function (input) {
   return protocols
 }
 
+// Populate the saved protocols table
+const populateProtocolTable = function () {
+  let table = ''
+  let protocols = savedOptions.protocols.sort()
+  $.each(protocols, function (key, protocol) {
+    table += protocolTableRow.replace(/REPLACE_PROTOCOL/g, protocol)
+  })
+  optionsProtocolSavedTable
+    .html('')
+    .append(table)
+  $('.editProtocol').on('click', function () {
+    editProtocol(jQuery(this).data('protocol'))
+  })
+  $('.deleteProtocol').on('click', function () {
+    deleteProtocol(jQuery(this).data('protocol'))
+  })
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+  })
+}
+
+// Copy a saved protocol to the input element and show cancel button
+const editProtocol = function (protocol) {
+  editingProtocol = true
+  editingProtocolTarget = protocol
+  optionsProtocolCancelEditButton.show()
+  optionsProtocolInput.val(protocol)
+  optionsProtocolInputEmpty.hide()
+  optionsProtocolInputLabel.text(`Editing protocol: ${protocol}`)
+  optionsProtocolSaveButton.prop('disabled', false)
+  optionsProtocolStatus.hide()
+}
+
+// Delete a saved protocol from storage
+const deleteProtocol = function (protocol) {
+  deleteModalBody.text('Are you sure you want to delete the protocol shown below?')
+  deleteModalName.text(protocol)
+  deleteModalDeleteButton.show()
+  deleteModalDeleteButton
+    .data('target', protocol)
+    .on('click', function () {
+      const protocol = jQuery(this).data('target')
+      deleteSavedOptions('protocol', protocol)
+      saveOptions()
+      deleteModalBody.text('Protocol deleted:')
+      deleteModalName.text(protocol)
+      deleteModalDeleteButton.hide()
+      deleteModalCancelButton.text('Close')
+    })
+  deleteModal.modal('show')
+}
+
+// Enable protocol save button if input is not empty
+optionsProtocolInput.on('keyup', function () {
+  if (optionsProtocolInput.val().replace(/\s/g, '').length > 0) {
+    optionsProtocolInputEmpty.hide()
+    optionsProtocolSaveButton.prop('disabled', false)
+  } else {
+    optionsProtocolInputEmpty.show()
+    optionsProtocolSaveButton.prop('disabled', true)
+  }
+})
+
+// Cancel protocol edit and reset variables
+optionsProtocolCancelEditButton.on('click', function () {
+  editingProtocol = false
+  editingProtocolTarget = ''
+  optionsProtocolInput.val('')
+  optionsProtocolInputLabel.text(optionsProtocolInputLabelDefaultText)
+  optionsProtocolInputEmpty.hide()
+  optionsProtocolSaveButton.prop('disabled', true)
+})
+
+// Persist protocol to storage on save button click
+optionsProtocolSaveButton.on('click', function () {
+  let protocol = getProtocols(optionsProtocolInput)
+  if (editingProtocol) {
+    deleteSavedOptions('protocol', editingProtocolTarget)
+  } else {
+    deleteSavedOptions('protocol', protocol)
+  }
+  savedOptions.protocols.push(protocol.toString().replace(/,/g, ', '))
+  saveOptions()
+  optionsProtocolInput.val('')
+  optionsProtocolInputLabel.text(optionsProtocolInputLabelDefaultText)
+  optionsProtocolSaveButton.prop('disabled', true)
+  optionsProtocolStatus
+    .text('Protocol saved.')
+    .show()
+})
+
 // OPTIONS: MESSAGE PERSISTENCE
 
 // Populate the saved messages table
-APP.populateMessageTable = function () {
-  let messages = APP.savedOptions.messages.sort()
+const populateMessageTable = function () {
+  let messages = savedOptions.messages.sort()
   let table = ''
   $.each(messages, function (key, message) {
     const [name, body] = message.split(SEPARATOR)
@@ -487,13 +577,13 @@ APP.populateMessageTable = function () {
     .html('')
     .append(table)
   $('.printMessage').on('click', function () {
-    APP.printMessage(jQuery(this).data('message'))
+    printMessage(jQuery(this).data('message'))
   })
   $('.editMessage').on('click', function () {
-    APP.editMessage(jQuery(this).data('message'))
+    editMessage(jQuery(this).data('message'))
   })
   $('.deleteMessage').on('click', function () {
-    APP.deleteMessage(jQuery(this).data('message'))
+    deleteMessage(jQuery(this).data('message'))
   })
   $(function () {
     $('[data-toggle="tooltip"]').tooltip()
@@ -501,7 +591,7 @@ APP.populateMessageTable = function () {
 }
 
 // Test a string to determine if it is valid JSON
-APP.isValidJson = function (string) {
+const isValidJson = function (string) {
   try {
     const test = JSON.parse(string)
     if (test && typeof test === 'object') {
@@ -512,7 +602,7 @@ APP.isValidJson = function (string) {
 }
 
 // Convert JSON to a string for saving and copying to textareas
-APP.convertJsonToString = function (input) {
+const convertJsonToString = function (input) {
   let string
   if (typeof input === 'object') {
     string = JSON.stringify(input)
@@ -523,36 +613,36 @@ APP.convertJsonToString = function (input) {
 }
 
 // Toggle JSON formatting from single line to multi-line and vice versa
-APP.formatTextarea = function (checkbox, textarea) {
+const formatTextarea = function (checkbox, textarea) {
   const checked = checkbox.is(':checked')
   const message = textarea.val()
-  const valid = APP.isValidJson(message)
+  const valid = isValidJson(message)
   if (!valid) {
     checkbox.prop('checked', false)
   } else if (valid && checked) {
     textarea.val(JSON.stringify(JSON.parse(message), null, 2))
   } else {
-    textarea.val(APP.convertJsonToString(message))
+    textarea.val(convertJsonToString(message))
   }
 }
 
 // Validate message name input and message textarea values
 // Enable or disable save button and JSON formatting toggle
-APP.validateOptionsMessage = function () {
+const validateOptionsMessage = function () {
   const validMessageName = optionsMessageNameInput.val().trim().length > 0
   const validMessageLength = optionsMessageTextarea.val().trim().length > 0
-  const validMessageJson = APP.isValidJson(optionsMessageTextarea.val())
+  const validMessageJson = isValidJson(optionsMessageTextarea.val())
   if (validMessageName && validMessageLength && validMessageJson) {
     optionsMessageSaveButton.prop('disabled', false)
     optionsMessageTextareaFormatSlider.removeClass('bwc-slider-disabled')
   } else {
-    optionsMessageSaveButton.prop('disabled', true)
+    optionsMessageSaveButton.prop('disabled', savedOptions.preferences.preventSavingMessage)
     optionsMessageTextareaFormatSlider.addClass('bwc-slider-disabled')
   }
 }
 
 // Validate message name input and show user feedback
-APP.validateOptionsMessageName = function () {
+const validateOptionsMessageName = function () {
   const validMessageName = optionsMessageNameInput.val().trim().length > 0
   let valid = true
   if (validMessageName) {
@@ -562,14 +652,14 @@ APP.validateOptionsMessageName = function () {
     optionsMessageNameInvalid.show()
   }
   if (valid) {
-    APP.validateOptionsMessage()
+    validateOptionsMessage()
   }
 }
 
 // Validate message textarea value and show user feedback
-APP.validateOptionsMessageTextarea = function () {
+const validateOptionsMessageTextarea = function () {
   const validMessageLength = optionsMessageTextarea.val().trim().length > 0
-  const validMessageJson = APP.isValidJson(optionsMessageTextarea.val())
+  const validMessageJson = isValidJson(optionsMessageTextarea.val())
   let valid = true
   optionsMessageJsonInvalidWarning.hide()
   if (validMessageLength) {
@@ -583,22 +673,12 @@ APP.validateOptionsMessageTextarea = function () {
     optionsMessageTextareaEmpty.show()
   }
   if (valid) {
-    APP.validateOptionsMessage()
+    validateOptionsMessage()
   }
 }
 
-// Validate message name input value
-optionsMessageNameInput.on('keyup', function () {
-  APP.validateOptionsMessageName()
-})
-
-// Validate message textarea value
-optionsMessageTextarea.on('keyup', function () {
-  APP.validateOptionsMessageTextarea()
-})
-
 // Copy a saved message to the input elements
-APP.editMessage = function (message) {
+const editMessage = function (message) {
   const [name, body] = message.split(SEPARATOR)
   editingMessage = true
   editingMessageTarget = `${name}${SEPARATOR}`
@@ -610,11 +690,11 @@ APP.editMessage = function (message) {
   optionsMessageSaveButton.prop('disabled', false)
   optionsMessageStatus.hide()
   optionsMessageTextarea.val(body)
-  APP.validateOptionsMessage()
+  validateOptionsMessage()
 }
 
 // Delete a saved message from storage
-APP.deleteMessage = function (all) {
+const deleteMessage = function (all) {
   const name = all.split(SEPARATOR)[0]
   deleteModalBody.text('Are you sure you want to delete the message shown below?')
   deleteModalName.text(name)
@@ -622,8 +702,8 @@ APP.deleteMessage = function (all) {
   deleteModalDeleteButton
     .data('target', all)
     .on('click', function () {
-      APP.savedOptionsDelete('message', `${name}${SEPARATOR}`)
-      APP.saveOptions()
+      deleteSavedOptions('message', `${name}${SEPARATOR}`)
+      saveOptions()
       deleteModalBody.text('Message deleted:')
       deleteModalName.text(name)
       deleteModalDeleteButton.hide()
@@ -632,55 +712,8 @@ APP.deleteMessage = function (all) {
   deleteModal.modal('show')
 }
 
-// Toggle message textarea JSON formatting
-optionsMessageTextareaFormatToggle.on('change', function () {
-  APP.formatTextarea($(this), optionsMessageTextarea)
-})
-
-// Cancel message edit and reset variables
-optionsMessageCancelEditButton.on('click', function () {
-  editingMessage = false
-  editingMessageTarget = ''
-  optionsMessageTextareaEmpty.hide()
-  optionsMessageJsonInvalidWarning.hide()
-  optionsMessageNameInput.val('')
-  optionsMessageNameInputLabel.text(optionsMessageNameInputLabelDefaultText)
-  optionsMessageNameInvalid.hide()
-  optionsMessageSaveButton.prop('disabled', true)
-  optionsMessageStatus.hide()
-  optionsMessageTextarea.val('')
-  optionsMessageTextareaFormatSlider.addClass('bwc-slider-disabled')
-  optionsMessageTextareaFormatToggle.prop('checked', false)
-})
-
-// Persist message to storage on save button click
-optionsMessageSaveButton.on('click', function () {
-  const name = optionsMessageNameInput.val()
-  const body = APP.convertJsonToString(optionsMessageTextarea.val())
-  const message = `${name}${SEPARATOR}${body}`
-  if (editingMessage) {
-    APP.savedOptionsDelete('message', editingMessageTarget)
-  } else {
-    APP.savedOptionsDelete('message', `${name}${SEPARATOR}`)
-  }
-  APP.savedOptions.messages.push(message)
-  APP.saveOptions()
-  optionsMessageTextareaEmpty.hide()
-  optionsMessageJsonInvalidWarning.hide()
-  optionsMessageNameInput.val('')
-  optionsMessageNameInputLabel.text(optionsMessageNameInputLabelDefaultText)
-  optionsMessageNameInvalid.hide()
-  optionsMessageSaveButton.prop('disabled', true)
-  optionsMessageStatus
-    .text('Message saved.')
-    .show()
-  optionsMessageTextarea.val('')
-  optionsMessageTextareaFormatSlider.addClass('bwc-slider-disabled')
-  optionsMessageTextareaFormatToggle.prop('checked', false)
-})
-
 // Format JSON for pretty-print modal
-APP.syntaxHighlight = function (json) {
+const highlightJson = function (json) {
   json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
   return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
     let cls = 'bwc-number'
@@ -700,20 +733,77 @@ APP.syntaxHighlight = function (json) {
 }
 
 // Pretty-print a saved message body
-APP.printMessage = function (message) {
+const printMessage = function (message) {
   const [name, body] = message.split(SEPARATOR)
   const json = JSON.parse(body)
-  const html = $('<pre>').html(APP.syntaxHighlight(JSON.stringify(json, null, 2)))
+  const html = $('<pre>').html(highlightJson(JSON.stringify(json, null, 2)))
   jsonModalTitle.html(name)
   jsonModalBody.html(html)
   jsonModal.modal('show')
 }
 
+// Validate message name input value
+optionsMessageNameInput.on('keyup', function () {
+  validateOptionsMessageName()
+})
+
+// Validate message textarea value
+optionsMessageTextarea.on('keyup', function () {
+  validateOptionsMessageTextarea()
+})
+
+// Toggle message textarea JSON formatting
+optionsMessageTextareaFormatCheckbox.on('change', function () {
+  formatTextarea($(this), optionsMessageTextarea)
+})
+
+// Cancel message edit and reset variables
+optionsMessageCancelEditButton.on('click', function () {
+  editingMessage = false
+  editingMessageTarget = ''
+  optionsMessageTextareaEmpty.hide()
+  optionsMessageJsonInvalidWarning.hide()
+  optionsMessageNameInput.val('')
+  optionsMessageNameInputLabel.text(optionsMessageNameInputLabelDefaultText)
+  optionsMessageNameInvalid.hide()
+  optionsMessageSaveButton.prop('disabled', savedOptions.preferences.preventSavingMessage)
+  optionsMessageStatus.hide()
+  optionsMessageTextarea.val('')
+  optionsMessageTextareaFormatSlider.addClass('bwc-slider-disabled')
+  optionsMessageTextareaFormatCheckbox.prop('checked', false)
+})
+
+// Persist message to storage on save button click
+optionsMessageSaveButton.on('click', function () {
+  const name = optionsMessageNameInput.val()
+  const body = convertJsonToString(optionsMessageTextarea.val())
+  const message = `${name}${SEPARATOR}${body}`
+  if (editingMessage) {
+    deleteSavedOptions('message', editingMessageTarget)
+  } else {
+    deleteSavedOptions('message', `${name}${SEPARATOR}`)
+  }
+  savedOptions.messages.push(message)
+  saveOptions()
+  optionsMessageTextareaEmpty.hide()
+  optionsMessageJsonInvalidWarning.hide()
+  optionsMessageNameInput.val('')
+  optionsMessageNameInputLabel.text(optionsMessageNameInputLabelDefaultText)
+  optionsMessageNameInvalid.hide()
+  optionsMessageSaveButton.prop('disabled', savedOptions.preferences.preventSavingMessage)
+  optionsMessageStatus
+    .text('Message saved.')
+    .show()
+  optionsMessageTextarea.val('')
+  optionsMessageTextareaFormatSlider.addClass('bwc-slider-disabled')
+  optionsMessageTextareaFormatCheckbox.prop('checked', false)
+})
+
 // CLIENT SECTION
 
 // Populate URL select menu
-APP.populateSavedUrlSelect = function () {
-  const urls = APP.savedOptions.urls.sort()
+const populateSavedUrlSelect = function () {
+  const urls = savedOptions.urls.sort()
   let options = ''
   $.each(urls, function (key, url) {
     options += `<button class="dropdown-item url" type="button" data-value="${url}">${url}</button>`
@@ -728,8 +818,8 @@ APP.populateSavedUrlSelect = function () {
 }
 
 // Populate protocol select menu
-APP.populateSavedProtocolSelect = function () {
-  const protocols = APP.savedOptions.protocols.sort()
+const populateSavedProtocolSelect = function () {
+  const protocols = savedOptions.protocols.sort()
   let options = ''
   $.each(protocols, function (key, protocol) {
     options += `<button class="dropdown-item protocol" type="button" data-value="${protocol}">${protocol}</button>`
@@ -743,8 +833,8 @@ APP.populateSavedProtocolSelect = function () {
 }
 
 // Populate message select menu
-APP.populateSavedMessageSelect = function () {
-  const messages = APP.savedOptions.messages.sort()
+const populateSavedMessageSelect = function () {
+  const messages = savedOptions.messages.sort()
   let options = ''
   $.each(messages, function (key, message) {
     const [name, body] = message.split(SEPARATOR)
@@ -754,49 +844,59 @@ APP.populateSavedMessageSelect = function () {
     .html('')
     .append(options)
   $('.dropdown-item.message').on('click', function () {
-    messageTextarea.val(APP.convertJsonToString(jQuery(this).data('value')))
-    APP.validateClientMessage()
+    messageTextarea.val(convertJsonToString(jQuery(this).data('value')))
+    validateClientMessage()
   })
 }
 
 // Validate message textarea value, show user feedback,
 // and enable or disable send button
-APP.validateClientMessage = function () {
-  const validMessageJson = APP.isValidJson(messageTextarea.val())
-  if (validMessageJson) {
+const validateClientMessage = function () {
+  const validJson = isValidJson(messageTextarea.val())
+  if (validJson) {
     if (wsConnected) {
       messageSendButton.prop('disabled', false)
     } else {
-      messageSendButton.prop('disabled', true)
+      messageSendButton.prop('disabled', savedOptions.preferences.preventUsingMessage)
     }
     messageJsonInvalidWarning.hide()
     messageTextareaFormatSlider.removeClass('bwc-slider-disabled')
   } else {
-    messageSendButton.prop('disabled', true)
-    if (messageTextarea.isFocused) {
+    if (messageTextarea.val().length === 0) {
+      messageJsonInvalidWarning.hide()
+    } else {
       messageJsonInvalidWarning.show()
     }
+    messageSendButton.prop('disabled', savedOptions.preferences.preventUsingMessage)
     messageTextareaFormatSlider.addClass('bwc-slider-disabled')
   }
+  return validJson
 }
 
-// Enable and disable connect button based on URL input length
+// Enable and disable connect button based on URL input length and validation
 urlInput.on('keyup', function () {
   if (urlInput.val().length === 0) {
+    urlInvalidWarning.hide()
     connectButton.prop('disabled', true)
   } else {
-    connectButton.prop('disabled', false)
+    if (isValidUrl(urlInput.val())) {
+      connectButton.prop('disabled', false)
+      urlInvalidWarning.hide()
+    } else {
+      connectButton.prop('disabled', savedOptions.preferences.preventUsingUrl)
+      urlInvalidWarning.show()
+    }
   }
 })
 
-// Validate message textarea value on change
-messageTextarea.on('keyup', function () {
-  APP.validateClientMessage()
+// Validate message body on textarea keyup
+messageTextarea.on('keyup', function (e) {
+  validateClientMessage()
 })
 
 // Toggle message textarea JSON formatting
-messageTextareaFormatToggle.on('change', function () {
-  APP.formatTextarea($(this), messageTextarea)
+messageTextareaFormatCheckbox.on('change', function () {
+  formatTextarea($(this), messageTextarea)
 })
 
 // Clear message log
@@ -808,19 +908,19 @@ clearMessagesButton.on('click', function () {
 // CLIENT: WEBSOCKET
 
 // Open WebSocket connection
-APP.open = function () {
+const open = function () {
   let url = urlInput.val().toString()
-  let protocol = APP.getProtocols(protocolInput)
+  let protocol = getProtocols(protocolInput)
   if (protocol) { ws = new WebSocket(url, protocol) } else { ws = new WebSocket(url) }
-  ws.onopen = APP.onOpen
-  ws.onclose = APP.onClose
-  ws.onmessage = APP.onMessage
-  ws.onerror = APP.onError
+  ws.onopen = onOpen
+  ws.onclose = onClose
+  ws.onmessage = onMessage
+  ws.onerror = onError
   connectionStatus.text('OPENING CONNECTION ...')
 }
 
 // Close WebSocket connection
-APP.close = function () {
+const close = function () {
   if (ws) {
     console.log('CLOSING CONNECTION ...')
     wsPoliteDisconnection = true
@@ -829,7 +929,7 @@ APP.close = function () {
 }
 
 // WebSocket onOpen handler
-APP.onOpen = function () {
+const onOpen = function () {
   console.log('OPENED: ' + urlInput.val())
   connectButton
     .prop('disabled', true)
@@ -840,11 +940,11 @@ APP.onOpen = function () {
   protocolInput.prop('disabled', true)
   wsConnected = true
   wsPoliteDisconnection = false
-  APP.validateClientMessage()
+  validateClientMessage()
 }
 
 // WebSocket onClose handler
-APP.onClose = function () {
+const onClose = function () {
   let disconnectionMessage = 'CLOSED'
   disconnectionMessage += (wsPoliteDisconnection) ? '' : '. Disconnected by the server.'
   console.log('CLOSED: ' + urlInput.val())
@@ -854,25 +954,25 @@ APP.onClose = function () {
     .show()
   connectionStatus.text(disconnectionMessage)
   disconnectButton.hide()
-  messageSendButton.prop('disabled', true)
+  messageSendButton.prop('disabled', savedOptions.preferences.preventUsingMessage)
   urlInput.prop('disabled', false)
   protocolInput.prop('disabled', false)
   wsConnected = false
 }
 
 // WebSocket onMessage handler
-APP.onMessage = function (event) {
-  APP.addMessage(event.data)
+const onMessage = function (event) {
+  addMessage(event.data)
 }
 
 // WebSocket onError handler
-APP.onError = function (event) {
+const onError = function (event) {
   console.error(event.data)
 }
 
 // Add outgoing and incoming message to DOM, formatting as necessary
 // Format incoming messages to open JSON pretty-print modal on click
-APP.addMessage = function (data, type) {
+const addMessage = function (data, type) {
   let message, messageBox
   if (type === 'SENT') {
     message = $('<pre>')
@@ -885,10 +985,10 @@ APP.addMessage = function (data, type) {
       .data('target', data)
       .on('click', function () {
         let body
-        if (APP.isValidJson(jQuery(this).data('target'))) {
+        if (isValidJson(jQuery(this).data('target'))) {
           const target = jQuery(this).data('target')
           const json = JSON.parse(target)
-          body = $('<pre>').html(APP.syntaxHighlight(JSON.stringify(json, null, 2)))
+          body = $('<pre>').html(highlightJson(JSON.stringify(json, null, 2)))
         } else {
           body = $('<p>').text('The incoming message cannot be parsed into valid JSON.')
         }
@@ -906,45 +1006,45 @@ APP.addMessage = function (data, type) {
 }
 
 // Add outgoing message to DOM and send it to server
-APP.sendMessage = function () {
+const sendMessage = function () {
   let message = messageTextarea.val()
-  APP.addMessage(message, 'SENT')
+  addMessage(message, 'SENT')
   ws.send(message)
 }
 
 // Connect button click
 connectButton.on('click', function () {
-  APP.close()
-  APP.open()
+  close()
+  open()
 })
 
 // Disconnect button click
 disconnectButton.on('click', function () {
-  APP.close()
+  close()
 })
 
 // Send message button click
 messageSendButton.on('click', function () {
-  APP.sendMessage()
+  sendMessage()
 })
 
 // Allow Ctrl+Enter shortcut to send message from message body textarea
-// Test if message body is valid JSON on textarea keyup
-messageTextarea.on('keyup', function (e) {
-  if (e.which === 17) {
-    isCtrlKey = true
-  } else {
-    isCtrlKey = false
-    if (APP.isValidJson(messageTextarea.val())) {
-      messageJsonInvalidWarning.hide()
-    } else {
-      messageJsonInvalidWarning.show()
-    }
+messageTextarea.on('keydown', function (e) {
+  const sendEnabled = !messageSendButton.prop('disabled')
+  if (sendEnabled && (e.ctrlKey || e.metaKey) && (e.keyCode === 13 || e.keyCode === 10)) {
+    sendMessage()
   }
-}).on('keydown', function (e) {
-  if (e.which === 17) isCtrlKey = true
-  if (e.which === 13 && isCtrlKey === true) {
-    APP.sendMessage()
+})
+
+// UTILITIES
+
+// Change collapse heading anchor chevrons
+$('.bwc-accordion-anchor').on('click', function () {
+  const icon = $(this).find('.bwc-accordion-heading-icon')
+  if ($(this).attr('aria-expanded') === 'true') {
+    icon.attr('data-icon', 'chevron-down')
+  } else {
+    icon.attr('data-icon', 'chevron-up')
   }
 })
 
@@ -955,12 +1055,11 @@ $('*').focus(function () {
   optionsMessageStatus.text('').hide()
 })
 
+// Document ready
 $(document).ready(function () {
-  // Prevent unit tests from failing
-  if (typeof chrome.storage !== 'undefined') {
-    APP.loadOptions()
-  }
+  loadOptions()
   $('.hide').hide()
+  $('[data-toggle="popover"]').popover()
   optionsUrlInput.val('')
   optionsProtocolInput.val('')
   optionsMessageNameInput.val('')
@@ -968,9 +1067,16 @@ $(document).ready(function () {
   urlInput.val('')
   protocolInput.val('')
   messageTextarea.val('')
-  optionsMessageTextareaFormatToggle.prop('checked', false)
-  optionsMessageSaveButton.prop('disabled', true)
-  connectButton.prop('disabled', true)
-  messageTextareaFormatToggle.prop('checked', false)
-  messageSendButton.prop('disabled', true)
+  optionsMessageTextareaFormatCheckbox.prop('checked', false)
+  messageTextareaFormatCheckbox.prop('checked', false)
 })
+
+// Used in unit tests
+export {
+  convertJsonToString,
+  deleteOptions,
+  getProtocols,
+  isValidJson,
+  isValidUrl,
+  highlightJson
+}

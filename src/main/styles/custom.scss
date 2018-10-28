@@ -24,11 +24,6 @@ input {
   margin-bottom: 10px;
 }
 
-label {
-  margin-top: 5px;
-  margin-bottom: 5px;
-}
-
 textarea {
   font-family: monospace;
   min-width: 300px;
@@ -75,10 +70,6 @@ textarea {
   margin-top: 15px;
 }
 
-.bwc-margin-bottom {
-  margin-bottom: 10px;
-}
-
 .bwc-pointer {
   cursor: pointer;
 }
@@ -120,31 +111,33 @@ textarea {
   color: rgb(255, 140, 0);
 }
 
+.bwc-preferences-info {
+  cursor: pointer;
+  color: $primary;
+}
+
 .bwc-string {
   color: rgb(0, 128, 0);;
 }
 
 // Slider checkbox
 
+.bwc-slider-row {
+  margin-bottom: 10px;
+}
+
 .bwc-switch {
   position: relative;
   display: inline-block;
   width: $bwc-switch-width;
   height: $bwc-switch-height;
-}
-
-.bwc-switch input {
-  display: none;
+  margin-right: 10px;
 }
 
 .bwc-switch-label {
-  position: absolute;
-  width: 400px;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 60px;
+  display: inline-block;
   height: $bwc-switch-height;
+  vertical-align: top !important;
 }
 
 .bwc-slider {
@@ -163,6 +156,10 @@ textarea {
 .bwc-slider-disabled {
   cursor: default !important;
   background-color: rgb(204, 204, 204);
+}
+
+.bwc-switch input {
+  display: none;
 }
 
 .bwc-slider:before {

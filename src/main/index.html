@@ -9,156 +9,360 @@
 	</title>
 <body>
 <div class="container">
-	<h3>
+	<h4>
 		Browser WebSocket Client
-	</h3>
+	</h4>
 	<div id="accordion" role="tablist">
-		<!--OPTIONS CARD-->
+
+		<!--OPTIONS-->
+
 		<div class="card">
 			<div id="optionsHeading" class="card-header" role="tab">
 				<h5 class="mb-0">
-					<a id="optionsAnchor" data-toggle="collapse" href="#options" aria-expanded="false"
+					<a id="optionsAnchor"
+					   class="bwc-accordion-anchor"
+					   data-toggle="collapse"
+					   href="#options"
+					   aria-expanded="false"
 					   aria-controls="options">
 						Options
+						<i class="fa fa-chevron-down bwc-accordion-heading-icon float-right" aria-hidden="true"></i>
 					</a>
 				</h5>
 			</div>
 			<div id="options" class="collapse" role="tabpanel" aria-labelledby="optionsHeading"
 				 data-parent="#accordion">
 				<div class="card-body">
-					<h4>
-						Server URLs
-					</h4>
-					<p id="optionsUrlNoneSaved">
-						You have not saved any URLs.
-					</p>
-					<div id="optionsUrlSavedTable" class="clearfix"></div>
-					<h5 class="bwc-margin-top">
-						Save a server URL
-					</h5>
-					<label id="optionsUrlInputLabel" for="optionsUrlInput">
-						The URL should begin with <code>ws://</code> or <code>wss://</code>:
-					</label>
-					<input id="optionsUrlInput"
-						   class="form-control"
-						   type="text"
-						   placeholder="URL"/>
-					<p id="optionsUrlStatus" class="hide"></p>
-					<p id="optionsUrlInputEmpty" class="alert alert-warning rounded hide" role="alert">
-						You must enter a URL.
-					</p>
-					<p id="optionsUrlInvalidWarning" class="alert alert-warning rounded hide" role="alert">
-						Invalid URL! It should begin with <code>ws://</code> or <code>wss://</code> and not contain any
-						spaces.
-					</p>
-					<button id="optionsUrlSaveButton" class="btn btn-primary" disabled="disabled">
-						Save URL
-					</button>
-					<button id="optionsUrlCancelEditButton" class="btn btn-secondary">
-						Cancel
-					</button>
-					<hr/>
-					<h4>
-						Server Protocols
-					</h4>
-					<p id="optionsProtocolNoneSaved">
-						You have not saved any protocols.
-					</p>
-					<div id="optionsProtocolSavedTable" class="clearfix"></div>
-					<h5 class="bwc-margin-top">
-						Save a server protocol
-					</h5>
-					<label id="optionsProtocolInputLabel" for="optionsProtocolInput">
-						Enter a single protocol name or multiple comma-separated names:
-					</label>
-					<input id="optionsProtocolInput"
-						   class="form-control"
-						   type="text"
-						   placeholder="Protocol"/>
-					<p>If you enter multiple names, they will be saved as a single string with a space after each comma:
-						<code>protocol1, protocol2, protocol3</code>. However, this string will be converted into an
-						<code>array</code> when required by the
-						<a href="https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/WebSocket#Parameters">WebSocket()
-							constructor</a>.</p>
-					<p id="optionsProtocolStatus" class="hide"></p>
-					<p id="optionsProtocolInputEmpty" class="alert alert-warning rounded hide" role="alert">
-						You must enter a protocol name.
-					</p>
-					<button id="optionsProtocolSaveButton" class="btn btn-primary" disabled="disabled">
-						Save Protocol
-					</button>
-					<button id="optionsProtocolCancelEditButton" class="btn btn-secondary">
-						Cancel
-					</button>
-					<hr/>
-					<h4>
-						Messages
-					</h4>
-					<p id="optionsMessageNoneSaved">
-						You have not saved any messages.
-					</p>
-					<div id="optionsMessageSavedTable" class="clearfix"></div>
-					<h4 class="bwc-margin-top">
-						Save a message
-					</h4>
-					<label id="optionsMessageNameInputLabel" for="optionsMessageNameInput">
-						The display name appears in the "Saved Messages" table and client drop-down menu:
-					</label>
-					<input id="optionsMessageNameInput"
-						   class="form-control"
-						   type="text"
-						   placeholder="Display Name"/>
-					<label id="optionsMessageTextareaLabel" for="optionsMessageTextarea">
-						The message body does not appear in the "Saved Messages" table or drop-down menu:
-					</label>
-					<textarea id="optionsMessageTextarea"
-							  class="form-control"
-							  placeholder="Message Body (JSON)"></textarea>
-					<p id="optionsMessageStatus" class="hide"></p>
-					<p id="optionsMessageNameInvalid" class="alert alert-warning rounded hide" role="alert">
-						You must enter a display name.
-					</p>
-					<p id="optionsMessageTextareaEmpty" class="alert alert-warning rounded hide" role="alert">
-						You must enter a message body.
-					</p>
-					<p id="optionsMessageJsonInvalidWarning" class="alert alert-warning rounded hide" role="alert">
-						Invalid JSON! You entered invalid JSON in the message body.
-					</p>
-					<div class="bwc-margin-bottom">
-						<label class="bwc-switch" for="optionsMessageTextareaFormatToggle">
-							<input id="optionsMessageTextareaFormatToggle" type="checkbox">
-							<span id="optionsMessageTextareaFormatSlider"
-								  class="bwc-slider bwc-slider-disabled"></span>
-							<span class="bwc-switch-label">
-								Toggle JSON formatting from single line to multi-line.
-							</span>
-						</label>
+
+					<!--PREFERENCES-->
+
+					<div class="card">
+						<div id="optionsPreferencesHeading" class="card-header" role="tab">
+							<h5 class="mb-0">
+								<a id="optionsPreferencesAnchor"
+								   class="bwc-accordion-anchor"
+								   data-toggle="collapse"
+								   href="#optionsPreferences"
+								   aria-expanded="false"
+								   aria-controls="optionsPreferences">
+									Preferences
+									<i class="fa fa-chevron-down bwc-accordion-heading-icon float-right"
+									   aria-hidden="true"></i>
+								</a>
+							</h5>
+						</div>
+						<div id="optionsPreferences" class="collapse" role="tabpanel"
+							 aria-labelledby="optionsPreferencesHeading"
+							 data-parent="#options">
+							<div class="card-body">
+								<h5>
+									Invalid URL Inputs
+								</h5>
+								<div class="bwc-slider-row">
+									<label class="bwc-switch" for="preferencesOptionsUrlCheckbox">
+										<input id="preferencesOptionsUrlCheckbox" type="checkbox">
+										<span id="preferencesOptionsUrlSlider"
+											  class="bwc-slider"></span>
+									</label>
+									<span class="bwc-switch-label">
+										Prevent <u>saving</u> an invalid URL in the Options section.
+										<span class="bwc-preferences-info"
+											  aria-hidden="true"
+											  data-container="body"
+											  data-toggle="popover"
+											  data-placement="top"
+											  data-html="true"
+											  data-title="Prevent Saving Invalid URL"
+											  data-content="If enabled, you cannot save URLs that do not begin with <code>ws://</code> or <code>wss://</code>. If disabled, the invalid URL warning will still appear; however, the save button will be enabled.">
+											<i class="fa fa-info-circle fa-lg"></i>
+										</span>
+									</span>
+								</div>
+								<div class="bwc-slider-row">
+									<label class="bwc-switch" for="preferencesClientUrlCheckbox">
+										<input id="preferencesClientUrlCheckbox" type="checkbox">
+										<span id="preferencesClientUrlSlider"
+											  class="bwc-slider"></span>
+									</label>
+									<span class="bwc-switch-label">
+										Prevent <u>using</u> an invalid URL in the Client section.
+										<span class="bwc-preferences-info"
+											  aria-hidden="true"
+											  data-container="body"
+											  data-toggle="popover"
+											  data-placement="bottom"
+											  data-html="true"
+											  data-title="Prevent Using Invalid URL"
+											  data-content="If enabled, you cannot use URLs in the Client section that do not begin with <code>ws://</code> or <code>wss://</code>. If disabled, the invalid URL warning will still appear; however, the Connect button will be enabled.">
+											<i class="fa fa-info-circle fa-lg"></i>
+										</span>
+									</span>
+								</div>
+								<h5>
+									Invalid Message Body Inputs
+								</h5>
+								<div class="bwc-slider-row">
+									<label class="bwc-switch" for="preferencesOptionsMessageCheckbox">
+										<input id="preferencesOptionsMessageCheckbox" type="checkbox">
+										<span id="preferencesOptionsMessageSlider"
+											  class="bwc-slider"></span>
+									</label>
+									<span class="bwc-switch-label">
+										Prevent <u>saving</u> an invalid message body in the Options section.
+										<span class="bwc-preferences-info"
+											  aria-hidden="true"
+											  data-container="body"
+											  data-toggle="popover"
+											  data-placement="top"
+											  data-html="true"
+											  data-title="Prevent Saving Message Body with Invalid JSON"
+											  data-content="If enabled, you cannot save a message unless the body is valid JSON. If disabled, the invalid JSON warning will still appear; however, the Save button will be enabled.">
+											<i class="fa fa-info-circle fa-lg"></i>
+										</span>
+									</span>
+								</div>
+								<div class="bwc-slider-row">
+									<label class="bwc-switch" for="preferencesClientMessageCheckbox">
+										<input id="preferencesClientMessageCheckbox" type="checkbox">
+										<span id="preferencesClientMessageSlider"
+											  class="bwc-slider"></span>
+									</label>
+									<span class="bwc-switch-label">
+										Prevent <u>using</u> an invalid message body in the Client section.
+										<span class="bwc-preferences-info"
+											  aria-hidden="true"
+											  data-container="body"
+											  data-toggle="popover"
+											  data-placement="bottom"
+											  data-html="true"
+											  data-title="Prevent Using Message Body with Invalid JSON"
+											  data-content="If enabled, you cannot use a message in the Client section unless the body is valid JSON. If disabled, the invalid JSON warning will still appear; however, the Send button will be enabled.">
+											<i class="fa fa-info-circle fa-lg"></i>
+										</span>
+									</span>
+								</div>
+							</div>
+						</div>
 					</div>
-					<button id="optionsMessageSaveButton" class="btn btn-primary" disabled="disabled">
-						Save Message
-					</button>
-					<button id="optionsMessageCancelEditButton" class="btn btn-secondary">
-						Cancel
-					</button>
+
+					<!--URLS-->
+
+					<div class="card">
+						<div id="optionsUrlsHeading" class="card-header" role="tab">
+							<h5 class="mb-0">
+								<a id="optionsUrlsAnchor"
+								   class="bwc-accordion-anchor"
+								   data-test="optionsUrlsAnchor"
+								   data-toggle="collapse"
+								   href="#optionsUrls"
+								   aria-expanded="false"
+								   aria-controls="optionsUrls">
+									Server URLs
+									<i class="fa fa-chevron-down bwc-accordion-heading-icon float-right"
+									   aria-hidden="true"></i>
+								</a>
+							</h5>
+						</div>
+						<div id="optionsUrls" class="collapse" role="tabpanel"
+							 aria-labelledby="optionsUrlsHeading"
+							 data-parent="#options">
+							<div class="card-body">
+								<h5>
+									Saved URLs
+								</h5>
+								<p id="optionsUrlNoneSaved">
+									You have not saved any URLs.
+								</p>
+								<div id="optionsUrlSavedTable" class="clearfix"></div>
+								<h5 class="bwc-margin-top">
+									Save a server URL
+								</h5>
+								<label id="optionsUrlInputLabel" for="optionsUrlInput">
+									The URL should begin with <code>ws://</code> or <code>wss://</code>:
+								</label>
+								<input id="optionsUrlInput"
+									   class="form-control"
+									   type="text"
+									   placeholder="URL"/>
+								<p id="optionsUrlStatus" class="hide"></p>
+								<p id="optionsUrlInputEmpty" class="alert alert-warning rounded hide" role="alert">
+									You must enter a URL.
+								</p>
+								<p id="optionsUrlInvalidWarning" class="alert alert-warning rounded hide" role="alert">
+									Invalid URL! It should begin with <code>ws://</code> or <code>wss://</code> and not
+									contain any
+									spaces.
+								</p>
+								<button id="optionsUrlSaveButton" class="btn btn-primary" disabled="disabled">
+									Save URL
+								</button>
+								<button id="optionsUrlCancelEditButton" class="btn btn-secondary">
+									Cancel
+								</button>
+							</div>
+						</div>
+					</div>
+
+					<!--PROTOCOLS-->
+
+					<div class="card">
+						<div id="optionsProtocolsHeading" class="card-header" role="tab">
+							<h5 class="mb-0">
+								<a id="optionsProtocolsAnchor"
+								   class="bwc-accordion-anchor"
+								   data-toggle="collapse"
+								   href="#optionsProtocols"
+								   aria-expanded="false"
+								   aria-controls="optionsProtocols">
+									Server Protocols
+									<i class="fa fa-chevron-down bwc-accordion-heading-icon float-right"
+									   aria-hidden="true"></i>
+								</a>
+							</h5>
+						</div>
+						<div id="optionsProtocols" class="collapse" role="tabpanel"
+							 aria-labelledby="optionsProtocolsHeading"
+							 data-parent="#options">
+							<div class="card-body">
+								<h5>
+									Saved Protocols
+								</h5>
+								<p id="optionsProtocolNoneSaved">
+									You have not saved any protocols.
+								</p>
+								<div id="optionsProtocolSavedTable" class="clearfix"></div>
+								<h5 class="bwc-margin-top">
+									Save a server protocol
+								</h5>
+								<label id="optionsProtocolInputLabel" for="optionsProtocolInput">
+									Enter a single protocol name or multiple comma-separated names:
+								</label>
+								<input id="optionsProtocolInput"
+									   class="form-control"
+									   type="text"
+									   placeholder="Protocol"/>
+								<p>If you enter multiple names, they will be saved as a single string with a space after
+									each comma:
+									<code>protocol1, protocol2, protocol3</code>. However, this string will be converted
+									into an
+									<code>array</code> when required by the
+									<a href="https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/WebSocket#Parameters">WebSocket()
+										constructor</a>.</p>
+								<p id="optionsProtocolStatus" class="hide"></p>
+								<p id="optionsProtocolInputEmpty" class="alert alert-warning rounded hide" role="alert">
+									You must enter a protocol name.
+								</p>
+								<button id="optionsProtocolSaveButton" class="btn btn-primary" disabled="disabled">
+									Save Protocol
+								</button>
+								<button id="optionsProtocolCancelEditButton" class="btn btn-secondary">
+									Cancel
+								</button>
+							</div>
+						</div>
+					</div>
+
+					<!--MESSAGES-->
+
+					<div class="card">
+						<div id="optionsMessagesHeading" class="card-header" role="tab">
+							<h5 class="mb-0">
+								<a id="optionsMessagesAnchor"
+								   class="bwc-accordion-anchor"
+								   data-toggle="collapse"
+								   href="#optionsMessages"
+								   aria-expanded="false"
+								   aria-controls="optionsMessages">
+									Messages
+									<i class="fa fa-chevron-down bwc-accordion-heading-icon float-right"
+									   aria-hidden="true"></i>
+								</a>
+							</h5>
+						</div>
+						<div id="optionsMessages" class="collapse" role="tabpanel"
+							 aria-labelledby="optionsMessagesHeading"
+							 data-parent="#options">
+							<div class="card-body">
+								<h5>
+									Saved Messages
+								</h5>
+								<p id="optionsMessageNoneSaved">
+									You have not saved any messages.
+								</p>
+								<div id="optionsMessageSavedTable" class="clearfix"></div>
+								<h5 class="bwc-margin-top">
+									Save a message
+								</h5>
+								<label id="optionsMessageNameInputLabel" for="optionsMessageNameInput">
+									The display name appears in the "Saved Messages" table and client drop-down menu:
+								</label>
+								<input id="optionsMessageNameInput"
+									   class="form-control"
+									   type="text"
+									   placeholder="Display Name"/>
+								<label id="optionsMessageTextareaLabel" for="optionsMessageTextarea">
+									The message body does not appear in the "Saved Messages" table or drop-down menu:
+								</label>
+								<textarea id="optionsMessageTextarea"
+										  class="form-control"
+										  placeholder="Message Body (JSON)"></textarea>
+								<p id="optionsMessageStatus" class="hide"></p>
+								<p id="optionsMessageNameInvalid" class="alert alert-warning rounded hide" role="alert">
+									You must enter a display name.
+								</p>
+								<p id="optionsMessageTextareaEmpty" class="alert alert-warning rounded hide"
+								   role="alert">
+									You must enter a message body.
+								</p>
+								<p id="optionsMessageJsonInvalidWarning" class="alert alert-warning rounded hide"
+								   role="alert">
+									Invalid JSON! You entered invalid JSON in the message body.
+								</p>
+								<div class="bwc-slider-row">
+									<label class="bwc-switch" for="optionsMessageTextareaFormatCheckbox">
+										<input id="optionsMessageTextareaFormatCheckbox" type="checkbox">
+										<span id="optionsMessageTextareaFormatSlider"
+											  class="bwc-slider bwc-slider-disabled"></span>
+									</label>
+									<span class="bwc-switch-label">
+										Toggle JSON formatting from single line to multi-line.
+									</span>
+								</div>
+								<button id="optionsMessageSaveButton" class="btn btn-primary" disabled="disabled">
+									Save Message
+								</button>
+								<button id="optionsMessageCancelEditButton" class="btn btn-secondary">
+									Cancel
+								</button>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
-		<!--CLIENT CARD-->
+
+		<!--CLIENT-->
+
 		<div class="card">
 			<div id="clientHeading" class="card-header" role="tab">
 				<h5 class="mb-0">
-					<a id="clientAnchor" class="collapsed" data-toggle="collapse" href="#client" aria-expanded="true"
+					<a id="clientAnchor"
+					   class="collapsed bwc-accordion-anchor"
+					   data-toggle="collapse"
+					   href="#client"
+					   aria-expanded="true"
 					   aria-controls="client">
 						Client
+						<i class="fa fa-chevron-up bwc-accordion-heading-icon float-right" aria-hidden="true"></i>
 					</a>
 				</h5>
 			</div>
 			<div id="client" class="collapse show" role="tabpanel" aria-labelledby="clientHeading"
 				 data-parent="#accordion">
 				<div class="card-body">
-					<h4>
+					<h5>
 						Server URL (Required)
-					</h4>
+					</h5>
 					<div id="urlSelect" class="dropdown hide">
 						<button id="urlSelectMenu"
 								class="btn btn-primary dropdown-toggle"
@@ -180,9 +384,13 @@
 						   class="form-control"
 						   type="text"
 						   placeholder="URL"/>
-					<h4>
+					<p id="urlInvalidWarning" class="alert alert-warning rounded hide" role="alert">
+						Invalid URL! It should begin with <code>ws://</code> or <code>wss://</code> and not contain any
+						spaces.
+					</p>
+					<h5>
 						Server Protocol (Optional)
-					</h4>
+					</h5>
 					<div id="protocolSelect" class="dropdown hide">
 						<button id="protocolSelectMenu"
 								class="btn btn-primary dropdown-toggle"
@@ -218,9 +426,9 @@
 						Disconnect
 					</button>
 					<hr/>
-					<h4>
+					<h5>
 						Send a Message
-					</h4>
+					</h5>
 					<div id="messageSelect" class="dropdown hide">
 						<button id="messageSelectMenu"
 								class="btn btn-primary dropdown-toggle"
@@ -245,22 +453,23 @@
 					<p id="messageJsonInvalidWarning" class="alert alert-warning rounded hide" role="alert">
 						Invalid JSON! You entered invalid JSON in the message body.
 					</p>
-					<div class="bwc-margin-bottom">
-						<label class="bwc-switch" for="messageTextareaFormatToggle">
-							<input id="messageTextareaFormatToggle" type="checkbox">
-							<span id="messageTextareaFormatSlider" class="bwc-slider bwc-slider-disabled"></span>
-							<span class="bwc-switch-label">
-								Toggle JSON formatting from single line to multi-line.
-							</span>
+					<div class="bwc-slider-row">
+						<label class="bwc-switch" for="messageTextareaFormatCheckbox">
+							<input id="messageTextareaFormatCheckbox" type="checkbox">
+							<span id="messageTextareaFormatSlider"
+								  class="bwc-slider bwc-slider-disabled"></span>
 						</label>
+						<span class="bwc-switch-label">
+							Toggle JSON formatting from single line to multi-line.
+						</span>
 					</div>
 					<button id="messageSendButton" class="btn btn-primary" disabled="disabled">
 						Send
 					</button>
 					<hr/>
-					<h4>
+					<h5>
 						Received Messages
-					</h4>
+					</h5>
 					<p>
 						Outgoing messages from client are shown in red.
 						Incoming messages from server are shown in black.
@@ -277,6 +486,7 @@
 </div>
 
 <!--DELETE MODAL-->
+
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModal"
 	 aria-hidden="true">
 	<div class="modal-dialog" role="document">
@@ -306,6 +516,7 @@
 </div>
 
 <!--JSON MODAL-->
+
 <div class="modal fade" id="jsonModal" tabindex="-1" role="dialog" aria-labelledby="jsonModal"
 	 aria-hidden="true">
 	<div class="modal-dialog" role="document">
