@@ -2,7 +2,6 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const GenerateJsonPlugin = require('generate-json-webpack-plugin')
 const merge = require('webpack-merge')
 const path = require('path')
-const webpack = require('webpack')
 const ROOT = path.resolve(__dirname)
 const root = path.join.bind(path, ROOT)
 const version = require('./src/manifest/common.json').version
@@ -38,7 +37,7 @@ module.exports = function (env) {
           ],
           loader: 'babel-loader'
         }, {
-          test: /\.(scss)$/,
+           test: /\.(scss)$/,
           use: [{
             loader: 'style-loader'
           }, {
@@ -66,10 +65,6 @@ module.exports = function (env) {
       ]
     },
     plugins: [
-      new webpack.ProvidePlugin({
-        $: 'jquery',
-        jQuery: 'jquery'
-      }),
       new CopyWebpackPlugin([
         {
           from: 'icons', to: buildPath
@@ -80,7 +75,7 @@ module.exports = function (env) {
       new GenerateJsonPlugin('manifest.json', merge(
         require('./src/manifest/common.json'),
         require(`./src/manifest/${platform}.json`),
-        { version }
+        {version}
       ), null, 2)
     ]
   }
