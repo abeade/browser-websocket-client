@@ -1,6 +1,10 @@
 ## Browser-WebSocket-Client
 
-Browser WebSocket Client is an extension for Chrome and Firefox that provides a simple method for testing a WebSocket server. It allows you to send and receive raw JSON messages as well as save server URLs, protocols,  and messages for later use.
+Browser WebSocket Client is an extension for Chrome and Firefox that provides a simple method for testing a WebSocket server. It allows you to send and receive raw JSON messages as well as save server URLs, protocols, and messages for later use.
+
+### Release Notes
+
+See the [release notes](https://github.com/kensiprell/browser-websocket-client/releases) for the latest changes.
 
 ### Browser Installation
 
@@ -8,45 +12,56 @@ Chrome: [https://chrome.google.com/webstore/detail/browser-websocket-client/mdml
 
 Firefox: [https://addons.mozilla.org/en-US/firefox/addon/browser-websocket-client/](https://addons.mozilla.org/en-US/firefox/addon/browser-websocket-client/)
 
-After installing look for the icon in the toolbar:
+Look for the blue WebSocket icon in the toolbar after installation:
 
-![icon](icons/icon_128.png?raw=true)
+![icon](icons/icon_48.png?raw=true)
 
 ### Advantages
 
-* Bootstrap 4 user interface
-* Save server URLs, protocols, and JSON messages for later use
+* Intuitive Bootstrap 4 user interface
+* Save server URLs, protocols, and messages for later use
+* Login to Chrome or Mozilla and your saved settings will be synced across different devices
 * Pretty-print incoming JSON messages and saved message bodies
 
-### Screenshots
+### Description and Screenshots
 
 #### Client Section
 
-The screenshot below shows the extension on initial startup. Note that it consists of "Options" and "Client" sections.
+The screenshot below shows the "Client" section in use with a pretty-printed message modal on top. The message is formatted as a JavaScript Object with a single color for keys and different colors for values based on the type: boolean, null, number, and string.
 
-![screenshot_1](screenshots/screenshot_1.png?raw=true)
-
-The screenshot below shows a manually entered URL and the result of sending a message. Note the explanation under the "Received Messages" header.
-
-![screenshot_2](screenshots/screenshot_2.png?raw=true)
-
-#### JSON Pretty-Print
-
-The screenshot below shows the result of clicking on an incoming message. The message is formatted as a JavaScript Object with a single color for keys and different colors for values based on the type: boolean, null, number, and string.
-
-![screenshot_3](screenshots/screenshot_3.png?raw=true)
+![screenshot_1](screenshots/firefox/screenshot_1.png?raw=true)
 
 #### Options Section
 
-The "Options" section allows you to save server URLs, protocols, and messages that you can select from drop-down menus in the "Client" section. They are saved to [storage.sync](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/storage/sync) so they remain available after a browser restart. You can edit and delete URLs, protocols, and messages. Additionally, you can pretty-print a saved message body. 
+All user options are saved using [storage.sync](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/storage/sync) which allows you to login to [Chrome](https://accounts.google.com) or [Mozilla](https://www.mozilla.org/en-US/firefox/accounts/)  and sync your settings across different devices. Your settings also remain available locally after a browser restart even if you do not login with a Chrome or Mozilla account.
 
-Note the toggle switch under the message body textarea. Use it to change the JSON formatting from single line to multi-line and vice versa.
+##### Preferences
 
-![screenshot_4](screenshots/screenshot_4.png?raw=true)
+The screenshot below shows the "Preferences" section. It allows you to control the following four functions:
+* Allow or prevent saving invalid URLs in the Options section
+* Allow or prevent using invalid URLs in the Client section
+* Allow or prevent saving message bodies with invalid JSON in the Options section
+* Allow or prevent using message bodies with invalid JSON Client section
 
-Below is the Client section again. However, now you can see dropdown menus with the saved items from the Options section.
+![screenshot_2](screenshots/firefox/screenshot_2.png?raw=true)
 
-![screenshot_5](screenshots/screenshot_5.png?raw=true)
+##### Server URLs
+
+The screenshot below shows the "Server URLs" section. It allows you to save URLs that you can use later in the Client section by selecting them from a dropdown menu. You can create, edit, and delete URLs. When creating or editing a URL you will receive a warning if the URL does not begin with `ws://` or `wss://` or if the URL contains spaces.
+
+![screenshot_3](screenshots/firefox/screenshot_3.png?raw=true)
+
+##### Server Protocols
+
+The screenshot below shows the "Server Protocols" section. It allows you to save URLs that you can use later in the Client section by selecting them from a dropdown menu. You can create, edit, and delete protocols.
+
+![screenshot_4](screenshots/firefox/screenshot_4.png?raw=true)
+
+##### Messages
+
+The screenshot below shows the "Messages" section. It allows you to save message names and bodies that you can use later in the Client section by selecting the message name from a dropdown menu. You can create, edit, and delete messages. You will receive a warning if the message body is not valid JSON. Note the toggle switch under the message body textarea. Use it to change the JSON formatting from single line to multi-line and vice versa. 
+
+![screenshot_5](screenshots/firefox/screenshot_5.png?raw=true)
 
 ### Manual Installation
 
@@ -59,7 +74,7 @@ cd browser-websocket-client
 npm install
 ```
 
-After ```npm``` finishes you can edit files as necessary, focusing on the files in the ```src/main/**``` and ```src/test``` directories although you probably don't need to make changes to ```background.js```.
+After ```npm``` finishes you can edit files as necessary, focusing on the files in the ```src/main/**``` and ```src/test/cypress/integration``` directories although you probably don't need to make changes to ```background.js```.
 
 The ```scripts``` section of ```package.json``` should be self explanatory. For example, if you want to test changes on Chrome, you would do the following from the project root directory (```/some/directory/browser-websocket-client```):
 
@@ -87,20 +102,14 @@ Then you can load the unpacked extension using these [instructions](https://deve
 
 ### Development Notes
 
-The JavaScript is written in ES6 using the jQuery framework.
+The JavaScript is written in ES6.
+ 
+[jQuery](https://jquery.com) and [Bootstrap](https://getbootstrap.com) provide the heavy lifting.
 
-Unit test report (after ```npm run test:unit```):
-```
-/some/directory/browser-websocket-client/karma_html/Karma_Report/index.html
-```
-
-E2E test report (after ```npm run test:e2e```):
-```
-/some/directory/browser-websocket-client/protractor_html/htmlReport_BrowserWebSocketClient.html
-```
+[Cypress](https://www.cypress.io) does all the testing.
 
 ### Inspiration
 
 This extension was inspired by [Simple-WebSocket-Client](https://github.com/hakobera/Simple-WebSocket-Client).
 
-The [syntaxHighlight function](https://github.com/kensiprell/browser-websocket-client/blob/master/src/main/index.js#L317) came from this [stackoverflow answer](https://stackoverflow.com/a/7220510/1705701).
+The `highlightJson` function came from this [stackoverflow answer](https://stackoverflow.com/a/7220510/1705701).
