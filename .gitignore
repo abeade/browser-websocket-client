@@ -6,8 +6,7 @@
 /TODO.md
 /build/
 /dist/
-/karma_html/
 /node_modules/
-/protractor_html/
 /src/test/cypress/screenshots/
 /src/test/cypress/videos/
+/temp/
