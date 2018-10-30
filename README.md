@@ -14,7 +14,7 @@ Firefox: [https://addons.mozilla.org/en-US/firefox/addon/browser-websocket-clien
 
 Look for the blue WebSocket icon in the toolbar after installation:
 
-![icon](icons/icon_48.png?raw=true)
+![icon](icons/icon_048.png?raw=true)
 
 ### Advantages
 
