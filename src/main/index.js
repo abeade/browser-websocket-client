@@ -34,27 +34,35 @@ const savedOptions = {
 }
 
 // Mock chrome.storage.sync
-const mockChromeStorage = function () {
-  window.chrome = {}
-  window.chrome.storage = {}
-  window.chrome.storage.sync = {
+const mockChromeStorage = function (browser) {
+  if (browser === 'chrome') {
+    console.warn('Chrome is using mocked chrome.storage.sync')
+  } else {
+    console.warn('Browser is using mocked chrome.storage.sync')
+    window.chrome = {}
+    // eslint-disable-next-line no-global-assign
+    chrome = window.chrome
+  }
+  chrome.storage = {}
+  chrome.storage.sync = {
     data: {
       savedOptions: savedOptions
     },
     get: function (key, callback) {
-      callback({key: window.chrome.storage.sync.data[key]})
+      callback({key: chrome.storage.sync.data[key]})
     },
     set: function ({key, value}, callback) {
-      window.chrome.storage.sync.data[key] = value
+      chrome.storage.sync.data[key] = value
       callback()
     }
   }
 }
 
-// Use mock if not running as extension, works only for Firefox
+// Use mock if not running as extension
 if (typeof chrome === 'undefined') {
-  console.warn('Using mocked chrome.storage.sync')
   mockChromeStorage()
+} else if (typeof chrome.permissions === 'undefined') {
+  mockChromeStorage('chrome')
 }
 
 // Add Font Awesome icons to its library
@@ -200,7 +208,7 @@ let ws = null
 let wsConnected = false
 let wsPoliteDisconnection = false
 
-// Used only by background.js to show the options card
+// Used only by background.js to show the options section
 // when user chooses extension options in browser settings
 if (url.match(/#options/)) {
   client.removeClass('show')
@@ -757,7 +765,7 @@ optionsMessageTextareaFormatCheckbox.on('change', function () {
   formatTextarea($(this), optionsMessageTextarea)
 })
 
-// Cancel message edit and reset variables
+// Cancel message edit and reset elements
 optionsMessageCancelEditButton.on('click', function () {
   editingMessage = false
   editingMessageTarget = ''
