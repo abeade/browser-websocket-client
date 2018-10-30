@@ -1046,14 +1046,29 @@ messageTextarea.on('keydown', function (e) {
 
 // UTILITIES
 
-// Change collapse heading anchor chevrons
-$('.bwc-accordion-anchor').on('click', function () {
-  const icon = $(this).find('.bwc-accordion-heading-icon')
-  if ($(this).attr('aria-expanded') === 'true') {
-    icon.attr('data-icon', 'chevron-down')
+// Change collapse header chevron to up on show and down on hide
+const setChevron = function(id) {
+  const anchor =  $(`#${id}Anchor`)
+  console.log(`show: ${id} expanded = ${anchor.attr('aria-expanded')}`)
+  if (anchor.attr('aria-expanded') === 'true') {
+    anchor
+      .find('.bwc-accordion-heading-icon')
+      .attr('data-icon', 'chevron-up')
   } else {
-    icon.attr('data-icon', 'chevron-up')
+    anchor
+      .find('.bwc-accordion-heading-icon')
+      .attr('data-icon', 'chevron-down')
   }
+}
+
+// Change chevron on show
+$('div.collapse').on('shown.bs.collapse', function () {
+  setChevron($(this).attr('id'))
+})
+
+// Change chevron on hide
+$('div.collapse').on('hidden.bs.collapse', function () {
+  setChevron($(this).attr('id'))
 })
 
 // Ensure status messages are not persistent
