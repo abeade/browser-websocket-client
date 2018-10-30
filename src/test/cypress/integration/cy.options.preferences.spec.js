@@ -8,6 +8,36 @@ describe('Options -> Preferences', function () {
     cy.get('#optionsPreferences').should('be.visible')
   })
 
+  it('clicking "i" icon should show and hide popover', function() {
+    // Prevent Saving Invalid URL
+    cy.log('Prevent Saving Invalid URL')
+    cy.get('[data-test=popover-save-url]').click()
+    cy.get('[data-title="Prevent Saving Invalid URL"]').should('have.attr', 'aria-describedby')
+    cy.get('[data-test=popover-save-url]').click()
+    cy.get('[data-title="Prevent Saving Invalid URL"]').should('not.have.attr', 'aria-describedby')
+
+    // Prevent Using Invalid URL
+    cy.log('Prevent Using Invalid URL')
+    cy.get('[data-test=popover-use-url]').click()
+    cy.get('[data-title="Prevent Using Invalid URL"]').should('have.attr', 'aria-describedby')
+    cy.get('[data-test=popover-use-url]').click()
+    cy.get('[data-title="Prevent Using Invalid URL"]').should('not.have.attr', 'aria-describedby')
+
+    // Prevent Saving Message Body with Invalid JSON
+    cy.log('Prevent Saving Message Body with Invalid JSON')
+    cy.get('[data-test=popover-save-message]').click()
+    cy.get('[data-title="Prevent Saving Message Body with Invalid JSON"]').should('have.attr', 'aria-describedby')
+    cy.get('[data-test=popover-save-message]').click()
+    cy.get('[data-title="Prevent Saving Message Body with Invalid JSON"]').should('not.have.attr', 'aria-describedby')
+
+    // Prevent Using Message Body with Invalid JSON
+    cy.log('Prevent Using Message Body with Invalid JSON')
+    cy.get('[data-test=popover-use-message]').click()
+    cy.get('[data-title="Prevent Using Message Body with Invalid JSON"]').should('have.attr', 'aria-describedby')
+    cy.get('[data-test=popover-use-message]').click()
+    cy.get('[data-title="Prevent Using Message Body with Invalid JSON"]').should('not.have.attr', 'aria-describedby')
+  })
+
   it('prevent saving an invalid URL in the Options section', function () {
     cy.get('#preferencesOptionsUrlCheckbox').then((checkbox) => {
       if (!checkbox.prop('checked')) {
