@@ -32,8 +32,8 @@ describe('Options -> Protocols', function () {
       cy.checkOptionsProtocols(input)
     })
 
-    // clicking protocol edit icon and then cancel button
-    cy.log('clicking protocol edit icon and then cancel button')
+    // click protocol edit icon and then cancel button
+    cy.log('click protocol edit icon and then cancel button')
     cy.get('.editProtocol').click()
     cy.fixture('optionsDefaults').then((input) => {
       input.optionsProtocolInputLabelText = 'Editing protocol: protocol1'
@@ -53,8 +53,8 @@ describe('Options -> Protocols', function () {
       cy.checkOptionsProtocols(input)
     })
 
-    // clicking protocol edit icon and then save button
-    cy.log('clicking protocol edit icon and then save button')
+    // click protocol edit icon and then save button
+    cy.log('click protocol edit icon and then save button')
     cy.get('.editProtocol').click()
     cy.get('#optionsProtocolInput').type(', protocol2')
     cy.get('#optionsProtocolSaveButton').click()
@@ -82,7 +82,7 @@ describe('Options -> Protocols', function () {
       cy.checkClient(input)
     })
 
-    // clicking protocol delete icon and then cancel button
+    // click protocol delete icon and then cancel button
     cy.log('click protocol delete icon and then cancel button')
     cy.get('#optionsAnchor').click()
     cy.get('#options').should('be.visible')

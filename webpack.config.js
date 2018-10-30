@@ -37,7 +37,7 @@ module.exports = function (env) {
           ],
           loader: 'babel-loader'
         }, {
-           test: /\.(scss)$/,
+          test: /\.(scss)$/,
           use: [{
             loader: 'style-loader'
           }, {

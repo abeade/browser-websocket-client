@@ -58,7 +58,7 @@ const mockChromeStorage = function (browser) {
   }
 }
 
-// Use mock if not running as extension
+// Use mocked chrome.storage.sync if not running as extension
 if (typeof chrome === 'undefined') {
   mockChromeStorage()
 } else if (typeof chrome.permissions === 'undefined') {
@@ -1047,8 +1047,8 @@ messageTextarea.on('keydown', function (e) {
 // UTILITIES
 
 // Change collapse header chevron to up on show and down on hide
-const setChevron = function(id) {
-  const anchor =  $(`#${id}Anchor`)
+const setChevron = function (id) {
+  const anchor = $(`#${id}Anchor`)
   console.log(`show: ${id} expanded = ${anchor.attr('aria-expanded')}`)
   if (anchor.attr('aria-expanded') === 'true') {
     anchor

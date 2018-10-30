@@ -79,7 +79,7 @@
 											  data-placement="top"
 											  data-html="true"
 											  data-title="Prevent Saving Invalid URL"
-											  data-content="If enabled, you cannot save URLs that do not begin with <code>ws://</code> or <code>wss://</code>. If disabled, the invalid URL warning will still appear; however, the save button will be enabled.">
+											  data-content="If enabled, you cannot save URLs that do not begin with <code>ws://</code> or <code>wss://</code>. If disabled, the invalid URL warning will still appear; however, the Save button will be enabled.">
 											<i class="fa fa-info-circle fa-lg"></i>
 										</span>
 									</span>
@@ -309,18 +309,18 @@
 									Save a message
 								</h5>
 								<label id="optionsMessageNameInputLabel" for="optionsMessageNameInput">
-									The display name appears in the "Saved Messages" table and client drop-down menu:
+									The display name appears in the "Saved Messages" table and Client drop-down menu:
 								</label>
 								<input id="optionsMessageNameInput"
 									   class="form-control"
 									   type="text"
 									   placeholder="Display Name"/>
 								<label id="optionsMessageTextareaLabel" for="optionsMessageTextarea">
-									The message body does not appear in the "Saved Messages" table or drop-down menu:
+									The message body does not appear in the "Saved Messages" table or Client drop-down menu:
 								</label>
 								<textarea id="optionsMessageTextarea"
 										  class="form-control"
-										  placeholder="Message Body (JSON)"></textarea>
+										  placeholder="Message Body"></textarea>
 								<p id="optionsMessageStatus" class="hide"></p>
 								<p id="optionsMessageNameInvalid" class="alert alert-warning rounded hide" role="alert">
 									You must enter a display name.
@@ -462,8 +462,7 @@
 						</div>
 					</div>
 					<label for="messageTextarea">
-						Enter JSON and press Ctrl + Enter or click the Send button after establishing a connection to a
-						server:
+						Enter a message and press Ctrl+Enter or click the Send button after connecting to a server:
 					</label>
 					<textarea id="messageTextarea"
 							  class="form-control"
@@ -489,8 +488,8 @@
 						Received Messages
 					</h5>
 					<p>
-						Outgoing messages from client are shown in red.
-						Incoming messages from server are shown in black.
+						Outgoing messages from the client are shown in red.
+						Incoming messages from the server are shown in black.
 						Click on on an incoming message to pretty-print it.
 					</p>
 					<button id="clearMessagesButton" class="btn btn-danger" disabled="disabled">

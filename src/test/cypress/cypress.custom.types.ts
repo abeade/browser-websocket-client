@@ -4,7 +4,7 @@ declare global {
             /**
              * Runs assertions using "clientDefaults.json" or a custom object
              *
-             * @param {object} input One or more key-value pairs forming a test assertion
+             * @param {object} input one or more key-value pairs forming a test assertion
              * @example
              *     cy.fixture('clientDefaults').then((input) => {
              *         input.connectionStatusText = 'OPEN'
@@ -12,13 +12,14 @@ declare global {
              *     })
              */
             checkClient(input: object): Chainable<null>
+
             /**
              * Runs assertions using "optionsDefaults.json" or a custom object, calling
              * checkOptionsUrls()
              * checkOptionsProtocols()
              * checkOptionsMessages()
              *
-             * @param {object} input One or more key-value pairs forming a test assertion
+             * @param {object} input one or more key-value pairs forming a test assertion
              * @example
              *     cy.fixture('optionsDefaults').then((input) => {
              *         input.optionsUrlInputValue = 'ws://test'
@@ -26,10 +27,11 @@ declare global {
              *     })
              */
             checkOptions(input: object): Chainable<null>
+
             /**
              * Runs assertions using "optionsDefaults.json" or a custom object
              *
-             * @param {object} input One or more key-value pairs forming a test assertion
+             * @param {object} input one or more key-value pairs forming a test assertion
              * @example
              *     cy.fixture('optionsDefaults').then((input) => {
              *         input.optionsMessageTextareaValue = '{"new": "message"}'
@@ -37,10 +39,11 @@ declare global {
              *     })
              */
             checkOptionsMessages(input: object): Chainable<null>
+
             /**
              * Runs assertions using "optionsDefaults.json" or a custom object
              *
-             * @param {object} input One or more key-value pairs forming a test assertion
+             * @param {object} input one or more key-value pairs forming a test assertion
              * @example
              *     cy.fixture('optionsDefaults').then((input) => {
              *         input.optionsProtocolInputValue = 'protocol1'
@@ -48,10 +51,11 @@ declare global {
              *     })
              */
             checkOptionsProtocols(input: object): Chainable<null>
+
             /**
              * Runs assertions using "optionsDefaults.json" or a custom object
              *
-             * @param {object} input One or more key-value pairs forming a test assertion
+             * @param {object} input one or more key-value pairs forming a test assertion
              * @example
              *     cy.fixture('optionsDefaults').then((input) => {
              *         input.optionsUrlInputValue = 'ws://test'
@@ -59,6 +63,7 @@ declare global {
              *     })
              */
             checkOptionsUrls(input: object): Chainable<null>
+
             /**
              * Mocks chrome.storage.sync and calls cy.visit(url), defaulting to '/'
              *
@@ -69,7 +74,7 @@ declare global {
              *    cy.mockChromeStorageAndVisit()
              *    cy.mockChromeStorageAndVisit('/#home')
              */
-            mockChromeStorageAndVisit(url: string, options?: Partial<VisitOptions>): Chainable<Window>
+            mockChromeStorageAndVisit(url: string, options ?: Partial<VisitOptions>): Chainable<Window>
         }
     }
 }

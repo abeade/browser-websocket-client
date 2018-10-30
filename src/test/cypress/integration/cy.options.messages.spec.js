@@ -96,8 +96,8 @@ describe('Options -> Messages', function () {
     cy.get('#jsonModalCloseButton').click()
     cy.get('#jsonModal').should('not.be.visible')
 
-    // clicking edit icon and then cancel button
-    cy.log('clicking edit icon and then cancel button')
+    // click edit icon and then cancel button
+    cy.log('click edit icon and then cancel button')
     cy.get('.editMessage').click()
     cy.fixture('optionsDefaults').then((input) => {
       input.optionsMessageNameInputLabelText = 'Editing message: One'
@@ -124,8 +124,8 @@ describe('Options -> Messages', function () {
       cy.checkOptionsMessages(input)
     })
 
-    // clicking edit icon and then save button
-    cy.log('clicking edit icon and then save button')
+    // click edit icon and then save button
+    cy.log('click edit icon and then save button')
     cy.get('.editMessage').click()
     cy.get('#optionsMessageNameInput').type(' New')
     cy.get('#optionsMessageSaveButton').click()
