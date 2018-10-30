@@ -23,19 +23,19 @@ Look for the blue WebSocket icon in the toolbar after installation:
 * Login to Chrome or Mozilla and your saved settings will be synced across different devices
 * Pretty-print incoming JSON messages and saved message bodies
 
-### Description and Screenshots
+## Description and Screenshots
 
-#### Client Section
+### Client Section
 
 The screenshot below shows the "Client" section in use with a pretty-printed message modal on top. The message is formatted as a JavaScript Object with a single color for keys and different colors for values based on the type: boolean, null, number, and string.
 
 ![screenshot_1](screenshots/firefox/screenshot_1.png?raw=true)
 
-#### Options Section
+### Options Section
 
 All user options are saved using [storage.sync](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/storage/sync) which allows you to login to [Chrome](https://accounts.google.com) or [Mozilla](https://www.mozilla.org/en-US/firefox/accounts/)  and sync your settings across different devices. Your settings also remain available locally after a browser restart even if you do not login with a Chrome or Mozilla account.
 
-##### Preferences
+#### Preferences
 
 The screenshot below shows the "Preferences" section. It allows you to control the following four functions:
 * Allow or prevent saving invalid URLs in the Options section
@@ -45,25 +45,25 @@ The screenshot below shows the "Preferences" section. It allows you to control t
 
 ![screenshot_2](screenshots/firefox/screenshot_2.png?raw=true)
 
-##### Server URLs
+#### Server URLs
 
 The screenshot below shows the "Server URLs" section. It allows you to save URLs that you can use later in the Client section by selecting them from a dropdown menu. You can create, edit, and delete URLs. When creating or editing a URL you will receive a warning if the URL does not begin with `ws://` or `wss://` or if the URL contains spaces.
 
 ![screenshot_3](screenshots/firefox/screenshot_3.png?raw=true)
 
-##### Server Protocols
+#### Server Protocols
 
 The screenshot below shows the "Server Protocols" section. It allows you to save URLs that you can use later in the Client section by selecting them from a dropdown menu. You can create, edit, and delete protocols.
 
 ![screenshot_4](screenshots/firefox/screenshot_4.png?raw=true)
 
-##### Messages
+#### Messages
 
 The screenshot below shows the "Messages" section. It allows you to save message names and bodies that you can use later in the Client section by selecting the message name from a dropdown menu. You can create, edit, and delete messages. You will receive a warning if the message body is not valid JSON. Note the toggle switch under the message body textarea. Use it to change the JSON formatting from single line to multi-line and vice versa. 
 
 ![screenshot_5](screenshots/firefox/screenshot_5.png?raw=true)
 
-### Manual Installation
+## Manual Installation
 
 Installing manually should only be necessary if you want to make changes to the extension and possibly submit a pull request. The instructions below assume you have [Node.js](https://nodejs.org/en/) installed.
 
@@ -100,7 +100,7 @@ Then you can load the unpacked extension using these [instructions](https://deve
 /some/directory/browser-websocket-client/build/dev/firefox
 ```
 
-### Development Notes
+## Development Notes
 
 The JavaScript is written in ES6.
  
@@ -108,7 +108,7 @@ The JavaScript is written in ES6.
 
 [Cypress](https://www.cypress.io) does all the testing.
 
-### Inspiration
+## Inspiration
 
 This extension was inspired by [Simple-WebSocket-Client](https://github.com/hakobera/Simple-WebSocket-Client).
 
