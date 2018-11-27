@@ -1049,7 +1049,6 @@ messageTextarea.on('keydown', function (e) {
 // Change collapse header chevron to up on show and down on hide
 const setChevron = function (id) {
   const anchor = $(`#${id}Anchor`)
-  console.log(`show: ${id} expanded = ${anchor.attr('aria-expanded')}`)
   if (anchor.attr('aria-expanded') === 'true') {
     anchor
       .find('.bwc-accordion-heading-icon')
