@@ -1015,10 +1015,8 @@ const addMessage = function (data, type) {
     message = $('<pre>')
       .attr('class', 'bwc-pointer bwc-received')
       .text(data)
-      .data('target', data)
       .on('click', function () {
         let body;
-        let target = jQuery(this).data('target');
         if (isValidJson(mightBeJson)) {
           const json = JSON.parse(mightBeJson)
           body = $('<pre>').html(highlightJson(JSON.stringify(json, null, 2)))
