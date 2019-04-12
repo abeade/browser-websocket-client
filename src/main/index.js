@@ -612,10 +612,14 @@ const isValidJson = function (string) {
 // Convert JSON to a string for saving and copying to textareas
 const convertJsonToString = function (input) {
   let string
-  if (typeof input === 'object') {
-    string = JSON.stringify(input)
-  } else {
-    string = JSON.stringify(JSON.parse(input))
+  try {
+    if (typeof input === 'object') {
+      string = JSON.stringify(input)
+    } else {
+      string = JSON.stringify(JSON.parse(input))
+    }
+  } catch (e) {
+    string = input
   }
   return string
 }
@@ -936,6 +940,7 @@ const close = function () {
   }
 }
 
+let pingInterval
 // WebSocket onOpen handler
 const onOpen = function () {
   console.log('OPENED: ' + urlInput.val())
@@ -956,6 +961,7 @@ const onClose = function () {
   let disconnectionMessage = 'CLOSED'
   disconnectionMessage += (wsPoliteDisconnection) ? '' : '. Disconnected by the server.'
   console.log('CLOSED: ' + urlInput.val())
+  clearInterval(pingInterval)
   ws = null
   connectButton
     .prop('disabled', false)
@@ -970,12 +976,21 @@ const onClose = function () {
 
 // WebSocket onMessage handler
 const onMessage = function (event) {
-  addMessage(event.data)
+  if (event.data != 3) {
+     addMessage(event.data)
+  }
 }
 
 // WebSocket onError handler
 const onError = function (event) {
   console.error(event.data)
+}
+
+const parseData = function(data) {
+  let indexOfMin = Math.min(data.indexOf("{"), data.indexOf("["))
+  let indexOfMax = Math.max(data.indexOf("{"), data.indexOf("["))
+  let indexOf = indexOfMin > -1 ? indexOfMin : indexOfMax
+  return indexOf > -1 ? data.substring(indexOf) : data
 }
 
 // Add outgoing and incoming message to DOM, formatting as necessary
@@ -987,15 +1002,25 @@ const addMessage = function (data, type) {
       .attr('class', 'bwc-sent')
       .text(data)
   } else {
+    let mightBeJson = parseData(data)
+    if (isValidJson(mightBeJson) && pingInterval == null) {
+      const initialJson = JSON.parse(mightBeJson)
+      if (initialJson.pingInterval > 0) {
+        pingInterval = setInterval(function() {
+          ws.send(2)
+        }, initialJson.pingInterval)
+      }
+    }
+
     message = $('<pre>')
       .attr('class', 'bwc-pointer bwc-received')
       .text(data)
       .data('target', data)
       .on('click', function () {
-        let body
-        if (isValidJson(jQuery(this).data('target'))) {
-          const target = jQuery(this).data('target')
-          const json = JSON.parse(target)
+        let body;
+        let target = jQuery(this).data('target');
+        if (isValidJson(mightBeJson)) {
+          const json = JSON.parse(mightBeJson)
           body = $('<pre>').html(highlightJson(JSON.stringify(json, null, 2)))
         } else {
           body = $('<p>').text('The incoming message cannot be parsed into valid JSON.')
