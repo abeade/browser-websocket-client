@@ -2,9 +2,20 @@ import { convertJsonToString, deleteOptions, getProtocols, highlightJson, isVali
 
 describe('Unit Tests', function () {
   const jsonMessageValid = '{"Message 1":{"null":null,"number":42,"string":"is the answer to everything","boolean":false}}'
+  const containsValidJson1 = '42[1, {"valid":"json"}]'
+  const containsValidJson2 = '42{"valid":"json"}'
 
   before(() => {
     cy.mockChromeStorageAndVisit()
+  })
+
+  describe('parseData()', function () {
+    it('should return JSON', function() {
+      let json1 = parseData(containsValidJson1)
+      let json2 = parseData(containsValidJson2)
+      expect(json1).to.eq('[1, {"valid":"json"}]')
+      expect(json2).to.eq('{"valid":"json"}')
+    })
   })
 
   describe('highlightJson()', function () {
@@ -38,6 +49,11 @@ describe('Unit Tests', function () {
     const object = {'question': 'answer'}
     const string = '{"question": "answer"}'
     const result = '{"question":"answer"}'
+
+    it('should not fail on invalid json', function () {
+      let invalidJson = "40,[1,2,3]"
+      expect(convertJsonToString(invalidJson)).to.eq(invalidJson)
+    })
 
     it('should return a string if passed an object', function () {
       expect(convertJsonToString(object)).to.eq(result)
@@ -110,7 +126,7 @@ describe('Unit Tests', function () {
       expect(getProtocols(input)).to.eq(null)
     })
   })
-  
+
   describe('deleteOptions()', function () {
     const SEPARATOR = '\u0007'
     let savedOptions
@@ -150,7 +166,7 @@ describe('Unit Tests', function () {
       expect(options.protocols.length).to.eq(1, 'protocols')
       expect(options.urls.length).to.eq(3, 'urls')
     })
-    
+
     it('switch.url', function () {
       const options = deleteOptions('url', 'ws://localhost:8080/ws/one', savedOptions)
       expect(options.messages.length).to.eq(3, 'messages')
