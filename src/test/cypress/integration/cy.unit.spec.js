@@ -1,4 +1,4 @@
-import { convertJsonToString, deleteOptions, getProtocols, highlightJson, isValidJson, isValidUrl } from '../../../main/index'
+import { convertJsonToString, deleteOptions, getProtocols, highlightJson, isValidJson, isValidUrl, parseData } from '../../../main/index'
 
 describe('Unit Tests', function () {
   const jsonMessageValid = '{"Message 1":{"null":null,"number":42,"string":"is the answer to everything","boolean":false}}'
@@ -10,11 +10,11 @@ describe('Unit Tests', function () {
   })
 
   describe('parseData()', function () {
-    it('should return JSON', function() {
-      let json1 = parseData(containsValidJson1)
-      let json2 = parseData(containsValidJson2)
-      expect(json1).to.eq('[1, {"valid":"json"}]')
-      expect(json2).to.eq('{"valid":"json"}')
+    it('should return string with valid JSON', function() {
+      let data1 = parseData(containsValidJson1)
+      let data2 = parseData(containsValidJson2)
+      expect(data1).to.eq('[1, {"valid":"json"}]')
+      expect(data2).to.eq('{"valid":"json"}')
     })
   })
 

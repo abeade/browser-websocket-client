@@ -1123,5 +1123,6 @@ export {
   getProtocols,
   isValidJson,
   isValidUrl,
-  highlightJson
+  highlightJson,
+  parseData
 }
