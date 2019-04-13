@@ -940,7 +940,6 @@ const close = function () {
   }
 }
 
-let pingInterval
 // WebSocket onOpen handler
 const onOpen = function () {
   console.log('OPENED: ' + urlInput.val())
@@ -961,7 +960,6 @@ const onClose = function () {
   let disconnectionMessage = 'CLOSED'
   disconnectionMessage += (wsPoliteDisconnection) ? '' : '. Disconnected by the server.'
   console.log('CLOSED: ' + urlInput.val())
-  clearInterval(pingInterval)
   ws = null
   connectButton
     .prop('disabled', false)
@@ -976,9 +974,7 @@ const onClose = function () {
 
 // WebSocket onMessage handler
 const onMessage = function (event) {
-  if (event.data !== 3) {
-    addMessage(event.data)
-  }
+  addMessage(event.data)
 }
 
 // WebSocket onError handler
@@ -1003,14 +999,6 @@ const addMessage = function (data, type) {
       .text(data)
   } else {
     let mightBeJson = parseData(data)
-    if (isValidJson(mightBeJson) && pingInterval == null) {
-      const initialJson = JSON.parse(mightBeJson)
-      if (initialJson.pingInterval > 0) {
-        pingInterval = setInterval(function () {
-          ws.send(2)
-        }, initialJson.pingInterval)
-      }
-    }
 
     message = $('<pre>')
       .attr('class', 'bwc-pointer bwc-received')
