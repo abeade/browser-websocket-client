@@ -976,8 +976,8 @@ const onClose = function () {
 
 // WebSocket onMessage handler
 const onMessage = function (event) {
-  if (event.data != 3) {
-     addMessage(event.data)
+  if (event.data !== 3) {
+    addMessage(event.data)
   }
 }
 
@@ -986,7 +986,7 @@ const onError = function (event) {
   console.error(event.data)
 }
 
-const parseData = function(data) {
+const parseData = function (data) {
   let indexOfMin = Math.min(data.indexOf("{"), data.indexOf("["))
   let indexOfMax = Math.max(data.indexOf("{"), data.indexOf("["))
   let indexOf = indexOfMin > -1 ? indexOfMin : indexOfMax
@@ -1006,7 +1006,7 @@ const addMessage = function (data, type) {
     if (isValidJson(mightBeJson) && pingInterval == null) {
       const initialJson = JSON.parse(mightBeJson)
       if (initialJson.pingInterval > 0) {
-        pingInterval = setInterval(function() {
+        pingInterval = setInterval(function () {
           ws.send(2)
         }, initialJson.pingInterval)
       }
@@ -1016,7 +1016,7 @@ const addMessage = function (data, type) {
       .attr('class', 'bwc-pointer bwc-received')
       .text(data)
       .on('click', function () {
-        let body;
+        let body
         if (isValidJson(mightBeJson)) {
           const json = JSON.parse(mightBeJson)
           body = $('<pre>').html(highlightJson(JSON.stringify(json, null, 2)))
