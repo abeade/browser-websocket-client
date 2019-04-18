@@ -1,6 +1,7 @@
 import { convertJsonToString, deleteOptions, getProtocols, highlightJson, isValidJson, isValidUrl } from '../../../main/index'
 
 describe('Unit Tests', function () {
+  const jsonMessageInvalid = '"missingLeadingBracket": true}'
   const jsonMessageValid = '{"Message 1":{"null":null,"number":42,"string":"is the answer to everything","boolean":false}}'
 
   before(() => {
@@ -49,9 +50,6 @@ describe('Unit Tests', function () {
   })
 
   describe('isValidJson()', function () {
-    const jsonMessageInvalid = '"missingLeadingBracket": true}'
-    const jsonMessageValid = '{"highlightJson() test":{"null":null,"number":42,"string":"is the answer to everything","boolean":false}}'
-
     it('should return false if invalid', function () {
       expect(isValidJson(jsonMessageInvalid)).to.eq(false)
     })

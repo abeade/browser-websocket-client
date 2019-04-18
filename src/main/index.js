@@ -611,12 +611,13 @@ const isValidJson = function (string) {
 
 // Convert JSON to a string for saving and copying to textareas
 const convertJsonToString = function (input) {
-  let string
-  if (typeof input === 'object') {
-    string = JSON.stringify(input)
-  } else {
-    string = JSON.stringify(JSON.parse(input))
-  }
+  let string = input
+  try {
+    const test = JSON.parse(input)
+    if (test && typeof test === 'object') {
+      string = JSON.stringify(input)
+    }
+  } catch (e) { }
   return string
 }
 
@@ -742,11 +743,16 @@ const highlightJson = function (json) {
 
 // Pretty-print a saved message body
 const printMessage = function (message) {
-  const [name, body] = message.split(SEPARATOR)
-  const json = JSON.parse(body)
-  const html = $('<pre>').html(highlightJson(JSON.stringify(json, null, 2)))
-  jsonModalTitle.html(name)
-  jsonModalBody.html(html)
+  const [title, target] = message.split(SEPARATOR)
+  let body
+  if(isValidJson(target)) {
+    const json = JSON.parse(target)
+    body = $('<pre>').html(highlightJson(JSON.stringify(json, null, 2)))
+  } else {
+    body = `<p class ="alert alert-warning rounded hide" role="alert">This message is not valid JSON.</p><p>${target}</p>`
+  }
+  jsonModalTitle.html(title)
+  jsonModalBody.html(body)
   jsonModal.modal('show')
 }
 
@@ -992,13 +998,13 @@ const addMessage = function (data, type) {
       .text(data)
       .data('target', data)
       .on('click', function () {
+        const target = jQuery(this).data('target')
         let body
-        if (isValidJson(jQuery(this).data('target'))) {
-          const target = jQuery(this).data('target')
+        if (isValidJson(target)) {
           const json = JSON.parse(target)
           body = $('<pre>').html(highlightJson(JSON.stringify(json, null, 2)))
         } else {
-          body = $('<p>').text('The incoming message cannot be parsed into valid JSON.')
+          body = `<p class ="alert alert-warning rounded hide" role="alert">This message is not valid JSON.</p><p>${target}</p>`
         }
         jsonModalBody.html(body)
         jsonModal.modal('show')
