@@ -103,6 +103,8 @@ describe('Options -> URLs', function () {
     cy.get('#deleteModal').should('be.visible')
     cy.get('#deleteModalCancelButton').click()
     cy.get('#deleteModalCancelButton').click()
+    cy.get('#deleteModalCancelButton').click()
+    cy.get('#deleteModalCancelButton').click()
     cy.get('#deleteModal').should('not.be.visible')
     cy.fixture('optionsDefaults').then((input) => {
       input.optionsUrlNoneSavedVisible = 'not.'

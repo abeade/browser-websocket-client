@@ -82,6 +82,7 @@ describe('Client', function () {
     cy.get('#jsonModalTitle').invoke('text').should('be', 'Incoming Message')
     cy.get('#jsonModalBody').invoke('text').should('contain', 'Message 1')
     cy.get('#jsonModalCloseButton').click()
+    cy.get('#jsonModalCloseButton').click()
     cy.get('#jsonModal').should('not.be.visible')
 
     // clear messages
