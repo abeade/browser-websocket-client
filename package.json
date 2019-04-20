@@ -1,6 +1,6 @@
 {
   "name": "browser-websocket-client",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Connect to a WebSocket server to send and receive raw JSON messages.",
   "license": "Apache-2.0",
   "author": "Ken Siprell",
@@ -46,8 +46,8 @@
     "@babel/plugin-proposal-object-rest-spread": "7.4.3",
     "@babel/preset-env": "7.4.3",
     "@cypress/webpack-preprocessor": "4.0.3",
-    "@types/chrome": "0.0.82",
-    "@types/node": "11.13.5",
+    "@types/chrome": "0.0.83",
+    "@types/node": "11.13.6",
     "autoprefixer": "9.5.1",
     "babel-loader": "8.0.5",
     "concurrently": "4.1.0",

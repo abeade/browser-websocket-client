@@ -199,7 +199,8 @@ const optionsProtocolInputLabelDefaultText = 'Enter a single protocol name or mu
 
 // Mutable variables
 let editingMessage = false
-let editingMessageTarget = ''
+let editingMessageTargetBody = ''
+let editingMessageTargetName = ''
 let editingProtocol = false
 let editingProtocolTarget = ''
 let editingUrl = false
@@ -609,16 +610,13 @@ const isValidJson = function (string) {
   return false
 }
 
-// Convert JSON to a string for saving and copying to textareas
-const convertJsonToString = function (input) {
-  let string = input
-  try {
-    const test = JSON.parse(input)
-    if (test && typeof test === 'object') {
-      string = JSON.stringify(input)
-    }
-  } catch (e) { }
-  return string
+// Convert JSON object to a string
+const stringifyJson = function (input) {
+  if (typeof input === 'object') {
+    return JSON.stringify(input)
+  } else {
+    return input
+  }
 }
 
 // Toggle JSON formatting from single line to multi-line and vice versa
@@ -631,7 +629,7 @@ const formatTextarea = function (checkbox, textarea) {
   } else if (valid && checked) {
     textarea.val(JSON.stringify(JSON.parse(message), null, 2))
   } else {
-    textarea.val(convertJsonToString(message))
+    textarea.val(editingMessageTargetBody)
   }
 }
 
@@ -690,7 +688,8 @@ const validateOptionsMessageTextarea = function () {
 const editMessage = function (message) {
   const [name, body] = message.split(SEPARATOR)
   editingMessage = true
-  editingMessageTarget = `${name}${SEPARATOR}`
+  editingMessageTargetBody = body
+  editingMessageTargetName = `${name}${SEPARATOR}`
   optionsMessageCancelEditButton.show()
   optionsMessageTextareaEmpty.hide()
   optionsMessageNameInput.val(name)
@@ -722,37 +721,31 @@ const deleteMessage = function (all) {
 }
 
 // Format JSON for pretty-print modal
-const highlightJson = function (json) {
-  json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-  return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-    let cls = 'bwc-number'
-    if (/^"/.test(match)) {
-      if (/:$/.test(match)) {
-        cls = 'bwc-key'
-      } else {
-        cls = 'bwc-string'
+const highlightJson = function (string) {
+  return JSON.stringify(JSON.parse(string), null, 2)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+      let cls = 'bwc-number'
+      if (/^"/.test(match)) {
+        if (/:$/.test(match)) {
+          cls = 'bwc-key'
+        } else {
+          cls = 'bwc-string'
+        }
+      } else if (/true|false/.test(match)) {
+        cls = 'bwc-boolean'
+      } else if (/null/.test(match)) {
+        cls = 'bwc-null'
       }
-    } else if (/true|false/.test(match)) {
-      cls = 'bwc-boolean'
-    } else if (/null/.test(match)) {
-      cls = 'bwc-null'
-    }
-    return `<span class="${cls}">${match}</span>`
-  })
+      return `<span class="${cls}">${match}</span>`
+    })
 }
 
 // Pretty-print a saved message body
 const printMessage = function (message) {
-  const [title, target] = message.split(SEPARATOR)
-  let body
-  if(isValidJson(target)) {
-    const json = JSON.parse(target)
-    body = $('<pre>').html(highlightJson(JSON.stringify(json, null, 2)))
-  } else {
-    body = `<p class ="alert alert-warning rounded hide" role="alert">This message is not valid JSON.</p><p>${target}</p>`
-  }
+  const [title, body] = message.split(SEPARATOR)
   jsonModalTitle.html(title)
-  jsonModalBody.html(body)
+  jsonModalBody.html(getJsonModalBody(body))
   jsonModal.modal('show')
 }
 
@@ -774,7 +767,8 @@ optionsMessageTextareaFormatCheckbox.on('change', function () {
 // Cancel message edit and reset elements
 optionsMessageCancelEditButton.on('click', function () {
   editingMessage = false
-  editingMessageTarget = ''
+  editingMessageTargetBody = ''
+  editingMessageTargetName = ''
   optionsMessageTextareaEmpty.hide()
   optionsMessageJsonInvalidWarning.hide()
   optionsMessageNameInput.val('')
@@ -790,10 +784,10 @@ optionsMessageCancelEditButton.on('click', function () {
 // Persist message to storage on save button click
 optionsMessageSaveButton.on('click', function () {
   const name = optionsMessageNameInput.val()
-  const body = convertJsonToString(optionsMessageTextarea.val())
+  const body = optionsMessageTextarea.val()
   const message = `${name}${SEPARATOR}${body}`
   if (editingMessage) {
-    deleteSavedOptions('message', editingMessageTarget)
+    deleteSavedOptions('message', editingMessageTargetName)
   } else {
     deleteSavedOptions('message', `${name}${SEPARATOR}`)
   }
@@ -858,7 +852,7 @@ const populateSavedMessageSelect = function () {
     .html('')
     .append(options)
   $('.dropdown-item.message').on('click', function () {
-    messageTextarea.val(convertJsonToString(jQuery(this).data('value')))
+    messageTextarea.val(stringifyJson(jQuery(this).data('value')))
     validateClientMessage()
   })
 }
@@ -998,15 +992,7 @@ const addMessage = function (data, type) {
       .text(data)
       .data('target', data)
       .on('click', function () {
-        const target = jQuery(this).data('target')
-        let body
-        if (isValidJson(target)) {
-          const json = JSON.parse(target)
-          body = $('<pre>').html(highlightJson(JSON.stringify(json, null, 2)))
-        } else {
-          body = `<p class ="alert alert-warning rounded hide" role="alert">This message is not valid JSON.</p><p>${target}</p>`
-        }
-        jsonModalBody.html(body)
+        jsonModalBody.html(getJsonModalBody(jQuery(this).data('target')))
         jsonModal.modal('show')
       })
   }
@@ -1051,6 +1037,47 @@ messageTextarea.on('keydown', function (e) {
 })
 
 // UTILITIES
+
+// Return JSON Modal body used for pretty-printing
+// Handles valid and invalid JSON and valid JSON objects enclosed within a string
+// TODO finish unit tests
+const getJsonModalBody = function (string) {
+  const prefix = '<p><code class="bwc-code">'
+  const suffix = '</code></p>'
+  let body = ''
+  let useCurly = false
+  let useSquare = false
+  let wrapperPrefix
+  let wrapperSuffix
+  if (isValidJson(string)) {
+    body = `<pre>${highlightJson(string)}</pre>`
+  } else {
+    const curlyBracketSubstring = string.substring(string.indexOf('{'), string.lastIndexOf('}') + 1)
+    const squareBracketSubstring = string.substring(string.indexOf('['), string.lastIndexOf(']') + 1)
+    if (curlyBracketSubstring.length >= squareBracketSubstring.length) {
+      useCurly = isValidJson(curlyBracketSubstring)
+    } else {
+      useSquare = isValidJson(squareBracketSubstring)
+    }
+    if (useCurly) {
+      wrapperPrefix = string.substring(0, string.indexOf('{'))
+      wrapperSuffix = string.substring(string.lastIndexOf('}') + 1, string.length)
+      if (wrapperPrefix) body += `${prefix}${wrapperPrefix}${suffix}`
+      body += `<pre>${highlightJson(curlyBracketSubstring)}</pre>`
+      if (wrapperSuffix) body += `${prefix}${wrapperSuffix}${suffix}`
+    } else if (useSquare) {
+      wrapperPrefix = string.substring(0, string.indexOf('['))
+      wrapperSuffix = string.substring(string.lastIndexOf(']') + 1, string.length)
+      if (wrapperPrefix) body += `${prefix}${wrapperPrefix}${suffix}`
+      body += `<pre>${highlightJson(squareBracketSubstring)}</pre>`
+      if (wrapperSuffix) body += `${prefix}${wrapperSuffix}${suffix}`
+    } else {
+      body = `<p class ="alert alert-warning rounded hide" role="alert">This message does not contain any valid JSON.</p>
+              <p><code class="bwc-key">${string}</code></p>`
+    }
+  }
+  return body
+}
 
 // Change collapse header chevron to up on show and down on hide
 const setChevron = function (id) {
@@ -1101,10 +1128,11 @@ $(document).ready(function () {
 
 // Used in unit tests
 export {
-  convertJsonToString,
   deleteOptions,
+  getJsonModalBody,
   getProtocols,
+  highlightJson,
   isValidJson,
   isValidUrl,
-  highlightJson
+  stringifyJson
 }

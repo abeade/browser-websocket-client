@@ -1,8 +1,14 @@
-import { convertJsonToString, deleteOptions, getProtocols, highlightJson, isValidJson, isValidUrl } from '../../../main/index'
+import { deleteOptions, getJsonModalBody, getProtocols, highlightJson, isValidJson, isValidUrl, stringifyJson } from '../../../main/index'
 
 describe('Unit Tests', function () {
   const jsonMessageInvalid = '"missingLeadingBracket": true}'
   const jsonMessageValid = '{"Message 1":{"null":null,"number":42,"string":"is the answer to everything","boolean":false}}'
+  const curlyPrefix = 'Prefix{"subscribe": ["id1", "id2"]}'
+  const curlySuffix = '{"subscribe": ["id1", "id2"]}Suffix'
+  const curlyWrapper = 'Prefix{"subscribe": ["id1", "id2"]}Suffix'
+  const squarePrefix = 'Prefix["subscribe", ["id1", "id2"]]'
+  const squareSufffix = '["subscribe", ["id1", "id2"]]Suffix'
+  const squareWrapper = 'Prefix["subscribe", ["id1", "id2"]]Suffix'
 
   before(() => {
     cy.mockChromeStorageAndVisit()
@@ -35,17 +41,28 @@ describe('Unit Tests', function () {
     })
   })
 
-  describe('convertJsonToString()', function () {
+  describe('getJsonModalBody()', function () {
+    // TODO
+    it('should return one element with valid JSON', function () {
+      const body = getJsonModalBody(jsonMessageValid)
+      const element = window.document.createElement('div')
+      element.innerHTML = body
+      const children = element.children
+      expect(children.length).to.eq(1)
+    })
+  })
+
+  describe('stringifyJson()', function () {
     const object = {'question': 'answer'}
     const string = '{"question": "answer"}'
     const result = '{"question":"answer"}'
 
     it('should return a string if passed an object', function () {
-      expect(convertJsonToString(object)).to.eq(result)
+      expect(stringifyJson(object)).to.eq(result)
     })
 
-    it('should return a string without spaces if passed a string', function () {
-      expect(convertJsonToString(string)).to.eq(result)
+    it('should return the same string if passed a string', function () {
+      expect(stringifyJson(string)).to.eq(string)
     })
   })
 
@@ -108,7 +125,7 @@ describe('Unit Tests', function () {
       expect(getProtocols(input)).to.eq(null)
     })
   })
-  
+
   describe('deleteOptions()', function () {
     const SEPARATOR = '\u0007'
     let savedOptions
@@ -148,7 +165,7 @@ describe('Unit Tests', function () {
       expect(options.protocols.length).to.eq(1, 'protocols')
       expect(options.urls.length).to.eq(3, 'urls')
     })
-    
+
     it('switch.url', function () {
       const options = deleteOptions('url', 'ws://localhost:8080/ws/one', savedOptions)
       expect(options.messages.length).to.eq(3, 'messages')
