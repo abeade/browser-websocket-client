@@ -7,7 +7,7 @@ describe('Unit Tests', function () {
   const curlySuffix = '{"subscribe": ["id1", "id2"]}Suffix'
   const curlyWrapper = 'Prefix{"subscribe": ["id1", "id2"]}Suffix'
   const squarePrefix = 'Prefix["subscribe", ["id1", "id2"]]'
-  const squareSufffix = '["subscribe", ["id1", "id2"]]Suffix'
+  const squareSuffix = '["subscribe", ["id1", "id2"]]Suffix'
   const squareWrapper = 'Prefix["subscribe", ["id1", "id2"]]Suffix'
 
   before(() => {
@@ -42,13 +42,70 @@ describe('Unit Tests', function () {
   })
 
   describe('getJsonModalBody()', function () {
-    // TODO
     it('should return one element with valid JSON', function () {
       const body = getJsonModalBody(jsonMessageValid)
       const element = window.document.createElement('div')
       element.innerHTML = body
       const children = element.children
       expect(children.length).to.eq(1)
+    })
+    it('should return two elements and a warning with invalid JSON', function () {
+      const body = getJsonModalBody(jsonMessageInvalid)
+      const element = window.document.createElement('div')
+      element.innerHTML = body
+      const children = element.children
+      expect(children.length).to.eq(2)
+      expect(children[0].innerHTML).to.eq('This message does not contain any valid JSON.')
+    })
+    it('should return two elements with curlyPrefix', function () {
+      const body = getJsonModalBody(curlyPrefix)
+      const element = window.document.createElement('div')
+      element.innerHTML = body
+      const children = element.children
+      expect(children.length).to.eq(2)
+      expect(children[0].textContent).to.eq('Prefix')
+    })
+    it('should return two elements with curlySuffix', function () {
+      const body = getJsonModalBody(curlySuffix)
+      const element = window.document.createElement('div')
+      element.innerHTML = body
+      const children = element.children
+      expect(children.length).to.eq(2)
+      expect(children[1].textContent).to.eq('Suffix')
+    })
+    it('should return three elements with curlyWrapper', function () {
+      const body = getJsonModalBody(curlyWrapper)
+      const element = window.document.createElement('div')
+      element.innerHTML = body
+      const children = element.children
+      expect(children.length).to.eq(3)
+      expect(children[0].textContent).to.eq('Prefix')
+      expect(children[2].textContent).to.eq('Suffix')
+    })
+    it('should return two elements with squarePrefix', function () {
+      const body = getJsonModalBody(squarePrefix)
+      const element = window.document.createElement('div')
+      element.innerHTML = body
+      const children = element.children
+      expect(children.length).to.eq(2)
+      expect(children[0].textContent).to.eq('Prefix')
+    })
+    it('should return two elements with squareSuffix', function () {
+      const body = getJsonModalBody(squareSuffix)
+      const element = window.document.createElement('div')
+      element.innerHTML = body
+      const children = element.children
+      expect(children.length).to.eq(2)
+      expect(children[1].textContent).to.eq('Suffix')
+    })
+    it('should return three elements with squareWrapper', function () {
+      const body = getJsonModalBody(squareWrapper)
+      const element = window.document.createElement('div')
+      element.innerHTML = body
+      const children = element.children
+      expect(children.length).to.eq(3)
+      expect(children[0].textContent).to.eq('Prefix')
+      expect(children[2].textContent).to.eq('Suffix')
     })
   })
 

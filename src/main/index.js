@@ -626,7 +626,7 @@ const formatTextarea = function (checkbox, textarea) {
   const valid = isValidJson(message)
   if (!valid) {
     checkbox.prop('checked', false)
-  } else if (valid && checked) {
+  } else if (checked) {
     textarea.val(JSON.stringify(JSON.parse(message), null, 2))
   } else {
     textarea.val(editingMessageTargetBody)
@@ -1040,7 +1040,6 @@ messageTextarea.on('keydown', function (e) {
 
 // Return JSON Modal body used for pretty-printing
 // Handles valid and invalid JSON and valid JSON objects enclosed within a string
-// TODO finish unit tests
 const getJsonModalBody = function (string) {
   const prefix = '<p><code class="bwc-code">'
   const suffix = '</code></p>'

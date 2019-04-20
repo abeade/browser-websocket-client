@@ -175,7 +175,6 @@ describe('Options -> Preferences', function () {
   })
 
   it('prevent using an invalid message body in the Client section', function () {
-    const name = 'name'
     cy.get('#preferencesClientMessageCheckbox').then((checkbox) => {
       if (!checkbox.prop('checked')) {
         cy.get('#preferencesClientMessageSlider').click()
@@ -197,7 +196,6 @@ describe('Options -> Preferences', function () {
   })
 
   it('allow using an invalid message body in the Client section', function () {
-    const name = 'name'
     cy.get('#preferencesClientMessageCheckbox').then((checkbox) => {
       if (checkbox.prop('checked')) {
         cy.get('#preferencesClientMessageSlider').click()
