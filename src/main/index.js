@@ -1044,8 +1044,6 @@ const getJsonModalBody = function (string) {
   const prefix = '<p><code class="bwc-code">'
   const suffix = '</code></p>'
   let body = ''
-  let useCurly = false
-  let useSquare = false
   let wrapperPrefix
   let wrapperSuffix
   if (isValidJson(string)) {
@@ -1053,18 +1051,16 @@ const getJsonModalBody = function (string) {
   } else {
     const curlyBracketSubstring = string.substring(string.indexOf('{'), string.lastIndexOf('}') + 1)
     const squareBracketSubstring = string.substring(string.indexOf('['), string.lastIndexOf(']') + 1)
-    if (curlyBracketSubstring.length >= squareBracketSubstring.length) {
-      useCurly = isValidJson(curlyBracketSubstring)
-    } else {
-      useSquare = isValidJson(squareBracketSubstring)
-    }
-    if (useCurly) {
+    const curlyValid = isValidJson(curlyBracketSubstring)
+    const squareValid = isValidJson(squareBracketSubstring)
+    const curlyLonger = curlyBracketSubstring.length >= squareBracketSubstring.length
+    if (curlyLonger && curlyValid) {
       wrapperPrefix = string.substring(0, string.indexOf('{'))
       wrapperSuffix = string.substring(string.lastIndexOf('}') + 1, string.length)
       if (wrapperPrefix) body += `${prefix}${wrapperPrefix}${suffix}`
       body += `<pre>${highlightJson(curlyBracketSubstring)}</pre>`
       if (wrapperSuffix) body += `${prefix}${wrapperSuffix}${suffix}`
-    } else if (useSquare) {
+    } else if (squareValid) {
       wrapperPrefix = string.substring(0, string.indexOf('['))
       wrapperSuffix = string.substring(string.lastIndexOf(']') + 1, string.length)
       if (wrapperPrefix) body += `${prefix}${wrapperPrefix}${suffix}`
