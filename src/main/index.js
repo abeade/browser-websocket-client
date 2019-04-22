@@ -135,6 +135,36 @@ const deleteModalCancelButton = $('#deleteModalCancelButton')
 const deleteModalDeleteButton = $('#deleteModalDeleteButton')
 const deleteModalName = $('#deleteModalName')
 const options = $('#options')
+const optionsHeartbeatCancelEditButton = $('#optionsHeartbeatCancelEditButton')
+const optionsHeartbeatDelayInput = $('#optionsHeartbeatDelayInput')
+const optionsHeartbeatDelayInputLabel = $('#optionsHeartbeatDelayInputLabel')
+const optionsHeartbeatFrequencyInput = $('#optionsHeartbeatFrequencyInput')
+const optionsHeartbeatFrequencyInputLabel = $('#optionsHeartbeatFrequencyInputLabel')
+const optionsHeartbeatJsonInvalidWarning = $('#optionsHeartbeatJsonInvalidWarning')
+const optionsHeartbeatNameInput = $('#optionsHeartbeatNameInput')
+const optionsHeartbeatNameInputLabel = $('#optionsHeartbeatNameInputLabel')
+const optionsHeartbeatNameInvalid = $('#optionsHeartbeatNameInvalid')
+const optionsHeartbeatNoneSaved = $('#optionsHeartbeatNoneSaved')
+const optionsHeartbeats = $('#optionsHeartbeats')
+const optionsHeartbeatsAnchor = $('#optionsHeartbeatsAnchor')
+const optionsHeartbeatSaveButton = $('#optionsHeartbeatSaveButton')
+const optionsHeartbeatSavedTable = $('#optionsHeartbeatSavedTable')
+const optionsHeartbeatServerMessageInput = $('#optionsHeartbeatServerMessageInput')
+const optionsHeartbeatServerMessageTypeObject = $('#optionsHeartbeatServerMessageTypeObject')
+const optionsHeartbeatServerMessageTypeSelect = $('#optionsHeartbeatServerMessageTypeSelect')
+const optionsHeartbeatServerMessageTypeSelectMenu = $('#optionsHeartbeatServerMessageTypeSelectMenu')
+const optionsHeartbeatServerMessageTypeSelectOptions = $('#optionsHeartbeatServerMessageTypeSelectOptions')
+const optionsHeartbeatServerMessageTypeString = $('#optionsHeartbeatServerMessageTypeString')
+const optionsHeartbeatsHeading = $('#optionsHeartbeatsHeading')
+const optionsHeartbeatStatus = $('#optionsHeartbeatStatus')
+const optionsHeartbeatTextarea = $('#optionsHeartbeatTextarea')
+const optionsHeartbeatTextareaEmpty = $('#optionsHeartbeatTextareaEmpty')
+const optionsHeartbeatTextareaFormatCheckbox = $('#optionsHeartbeatTextareaFormatCheckbox')
+const optionsHeartbeatTextareaFormatSlider = $('#optionsHeartbeatTextareaFormatSlider')
+const optionsHeartbeatTextareaLabel = $('#optionsHeartbeatTextareaLabel')
+const optionsHeartbeatTrackServerMessageCheckbox = $('#optionsHeartbeatTrackServerMessageCheckbox')
+const optionsHeartbeatTrackServerMessageOptions = $('#optionsHeartbeatTrackServerMessageOptions')
+const optionsHeartbeatTrackServerMessageSlider = $('#optionsHeartbeatTrackServerMessageSlider')
 const optionsMessageCancelEditButton = $('#optionsMessageCancelEditButton')
 const optionsMessageJsonInvalidWarning = $('#optionsMessageJsonInvalidWarning')
 const optionsMessageNameInput = $('#optionsMessageNameInput')
@@ -146,8 +176,8 @@ const optionsMessageSavedTable = $('#optionsMessageSavedTable')
 const optionsMessageStatus = $('#optionsMessageStatus')
 const optionsMessageTextarea = $('#optionsMessageTextarea')
 const optionsMessageTextareaEmpty = $('#optionsMessageTextareaEmpty')
-const optionsMessageTextareaFormatSlider = $('#optionsMessageTextareaFormatSlider')
 const optionsMessageTextareaFormatCheckbox = $('#optionsMessageTextareaFormatCheckbox')
+const optionsMessageTextareaFormatSlider = $('#optionsMessageTextareaFormatSlider')
 const optionsProtocolCancelEditButton = $('#optionsProtocolCancelEditButton')
 const optionsProtocolInput = $('#optionsProtocolInput')
 const optionsProtocolInputEmpty = $('#optionsProtocolInputEmpty')
@@ -172,6 +202,15 @@ const client = $('#client')
 const connectButton = $('#connectButton')
 const connectionStatus = $('#connectionStatus')
 const disconnectButton = $('#disconnectButton')
+const heartbeatClientStatus = $('#heartbeatClientStatus')
+const heartbeatClientStatusTime = $('#heartbeatClientStatusTime')
+const heartbeatSelect = $('#heartbeatSelect')
+const heartbeatSelectMenu = $('#heartbeatSelectMenu')
+const heartbeatSelectOptions = $('#heartbeatSelectOptions')
+const heartbeatServerStatus = $('#heartbeatServerStatus')
+const heartbeatServerStatusTime = $('#heartbeatServerStatusTime')
+const heartbeatStartButton = $('#heartbeatStartButton')
+const heartbeatStopButton = $('#heartbeatStopButton')
 const jsonModal = $('#jsonModal')
 const jsonModalBody = $('#jsonModalBody')
 const jsonModalTitle = $('#jsonModalTitle')
@@ -193,6 +232,10 @@ const urlSelectOptions = $('#urlSelectOptions')
 
 // Immutable variables
 const url = document.location.toString()
+const optionsHeartbeatDelayMin = 0
+const optionsHeartbeatDelayMax = 300
+const optionsHeartbeatFrequencyMin = 1
+const optionsHeartbeatFrequencyMax = 300
 const optionsUrlInputLabelDefaultText = 'The URL should begin with <code>ws://</code> or <code>wss://</code>:'
 const optionsMessageNameInputLabelDefaultText = 'The display name appears in the "Saved Messages" table and client drop-down menu:'
 const optionsProtocolInputLabelDefaultText = 'Enter a single protocol name or multiple comma-separated names:'
@@ -568,6 +611,114 @@ optionsProtocolSaveButton.on('click', function () {
     .text('Protocol saved.')
     .show()
 })
+
+// OPTIONS: HEARTBEAT PERSISTWNCE
+
+/* TODO
+
+ */
+const optionsHeartbeatDefaultMap = new Map([
+  ['name',  ''],
+  ['delay', 0],
+  ['frequency', 60],
+  ['clientMessage', ''],
+  ['trackServerMessage', false],
+  ['serverMessageType', 'object'],
+  ['serverMessage', '']
+])
+let optionsHeartbeatWorkingMap = new Map(optionsHeartbeatDefaultMap)
+
+const resetHeartbeatOptions = function() {
+  optionsHeartbeatNameInput.val('')
+  optionsHeartbeatDelayInput.val('')
+  optionsHeartbeatFrequencyInput.val('')
+  optionsHeartbeatTextarea.val('')
+  optionsHeartbeatServerMessageInput.hide()
+  optionsHeartbeatTrackServerMessageOptions.hide()
+  optionsHeartbeatServerMessageTypeObject.hide()
+  optionsHeartbeatServerMessageTypeString.hide()
+  optionsHeartbeatServerMessageTypeSelectMenu.text('Server Message Type')
+  optionsHeartbeatTrackServerMessageCheckbox.prop('checked', false)
+}
+
+optionsHeartbeatDelayInput.on('focusout', function () {
+  const value = parseInt(optionsHeartbeatDelayInput.val(), 10)
+  if (value >= optionsHeartbeatDelayMin &&  value <= optionsHeartbeatDelayMax) {
+    console.log('valid')
+  } else {
+    console.log('invalid')
+  }
+})
+
+optionsHeartbeatFrequencyInput.on('focusout', function () {
+  const value = parseInt(optionsHeartbeatFrequencyInput.val(), 10)
+  if (value >= optionsHeartbeatFrequencyMin &&  value <= optionsHeartbeatFrequencyMax) {
+    console.log('valid')
+  } else {
+    console.log('invalid')
+  }
+})
+
+$('.dropdown-item.heartbeat-server-message-type').on('click', function () {
+  const value = jQuery(this).data('value')
+  optionsHeartbeatServerMessageTypeSelectMenu.text(value)
+  if (value === 'Object') {
+    optionsHeartbeatServerMessageInput.show()
+    optionsHeartbeatServerMessageTypeObject.show()
+    optionsHeartbeatServerMessageTypeString.hide()
+  }
+  if (value === 'String') {
+    optionsHeartbeatServerMessageInput.show()
+    optionsHeartbeatServerMessageTypeObject.hide()
+    optionsHeartbeatServerMessageTypeString.show()
+  }
+})
+
+optionsHeartbeatServerMessageInput.on('focusout', function () {
+  optionsHeartbeatServerMessage.text(optionsHeartbeatServerMessageInput.val())
+
+})
+
+optionsHeartbeatTrackServerMessageCheckbox.on('change', function () {
+  if(optionsHeartbeatTrackServerMessageCheckbox.is(':checked')) {
+    optionsHeartbeatTrackServerMessageOptions.show()
+  } else {
+    optionsHeartbeatServerMessageInput.hide()
+    optionsHeartbeatTrackServerMessageOptions.hide()
+    optionsHeartbeatServerMessageTypeObject.hide()
+    optionsHeartbeatServerMessageTypeString.hide()
+  }
+})
+
+optionsHeartbeatCancelEditButton.on('click', function () {
+  resetHeartbeatOptions()
+})
+
+// CLIENT: HEARTBEAT
+
+/* TODO
+heartbeatClientStatusTime
+heartbeatServerStatusTime class="text-success || text-danger"
+ */
+$('.dropdown-item.heartbeat').on('click', function () {
+  const value = jQuery(this).data('value')
+  heartbeatSelectMenu.text(value)
+  heartbeatStartButton.prop('disabled', false)
+})
+
+heartbeatStartButton.on('click', function () {
+  heartbeatStartButton.hide()
+  heartbeatStopButton.show()
+  heartbeatClientStatus.show()
+  heartbeatServerStatus.show()
+})
+
+heartbeatStopButton.on('click', function () {
+  heartbeatStartButton.show()
+  heartbeatStopButton.hide()
+  heartbeatClientStatus.hide()
+  heartbeatServerStatus.hide()
+  heartbeatSelectMenu.text('Saved Heartbeats')})
 
 // OPTIONS: MESSAGE PERSISTENCE
 

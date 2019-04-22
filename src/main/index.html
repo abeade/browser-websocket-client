@@ -275,6 +275,221 @@
 						</div>
 					</div>
 
+					<!--HEARTBEATS-->
+
+					<div class="card">
+						<div id="optionsHeartbeatsHeading" class="card-header" role="tab">
+							<h5 class="mb-0">
+								<a id="optionsHeartbeatsAnchor"
+								   class="bwc-accordion-anchor"
+								   data-toggle="collapse"
+								   href="#optionsHeartbeats"
+								   aria-expanded="false"
+								   aria-controls="optionsHeartbeats">
+									Heartbeats
+									<i class="fa fa-chevron-down bwc-accordion-heading-icon float-right"
+									   aria-hidden="true"></i>
+								</a>
+							</h5>
+						</div>
+						<div id="optionsHeartbeats"
+							 class="collapse"
+							 role="tabpanel"
+							 aria-labelledby="optionsHeartbeatsHeading"
+							 data-parent="#options">
+							<div class="card-body">
+								<h5>
+									Saved Heartbeats
+								</h5>
+								<p id="optionsHeartbeatNoneSaved">
+									You have not saved any heartbeats.
+								</p>
+								<div id="optionsHeartbeatSavedTable" class="clearfix"></div>
+								<h5 class="bwc-margin-top">
+									Save a heartbeat
+								</h5>
+								<!--HEARTBEAT NAME-->
+								<label id="optionsHeartbeatNameInputLabel" for="optionsHeartbeatNameInput">
+									The display name appears in the "Saved Heartbeats" table and Client drop-down menu:
+								</label>
+								<input id="optionsHeartbeatNameInput"
+									   class="form-control"
+									   type="text"
+									   placeholder="Display Name"/>
+								<p id="optionsHeartbeatNameInvalid" class="alert alert-warning rounded hide"
+								   role="alert">
+									You must enter a display name.
+								</p>
+								<!--TODO validation alert-->
+								<!--HEARTBEAT DELAY-->
+								<label id="optionsHeartbeatDelayInputLabel" for="optionsHeartbeatDelayInput">
+									Delay in seconds (accepts 0 through 300):
+								</label>
+								<span class="bwc-preferences-info"
+									  aria-hidden="true"
+									  data-container="body"
+									  data-toggle="popover"
+									  data-test="popover-save-url"
+									  data-placement="top"
+									  data-html="true"
+									  data-title="Heartbeat Delay"
+									  data-content="This value determines how long the client will wait before the first heartbeat message is sent to the server.">
+										<i class="fa fa-info-circle fa-lg"></i>
+									</span>
+								<input id="optionsHeartbeatDelayInput"
+									   class="form-control"
+									   type="text"
+									   placeholder="Delay"/>
+								<!--TODO validation alert-->
+								<!--HEARTBEAT FREQUENCY-->
+								<label id="optionsHeartbeatFrequencyInputLabel" for="optionsHeartbeatFrequencyInput">
+									Frequency in seconds (accepts 1 through 300):
+								</label>
+								<span class="bwc-preferences-info"
+									  aria-hidden="true"
+									  data-container="body"
+									  data-toggle="popover"
+									  data-test="popover-save-url"
+									  data-placement="top"
+									  data-html="true"
+									  data-title="Heartbeat Frequency"
+									  data-content="This value determines how often the client will send the heartbeat message to the server.">
+									<i class="fa fa-info-circle fa-lg"></i>
+								</span>
+								<input id="optionsHeartbeatFrequencyInput"
+									   class="form-control"
+									   type="text"
+									   placeholder="Frequency"/>
+								<!--HEARTBEAT CLIENT MESSAGE-->
+								<label id="optionsHeartbeatTextareaLabel" for="optionsHeartbeatTextarea">
+									Message to send from the client to the server:
+								</label>
+								<textarea id="optionsHeartbeatTextarea"
+										  class="form-control"
+										  placeholder="Message from Client"></textarea>
+								<p id="optionsHeartbeatStatus" class="hide"></p>
+								<p id="optionsHeartbeatTextareaEmpty" class="alert alert-warning rounded hide"
+								   role="alert">
+									You must enter a message body.
+								</p>
+								<p id="optionsHeartbeatJsonInvalidWarning" class="alert alert-warning rounded hide"
+								   role="alert">
+									Invalid JSON! You entered invalid JSON in the message body.
+								</p>
+								<div class="bwc-slider-row">
+									<label class="bwc-switch" for="optionsHeartbeatTextareaFormatCheckbox">
+										<input id="optionsHeartbeatTextareaFormatCheckbox" type="checkbox">
+										<span id="optionsHeartbeatTextareaFormatSlider"
+											  class="bwc-slider bwc-slider-disabled"></span>
+									</label>
+									<span class="bwc-switch-label">
+										Toggle JSON formatting from single line to multi-line.
+									</span>
+								</div>
+								<!--HEARTBEAT TRACK SERVER MESSAGES-->
+								<div class="bwc-slider-row">
+									<label class="bwc-switch" for="optionsHeartbeatTrackServerMessageCheckbox">
+										<input id="optionsHeartbeatTrackServerMessageCheckbox" type="checkbox">
+										<span id="optionsHeartbeatTrackServerMessageSlider"
+											  class="bwc-slider bwc-slider-disabled"></span>
+									</label>
+									<span class="bwc-switch-label">
+										Track Server Heartbeat Messages
+										<span class="bwc-preferences-info"
+											  aria-hidden="true"
+											  data-container="body"
+											  data-toggle="popover"
+											  data-test="popover-save-url"
+											  data-placement="top"
+											  data-html="true"
+											  data-title="Server Heartbeat Message"
+											  data-content="This section allows the client to determine when a heartbeat message is received from the server. Although the received message will always appear in the client received messages area, using this option will allow the client to track server heartbeat messages and display the last-received time. If a message from the server is overdue, it will highlight the last-received time in red.">
+											<i class="fa fa-info-circle fa-lg"></i>
+										</span>
+									</span>
+								</div>
+								<div id="optionsHeartbeatTrackServerMessageOptions" class="mb-4 hide">
+									<div id="optionsHeartbeatServerMessageTypeSelect" class="dropdown">
+										<button id="optionsHeartbeatServerMessageTypeSelectMenu"
+												class="btn btn-primary dropdown-toggle"
+												type="button"
+												data-toggle="dropdown"
+												aria-haspopup="true"
+												aria-expanded="false">
+											Server Message Type
+										</button>
+										<div id="optionsHeartbeatServerMessageTypeSelectOptions"
+											 class="dropdown-menu"
+											 aria-labelledby="optionsHeartbeatServerMessageTypeSelectMenu">
+											<button class="dropdown-item heartbeat-server-message-type"
+													type="button"
+													data-value="Object">
+												Object
+											</button>
+											<button class="dropdown-item heartbeat-server-message-type"
+													type="button"
+													data-value="String">
+												String
+											</button>
+										</div>
+										<span class="bwc-preferences-info"
+											  aria-hidden="true"
+											  data-container="body"
+											  data-toggle="popover"
+											  data-test="popover-save-url"
+											  data-placement="top"
+											  data-html="true"
+											  data-title="Server Heartbeat Message Type"
+											  data-content="TODO"> <!--TODO-->
+											<i class="fa fa-info-circle fa-lg"></i>
+										</span>
+									</div>
+									<p id="optionsHeartbeatServerMessageTypeObject" class="hide">
+										The heartbeat message from the server must contain an <code>object</code> with
+										the following property:
+										<span class="bwc-preferences-info"
+											  aria-hidden="true"
+											  data-container="body"
+											  data-toggle="popover"
+											  data-test="popover-save-url"
+											  data-placement="top"
+											  data-html="true"
+											  data-title="Server Heartbeat Message Property"
+											  data-content="For example, <code>messageType.heartbeat</code>"> <!--TODO-->
+										<i class="fa fa-info-circle fa-lg"></i>
+									</span>
+									</p>
+									<p id="optionsHeartbeatServerMessageTypeString" class="hide">
+										The heartbeat message from the server must contain the following
+										<code>string</code>:
+										<span class="bwc-preferences-info"
+											  aria-hidden="true"
+											  data-container="body"
+											  data-toggle="popover"
+											  data-test="popover-save-url"
+											  data-placement="top"
+											  data-html="true"
+											  data-title="Server Heartbeat Message String"
+											  data-content="For example, <code>this is a heartbeat message from the server</code>"> <!--TODO-->
+										<i class="fa fa-info-circle fa-lg"></i>
+									</span>
+									</p>
+									<input id="optionsHeartbeatServerMessageInput"
+										   class="form-control hide"
+										   type="text"
+										   placeholder="Server Heartbeat Message Object or String"/>
+								</div>
+								<!--HEARTBEAT SAVE BUTTONS-->
+								<button id="optionsHeartbeatSaveButton" class="btn btn-primary" disabled="disabled">
+									Save Heartbeat
+								</button>
+								<button id="optionsHeartbeatCancelEditButton" class="btn btn-secondary">
+									Cancel
+								</button>
+							</div>
+						</div>
+					</div>
+
 					<!--MESSAGES-->
 
 					<div class="card">
@@ -316,7 +531,8 @@
 									   type="text"
 									   placeholder="Display Name"/>
 								<label id="optionsMessageTextareaLabel" for="optionsMessageTextarea">
-									The message body does not appear in the "Saved Messages" table or Client drop-down menu:
+									The message body does not appear in the "Saved Messages" table or Client drop-down
+									menu:
 								</label>
 								<textarea id="optionsMessageTextarea"
 										  class="form-control"
@@ -378,6 +594,9 @@
 				 aria-labelledby="clientHeading"
 				 data-parent="#accordion">
 				<div class="card-body">
+
+					<!--URL-->
+
 					<h5>
 						Server URL (Required)
 					</h5>
@@ -406,6 +625,9 @@
 						Invalid URL! It should begin with <code>ws://</code> or <code>wss://</code> and not contain any
 						spaces.
 					</p>
+
+					<!--PROTOCOL-->
+
 					<h5>
 						Server Protocol (Optional)
 					</h5>
@@ -444,6 +666,59 @@
 						Disconnect
 					</button>
 					<hr/>
+
+					<!--HEARTBEAT-->
+
+					<h5>
+						Heartbeat
+					</h5>
+					<div id="heartbeatSelect" class="dropdown">
+						<button id="heartbeatSelectMenu"
+								class="btn btn-primary dropdown-toggle"
+								type="button"
+								data-toggle="dropdown"
+								aria-haspopup="true"
+								aria-expanded="false">
+							Saved Heartbeats
+						</button>
+						<div id="heartbeatSelectOptions"
+							 class="dropdown-menu"
+							 aria-labelledby="heartbeatSelectMenu">
+							<button class="dropdown-item heartbeat"
+									type="button"
+									data-value="TODO 1">
+								TODO 1
+							</button>
+							<button class="dropdown-item heartbeat"
+									type="button"
+									data-value="TODO 2">
+								TODO 2
+							</button>
+						</div>
+					</div>
+
+					<div class="mt-3 mb-3">
+						<button id="heartbeatStartButton" class="btn btn-primary" disabled="disabled">
+							Start
+						</button>
+						<button id="heartbeatStopButton" class="btn btn-danger hide">
+							Stop
+						</button>
+					</div>
+
+					<!--TODO-->
+					<p id="heartbeatClientStatus" class="hide">
+						Last message sent from client: <span id="heartbeatClientStatusTime">13:45:26</span>
+					</p>
+
+					<!--TODO-->
+					<p id="heartbeatServerStatus" class="hide">
+						Last message received from server: <span id=heartbeatServerStatusTime" class="text-danger">13:42:26</span>
+					</p>
+					<hr/>
+
+					<!--MESSAGE-->
+
 					<h5>
 						Send a Message
 					</h5>
