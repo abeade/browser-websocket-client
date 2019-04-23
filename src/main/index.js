@@ -28,6 +28,7 @@ const savedOptions = {
     preventSavingMessage: true,
     preventUsingMessage: true
   },
+  heartbeats: [],
   messages: [],
   protocols: [],
   urls: []
@@ -79,6 +80,19 @@ fontawesome.library.add(
 const SEPARATOR = '\u0007'
 
 // HTML snippets for saved table row items
+const heartbeatTableRow = `
+<div class="bwc-table-row rounded">
+  <span>
+    REPLACE_NAME
+  </span>
+  <span class="deleteHeartbeat bwc-table-row-icon float-right" data-toggle="tooltip" data-placement="top" title="Click to delete this heartbeat" data-heartbeat='REPLACE_ALL'>
+      <i class="fa fa-trash-alt" aria-hidden="true"></i>
+  </span>
+  <span class="editHeartbeat bwc-table-row-icon float-right" data-toggle="tooltip" data-placement="top" title="Click to edit this heartbeat" data-heartbeat='REPLACE_ALL'>
+    <i class="fa fa-pencil-alt" aria-hidden="true"></i>
+  </span>
+</div>
+`
 const messageTableRow = `
 <div class="bwc-table-row rounded">
   <span>
@@ -136,8 +150,8 @@ const deleteModalDeleteButton = $('#deleteModalDeleteButton')
 const deleteModalName = $('#deleteModalName')
 const options = $('#options')
 const optionsHeartbeatCancelEditButton = $('#optionsHeartbeatCancelEditButton')
-const optionsHeartbeatDelayInput = $('#optionsHeartbeatDelayInput')
-const optionsHeartbeatDelayInputLabel = $('#optionsHeartbeatDelayInputLabel')
+const optionsHeartbeatDisplayServerMessage = $('#optionsHeartbeatDisplayServerMessage')
+const optionsHeartbeatDisplayServerMessageCheckbox = $('#optionsHeartbeatDisplayServerMessageCheckbox')
 const optionsHeartbeatFrequencyInput = $('#optionsHeartbeatFrequencyInput')
 const optionsHeartbeatFrequencyInputLabel = $('#optionsHeartbeatFrequencyInputLabel')
 const optionsHeartbeatJsonInvalidWarning = $('#optionsHeartbeatJsonInvalidWarning')
@@ -618,19 +632,18 @@ optionsProtocolSaveButton.on('click', function () {
 
  */
 const optionsHeartbeatDefaultMap = new Map([
-  ['name',  ''],
-  ['delay', 0],
+  ['name', ''],
   ['frequency', 60],
   ['clientMessage', ''],
   ['trackServerMessage', false],
   ['serverMessageType', 'object'],
-  ['serverMessage', '']
+  ['serverMessage', ''],
+  ['displayServerMessage', false]
 ])
 let optionsHeartbeatWorkingMap = new Map(optionsHeartbeatDefaultMap)
 
-const resetHeartbeatOptions = function() {
+const resetHeartbeatOptions = function () {
   optionsHeartbeatNameInput.val('')
-  optionsHeartbeatDelayInput.val('')
   optionsHeartbeatFrequencyInput.val('')
   optionsHeartbeatTextarea.val('')
   optionsHeartbeatServerMessageInput.hide()
@@ -639,20 +652,12 @@ const resetHeartbeatOptions = function() {
   optionsHeartbeatServerMessageTypeString.hide()
   optionsHeartbeatServerMessageTypeSelectMenu.text('Server Message Type')
   optionsHeartbeatTrackServerMessageCheckbox.prop('checked', false)
+  optionsHeartbeatDisplayServerMessage.hide()
 }
-
-optionsHeartbeatDelayInput.on('focusout', function () {
-  const value = parseInt(optionsHeartbeatDelayInput.val(), 10)
-  if (value >= optionsHeartbeatDelayMin &&  value <= optionsHeartbeatDelayMax) {
-    console.log('valid')
-  } else {
-    console.log('invalid')
-  }
-})
 
 optionsHeartbeatFrequencyInput.on('focusout', function () {
   const value = parseInt(optionsHeartbeatFrequencyInput.val(), 10)
-  if (value >= optionsHeartbeatFrequencyMin &&  value <= optionsHeartbeatFrequencyMax) {
+  if (value >= optionsHeartbeatFrequencyMin && value <= optionsHeartbeatFrequencyMax) {
     console.log('valid')
   } else {
     console.log('invalid')
@@ -662,6 +667,7 @@ optionsHeartbeatFrequencyInput.on('focusout', function () {
 $('.dropdown-item.heartbeat-server-message-type').on('click', function () {
   const value = jQuery(this).data('value')
   optionsHeartbeatServerMessageTypeSelectMenu.text(value)
+  optionsHeartbeatDisplayServerMessage.show()
   if (value === 'Object') {
     optionsHeartbeatServerMessageInput.show()
     optionsHeartbeatServerMessageTypeObject.show()
@@ -675,18 +681,25 @@ $('.dropdown-item.heartbeat-server-message-type').on('click', function () {
 })
 
 optionsHeartbeatServerMessageInput.on('focusout', function () {
-  optionsHeartbeatServerMessage.text(optionsHeartbeatServerMessageInput.val())
-
+  // optionsHeartbeatServerMessage.text(optionsHeartbeatServerMessageInput.val())
 })
 
 optionsHeartbeatTrackServerMessageCheckbox.on('change', function () {
-  if(optionsHeartbeatTrackServerMessageCheckbox.is(':checked')) {
+  if (optionsHeartbeatTrackServerMessageCheckbox.is(':checked')) {
     optionsHeartbeatTrackServerMessageOptions.show()
   } else {
     optionsHeartbeatServerMessageInput.hide()
     optionsHeartbeatTrackServerMessageOptions.hide()
     optionsHeartbeatServerMessageTypeObject.hide()
     optionsHeartbeatServerMessageTypeString.hide()
+  }
+})
+
+optionsHeartbeatDisplayServerMessageCheckbox.on('change', function () {
+  if (optionsHeartbeatDisplayServerMessageCheckbox.is(':checked')) {
+    console.log('optionsHeartbeatDisplayServerMessageCheckbox checked')
+  } else {
+    console.log('optionsHeartbeatDisplayServerMessageCheckbox not checked')
   }
 })
 
@@ -718,7 +731,8 @@ heartbeatStopButton.on('click', function () {
   heartbeatStopButton.hide()
   heartbeatClientStatus.hide()
   heartbeatServerStatus.hide()
-  heartbeatSelectMenu.text('Saved Heartbeats')})
+  heartbeatSelectMenu.text('Saved Heartbeats')
+})
 
 // OPTIONS: MESSAGE PERSISTENCE
 
