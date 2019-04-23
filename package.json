@@ -24,6 +24,7 @@
     "lint": "eslint -c .eslintrc.json src/**/*.js",
     "cypress": "cypress open --project ./src/test",
     "serve": "serve -l 3000",
+    "wss": "node server/server.js",
     "test": "concurrently --kill-others \"npm:build:firefox\" \"npm:serve\" \"npm:cypress\"",
     "zip:chrome": "npm run build:chrome:production && mkdirp ./dist && zip -jr dist/chrome.zip build/production/chrome/*",
     "zip:firefox": "npm run build:firefox:production && mkdirp ./dist && zip -jr dist/firefox.zip build/production/firefox/*",
@@ -79,6 +80,7 @@
     "url-loader": "1.1.2",
     "webpack": "4.30.0",
     "webpack-cli": "3.3.1",
-    "webpack-merge": "4.2.1"
+    "webpack-merge": "4.2.1",
+    "ws": "6.2.1"
   }
 }
