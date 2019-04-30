@@ -7,6 +7,8 @@ import faPencilAlt from '@fortawesome/fontawesome-free-solid/faPencilAlt'
 import faPrint from '@fortawesome/fontawesome-free-solid/faPrint'
 import faTrashAlt from '@fortawesome/fontawesome-free-solid/faTrashAlt'
 
+const lodash = require('lodash')
+
 require('popper.js')
 require('bootstrap/js/src/button')
 require('bootstrap/js/src/collapse')
@@ -150,35 +152,31 @@ const deleteModalDeleteButton = $('#deleteModalDeleteButton')
 const deleteModalName = $('#deleteModalName')
 const options = $('#options')
 const optionsHeartbeatCancelEditButton = $('#optionsHeartbeatCancelEditButton')
+const optionsHeartbeatClientMessageTextarea = $('#optionsHeartbeatClientMessageTextarea')
+const optionsHeartbeatClientMessageTextareaEmpty = $('#optionsHeartbeatClientMessageTextareaEmpty')
+const optionsHeartbeatClientMessageTextareaFormatCheckbox = $('#optionsHeartbeatClientMessageTextareaFormatCheckbox')
 const optionsHeartbeatDisplayServerMessage = $('#optionsHeartbeatDisplayServerMessage')
 const optionsHeartbeatDisplayServerMessageCheckbox = $('#optionsHeartbeatDisplayServerMessageCheckbox')
-const optionsHeartbeatFrequencyInput = $('#optionsHeartbeatFrequencyInput')
-const optionsHeartbeatFrequencyInputLabel = $('#optionsHeartbeatFrequencyInputLabel')
-const optionsHeartbeatJsonInvalidWarning = $('#optionsHeartbeatJsonInvalidWarning')
+const optionsHeartbeatIntervalInput = $('#optionsHeartbeatIntervalInput')
+const optionsHeartbeatIntervalInvalid = $('#optionsHeartbeatIntervalInvalid')
 const optionsHeartbeatNameInput = $('#optionsHeartbeatNameInput')
 const optionsHeartbeatNameInputLabel = $('#optionsHeartbeatNameInputLabel')
 const optionsHeartbeatNameInvalid = $('#optionsHeartbeatNameInvalid')
 const optionsHeartbeatNoneSaved = $('#optionsHeartbeatNoneSaved')
-const optionsHeartbeats = $('#optionsHeartbeats')
-const optionsHeartbeatsAnchor = $('#optionsHeartbeatsAnchor')
 const optionsHeartbeatSaveButton = $('#optionsHeartbeatSaveButton')
 const optionsHeartbeatSavedTable = $('#optionsHeartbeatSavedTable')
-const optionsHeartbeatServerMessageInput = $('#optionsHeartbeatServerMessageInput')
 const optionsHeartbeatServerMessageTypeObject = $('#optionsHeartbeatServerMessageTypeObject')
+const optionsHeartbeatServerMessageTypeObjectKeyInput = $('#optionsHeartbeatServerMessageTypeObjectKeyInput')
+const optionsHeartbeatServerMessageTypeObjectOperatorSelect = $('#optionsHeartbeatServerMessageTypeObjectOperatorSelect')
+const optionsHeartbeatServerMessageTypeObjectValue = $('#optionsHeartbeatServerMessageTypeObjectValue')
+const optionsHeartbeatServerMessageTypeObjectValueInput = $('#optionsHeartbeatServerMessageTypeObjectValueInput')
 const optionsHeartbeatServerMessageTypeSelect = $('#optionsHeartbeatServerMessageTypeSelect')
-const optionsHeartbeatServerMessageTypeSelectMenu = $('#optionsHeartbeatServerMessageTypeSelectMenu')
-const optionsHeartbeatServerMessageTypeSelectOptions = $('#optionsHeartbeatServerMessageTypeSelectOptions')
 const optionsHeartbeatServerMessageTypeString = $('#optionsHeartbeatServerMessageTypeString')
-const optionsHeartbeatsHeading = $('#optionsHeartbeatsHeading')
+const optionsHeartbeatServerMessageTypeStringInput = $('#optionsHeartbeatServerMessageTypeStringInput')
+const optionsHeartbeatServerTypeInvalid = $('#optionsHeartbeatServerTypeInvalid')
 const optionsHeartbeatStatus = $('#optionsHeartbeatStatus')
-const optionsHeartbeatTextarea = $('#optionsHeartbeatTextarea')
-const optionsHeartbeatTextareaEmpty = $('#optionsHeartbeatTextareaEmpty')
-const optionsHeartbeatTextareaFormatCheckbox = $('#optionsHeartbeatTextareaFormatCheckbox')
-const optionsHeartbeatTextareaFormatSlider = $('#optionsHeartbeatTextareaFormatSlider')
-const optionsHeartbeatTextareaLabel = $('#optionsHeartbeatTextareaLabel')
 const optionsHeartbeatTrackServerMessageCheckbox = $('#optionsHeartbeatTrackServerMessageCheckbox')
 const optionsHeartbeatTrackServerMessageOptions = $('#optionsHeartbeatTrackServerMessageOptions')
-const optionsHeartbeatTrackServerMessageSlider = $('#optionsHeartbeatTrackServerMessageSlider')
 const optionsMessageCancelEditButton = $('#optionsMessageCancelEditButton')
 const optionsMessageJsonInvalidWarning = $('#optionsMessageJsonInvalidWarning')
 const optionsMessageNameInput = $('#optionsMessageNameInput')
@@ -213,13 +211,15 @@ const optionsUrlStatus = $('#optionsUrlStatus')
 // Client HTML elements
 const clearMessagesButton = $('#clearMessagesButton')
 const client = $('#client')
+const clientHeartbeatName = $('#clientHeartbeatName')
+const clientHeartbeatNameText = $('#clientHeartbeatNameText')
 const connectButton = $('#connectButton')
 const connectionStatus = $('#connectionStatus')
 const disconnectButton = $('#disconnectButton')
 const heartbeatClientStatus = $('#heartbeatClientStatus')
 const heartbeatClientStatusTime = $('#heartbeatClientStatusTime')
 const heartbeatSelect = $('#heartbeatSelect')
-const heartbeatSelectMenu = $('#heartbeatSelectMenu')
+const heartbeatSelectNone = $('#heartbeatSelectNone')
 const heartbeatSelectOptions = $('#heartbeatSelectOptions')
 const heartbeatServerStatus = $('#heartbeatServerStatus')
 const heartbeatServerStatusTime = $('#heartbeatServerStatusTime')
@@ -246,22 +246,38 @@ const urlSelectOptions = $('#urlSelectOptions')
 
 // Immutable variables
 const url = document.location.toString()
-const optionsHeartbeatDelayMin = 0
-const optionsHeartbeatDelayMax = 300
-const optionsHeartbeatFrequencyMin = 1
-const optionsHeartbeatFrequencyMax = 300
-const optionsUrlInputLabelDefaultText = 'The URL should begin with <code>ws://</code> or <code>wss://</code>:'
+const optionsHeartbeatIntervalDefault = 60
+const optionsHeartbeatIntervalMax = 300
+const optionsHeartbeatIntervalMin = 1
 const optionsMessageNameInputLabelDefaultText = 'The display name appears in the "Saved Messages" table and client drop-down menu:'
 const optionsProtocolInputLabelDefaultText = 'Enter a single protocol name or multiple comma-separated names:'
+const optionsUrlInputLabelDefaultText = 'The URL should begin with <code>ws://</code> or <code>wss://</code>:'
+const optionsHeartbeatObject = {
+  name: '',
+  interval: optionsHeartbeatIntervalDefault,
+  clientMessage: '',
+  trackServerMessage: false,
+  serverMessageType: 'object', // 'object'||'string'
+  serverMessageObjectKey: '',
+  serverMessageObjectOperator: 'equals', // 'noValue'||'equals'||'notEquals'
+  serverMessageObjectValue: '',
+  serverMessageString: '',
+  displayServerMessage: false
+}
 
 // Mutable variables
+let clientHeartbeat = optionsHeartbeatObject
+let editingHeartbeat = false
+let editingHeartbeatTargetName = ''
 let editingMessage = false
-let editingMessageTargetBody = ''
 let editingMessageTargetName = ''
 let editingProtocol = false
 let editingProtocolTarget = ''
 let editingUrl = false
 let editingUrlTarget = ''
+let heartbeatClientTimer = null
+let heartbeatServerTimer = null
+let heartbeatLastServerMessageTime = null
 let ws = null
 let wsConnected = false
 let wsPoliteDisconnection = false
@@ -323,6 +339,9 @@ const saveOptions = function () {
 const loadOptions = function () {
   chrome.storage.sync.get('savedOptions', function (result) {
     if (result['savedOptions']) {
+      if (result['savedOptions']['heartbeats']) {
+        savedOptions.heartbeats = result['savedOptions']['heartbeats']
+      }
       if (result['savedOptions']['preferences']) {
         savedOptions.preferences = result['savedOptions']['preferences']
       }
@@ -337,6 +356,17 @@ const loadOptions = function () {
       }
     }
     setPreferencesCheckboxes()
+    if (savedOptions.heartbeats.length > 0) {
+      populateHeartbeatTable()
+      populateSavedHeartbeatSelect()
+      messageSelect.show()
+      optionsHeartbeatNoneSaved.hide()
+      optionsHeartbeatSavedTable.show()
+    } else {
+      messageSelect.hide()
+      optionsHeartbeatNoneSaved.show()
+      optionsHeartbeatSavedTable.hide()
+    }
     if (savedOptions.messages.length > 0) {
       populateMessageTable()
       populateSavedMessageSelect()
@@ -376,6 +406,7 @@ const loadOptions = function () {
 // Delete from savedOptions
 const deleteSavedOptions = function (option, target) {
   const options = deleteOptions(option, target, savedOptions)
+  savedOptions.heartbeats = options.heartbeats
   savedOptions.messages = options.messages
   savedOptions.protocols = options.protocols
   savedOptions.urls = options.urls
@@ -383,19 +414,28 @@ const deleteSavedOptions = function (option, target) {
 
 // Delete options
 const deleteOptions = function (option, target, options) {
-  let messages, protocols, urls
+  let heartbeats, messages, protocols, urls
   switch (option) {
+    case 'heartbeat':
+      heartbeats = options.heartbeats.filter(e => JSON.parse(e).name !== target)
+      messages = options.messages ? options.messages : []
+      protocols = options.protocols ? options.protocols : []
+      urls = options.urls ? options.urls : []
+      break
     case 'message':
+      heartbeats = options.heartbeats ? options.heartbeats : []
       messages = options.messages.filter(e => !e.toString().startsWith(target))
       protocols = options.protocols ? options.protocols : []
       urls = options.urls ? options.urls : []
       break
     case 'protocol':
+      heartbeats = options.heartbeats ? options.heartbeats : []
       messages = options.messages ? options.messages : []
       protocols = options.protocols.filter(e => e !== target)
       urls = options.urls ? options.urls : []
       break
     case 'url':
+      heartbeats = options.heartbeats ? options.heartbeats : []
       messages = options.messages ? options.messages : []
       protocols = options.protocols ? options.protocols : []
       urls = options.urls.filter(e => e !== target)
@@ -403,7 +443,7 @@ const deleteOptions = function (option, target, options) {
     default:
       return false
   }
-  return {messages, protocols, urls}
+  return {heartbeats, messages, protocols, urls}
 }
 
 // OPTIONS: URL PERSISTENCE
@@ -478,7 +518,7 @@ optionsUrlInput.on('keyup', function () {
   } else {
     optionsUrlInvalidWarning.show()
   }
-  if (optionsUrlInput.val().length > 0 && isValidUrl(optionsUrlInput.val())) {
+  if (optionsUrlInput.val().trim().length > 0 && isValidUrl(optionsUrlInput.val().trim())) {
     optionsUrlSaveButton.prop('disabled', false)
   } else {
     optionsUrlSaveButton.prop('disabled', savedOptions.preferences.preventSavingUrl)
@@ -498,7 +538,7 @@ optionsUrlCancelEditButton.on('click', function () {
 
 // Persist URL to storage on save button click
 optionsUrlSaveButton.on('click', function () {
-  let url = optionsUrlInput.val()
+  let url = optionsUrlInput.val().trim()
   if (editingUrl) {
     deleteSavedOptions('url', editingUrlTarget)
   } else {
@@ -589,7 +629,7 @@ const deleteProtocol = function (protocol) {
 
 // Enable protocol save button if input is not empty
 optionsProtocolInput.on('keyup', function () {
-  if (optionsProtocolInput.val().replace(/\s/g, '').length > 0) {
+  if (optionsProtocolInput.val().trim().replace(/\s/g, '').length > 0) {
     optionsProtocolInputEmpty.hide()
     optionsProtocolSaveButton.prop('disabled', false)
   } else {
@@ -628,110 +668,306 @@ optionsProtocolSaveButton.on('click', function () {
 
 // OPTIONS: HEARTBEAT PERSISTWNCE
 
-/* TODO
-
- */
-const optionsHeartbeatDefaultMap = new Map([
-  ['name', ''],
-  ['frequency', 60],
-  ['clientMessage', ''],
-  ['trackServerMessage', false],
-  ['serverMessageType', 'object'],
-  ['serverMessage', ''],
-  ['displayServerMessage', false]
-])
-let optionsHeartbeatWorkingMap = new Map(optionsHeartbeatDefaultMap)
-
-const resetHeartbeatOptions = function () {
-  optionsHeartbeatNameInput.val('')
-  optionsHeartbeatFrequencyInput.val('')
-  optionsHeartbeatTextarea.val('')
-  optionsHeartbeatServerMessageInput.hide()
-  optionsHeartbeatTrackServerMessageOptions.hide()
-  optionsHeartbeatServerMessageTypeObject.hide()
-  optionsHeartbeatServerMessageTypeString.hide()
-  optionsHeartbeatServerMessageTypeSelectMenu.text('Server Message Type')
-  optionsHeartbeatTrackServerMessageCheckbox.prop('checked', false)
-  optionsHeartbeatDisplayServerMessage.hide()
+// Populate the saved heartbeats table
+const populateHeartbeatTable = function () {
+  let heartbeats = savedOptions.heartbeats.sort()
+  let table = ''
+  if (savedOptions.heartbeats.length > 0) {
+    heartbeatSelect.show()
+    heartbeatSelectNone.hide()
+  } else {
+    heartbeatSelect.hide()
+    heartbeatSelectNone.show()
+  }
+  $.each(heartbeats, function (key, heartbeat) {
+    const heartbeatObject = JSON.parse(heartbeat)
+    table += heartbeatTableRow
+      .replace(/REPLACE_ALL/g, heartbeat)
+      .replace(/REPLACE_NAME/g, heartbeatObject.name)
+  })
+  optionsHeartbeatSavedTable
+    .html('')
+    .append(table)
+  $('.editHeartbeat').on('click', function () {
+    editHeartbeat(jQuery(this).data('heartbeat'))
+  })
+  $('.deleteHeartbeat').on('click', function () {
+    deleteHeartbeat(jQuery(this).data('heartbeat'))
+  })
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+  })
 }
 
-optionsHeartbeatFrequencyInput.on('focusout', function () {
-  const value = parseInt(optionsHeartbeatFrequencyInput.val(), 10)
-  if (value >= optionsHeartbeatFrequencyMin && value <= optionsHeartbeatFrequencyMax) {
-    console.log('valid')
+// Delete a saved heartbeat from storage
+const deleteHeartbeat = function (heartbeat) {
+  const name = heartbeat.name
+  deleteModalBody.text('Are you sure you want to delete the heartbeat shown below?')
+  deleteModalName.text(name)
+  deleteModalDeleteButton.show()
+  deleteModalDeleteButton
+    .data('target', heartbeat)
+    .on('click', function () {
+      deleteSavedOptions('heartbeat', name)
+      saveOptions()
+      resetHeartbeatOptions()
+      deleteModalBody.text('Heartbeat deleted:')
+      deleteModalName.text(name)
+      deleteModalDeleteButton.hide()
+      deleteModalCancelButton.text('Close')
+    })
+  deleteModal.modal('show')
+}
+
+// Copy a saved heartbeat to input elements
+const editHeartbeat = function (heartbeatObject) {
+  // TODO console.log(heartbeatObject) and copy paste into tests
+  editingHeartbeat = true
+  editingHeartbeatTargetName = heartbeatObject.name
+  resetHeartbeatOptions()
+  optionsHeartbeatCancelEditButton.show()
+  optionsHeartbeatSaveButton.prop('disabled', false)
+  optionsHeartbeatNameInput.val(heartbeatObject.name)
+  optionsHeartbeatIntervalInput.val(heartbeatObject.interval)
+  optionsHeartbeatClientMessageTextarea.val(heartbeatObject.clientMessage)
+  optionsHeartbeatTrackServerMessageCheckbox.prop('checked', heartbeatObject.trackServerMessage)
+  if (heartbeatObject.trackServerMessage) {
+    optionsHeartbeatTrackServerMessageOptions.show()
+    optionsHeartbeatDisplayServerMessage.show()
+    optionsHeartbeatServerMessageTypeSelect.val(heartbeatObject.serverMessageType)
   } else {
-    console.log('invalid')
+    optionsHeartbeatTrackServerMessageOptions.hide()
+    optionsHeartbeatDisplayServerMessage.hide()
   }
+  switch (heartbeatObject.serverMessageType) {
+    case 'object':
+      optionsHeartbeatServerMessageTypeObject.show()
+      optionsHeartbeatServerMessageTypeObjectKeyInput.val(heartbeatObject.serverMessageObjectKey)
+      optionsHeartbeatServerMessageTypeObjectOperatorSelect.val(heartbeatObject.serverMessageObjectOperator)
+      switch (heartbeatObject.serverMessageObjectOperator) {
+        case 'noValue':
+          optionsHeartbeatServerMessageTypeObjectOperatorSelect.val('noValue')
+          optionsHeartbeatServerMessageTypeObjectValueInput.hide()
+          break
+        case 'equals':
+          optionsHeartbeatServerMessageTypeObjectValue.show()
+          optionsHeartbeatServerMessageTypeObjectValueInput.val(heartbeatObject.serverMessageObjectValue)
+          break
+        case 'notEquals':
+          optionsHeartbeatServerMessageTypeObjectValue.show()
+          optionsHeartbeatServerMessageTypeObjectValueInput.val(heartbeatObject.serverMessageObjectValue)
+          break
+        default:
+          optionsHeartbeatServerMessageTypeObjectOperatorSelect.val('noValue')
+          optionsHeartbeatServerMessageTypeObjectValueInput.hide()
+      }
+      break
+    case 'string':
+      optionsHeartbeatServerMessageTypeString.show()
+      optionsHeartbeatServerMessageTypeStringInput.val(heartbeatObject.serverMessageString)
+      break
+  }
+  optionsHeartbeatDisplayServerMessageCheckbox.prop('checked', heartbeatObject.displayServerMessage)
+  optionsHeartbeatNameInputLabel.text(`Editing heartbeat: ${heartbeatObject.name}`)
+}
+
+// Validate heartbeat name input
+const validateHeartbeatName = function () {
+  const value = optionsHeartbeatNameInput.val().trim()
+  let nameTaken = false
+  let valid = true
+  if (!editingHeartbeat) {
+    savedOptions.heartbeats.forEach((heartbeat) => {
+      if (JSON.parse(heartbeat).name === value) nameTaken = true
+    })
+    if (nameTaken) {
+      valid = false
+      optionsHeartbeatNameInvalid.text('That name already exists. Please choose another one.')
+    }
+    if (value.length === 0) {
+      valid = false
+      optionsHeartbeatNameInvalid.text('You must enter a display name.')
+    }
+  }
+  if (valid) {
+    optionsHeartbeatNameInvalid.hide()
+  } else {
+    optionsHeartbeatNameInvalid.show()
+  }
+  return valid
+}
+
+// Validate heartbeat interval input
+const validateHeartbeatInterval = function () {
+  const value = parseInt(optionsHeartbeatIntervalInput.val().trim(), 10)
+  let valid = true
+  if (value >= optionsHeartbeatIntervalMin && value <= optionsHeartbeatIntervalMax) {
+    optionsHeartbeatIntervalInvalid.hide()
+  } else {
+    valid = false
+    optionsHeartbeatIntervalInvalid.show()
+  }
+  return valid
+}
+
+// Validate heartbeat client message input
+const validateHeartbeatClientMessage = function () {
+  const value = optionsHeartbeatClientMessageTextarea.val().trim()
+  let valid = true
+  if (value.length === 0) {
+    valid = false
+    optionsHeartbeatClientMessageTextareaEmpty.show()
+  } else {
+    optionsHeartbeatClientMessageTextareaEmpty.hide()
+  }
+  return valid
+}
+
+// Validate heartbeat server message type option inputs
+const validateHeartbeatServerType = function () {
+  const type = optionsHeartbeatServerMessageTypeSelect.val()
+  let html = ''
+  let valid = true
+  if (type === 'object') {
+    if (optionsHeartbeatServerMessageTypeObjectKeyInput.val().trim().length === 0) {
+      valid = false
+      html += `<div>The 'Property Accessor' field cannot be empty.</div>`
+    }
+    if (optionsHeartbeatServerMessageTypeObjectOperatorSelect.val() !== 'noValue' && optionsHeartbeatServerMessageTypeObjectValueInput.val().trim().length === 0) {
+      valid = false
+      html += `<div>The 'Property Value' field cannot be empty.</div>`
+    }
+  }
+  if (type === 'string') {
+    if (optionsHeartbeatServerMessageTypeStringInput.val().trim().length === 0) {
+      valid = false
+      html += `<div>The 'Message String' field cannot be empty.</div>`
+    }
+  }
+  if (valid) {
+    optionsHeartbeatServerTypeInvalid.hide()
+  } else {
+    optionsHeartbeatServerTypeInvalid.show()
+    optionsHeartbeatServerTypeInvalid.html(html)
+  }
+  return valid
+}
+
+// Validate all heartbeat input elements and enable or disable save button
+const validateHeartbeat = function () {
+  const heartbeatNameValid = validateHeartbeatName()
+  const heartbeatIntervalValid = validateHeartbeatInterval()
+  const heartbeatClientMessageValid = validateHeartbeatClientMessage()
+  const heartbeatServerTypeValid = validateHeartbeatServerType()
+  let valid = true
+  if (!heartbeatNameValid || !heartbeatIntervalValid || !heartbeatClientMessageValid || !heartbeatServerTypeValid) {
+    valid = false
+  }
+  optionsHeartbeatSaveButton.prop('disabled', !valid)
+}
+
+// Rest all heartbeat input elements to their default values
+const resetHeartbeatOptions = function () {
+  $('.alert.bwc-options-heartbeat').hide()
+  optionsHeartbeatClientMessageTextarea.val('')
+  optionsHeartbeatDisplayServerMessage.hide()
+  optionsHeartbeatIntervalInput.val('')
+  optionsHeartbeatNameInput.val('')
+  optionsHeartbeatSaveButton.prop('disabled', true)
+  optionsHeartbeatServerMessageTypeObject.hide()
+  optionsHeartbeatServerMessageTypeSelect.val('label')
+  optionsHeartbeatServerMessageTypeString.hide()
+  optionsHeartbeatStatus.hide()
+  optionsHeartbeatTrackServerMessageCheckbox.prop('checked', false)
+  optionsHeartbeatTrackServerMessageOptions.hide()
+}
+
+// Trigger heartbeat validation
+optionsHeartbeatServerMessageTypeObjectOperatorSelect.on('change', function () {
+  validateHeartbeat()
 })
 
-$('.dropdown-item.heartbeat-server-message-type').on('click', function () {
-  const value = jQuery(this).data('value')
-  optionsHeartbeatServerMessageTypeSelectMenu.text(value)
-  optionsHeartbeatDisplayServerMessage.show()
-  if (value === 'Object') {
-    optionsHeartbeatServerMessageInput.show()
-    optionsHeartbeatServerMessageTypeObject.show()
-    optionsHeartbeatServerMessageTypeString.hide()
-  }
-  if (value === 'String') {
-    optionsHeartbeatServerMessageInput.show()
-    optionsHeartbeatServerMessageTypeObject.hide()
-    optionsHeartbeatServerMessageTypeString.show()
-  }
+// Trigger heartbeat validation
+$('.bwc-heartbeat-input').on('keyup', function () {
+  validateHeartbeat()
 })
 
-optionsHeartbeatServerMessageInput.on('focusout', function () {
-  // optionsHeartbeatServerMessage.text(optionsHeartbeatServerMessageInput.val())
+// Toggle message textarea JSON formatting
+optionsHeartbeatClientMessageTextareaFormatCheckbox.on('change', function () {
+  formatTextarea($(this), optionsHeartbeatClientMessageTextarea)
 })
 
+// Show and hide elements based on track server message selection
 optionsHeartbeatTrackServerMessageCheckbox.on('change', function () {
   if (optionsHeartbeatTrackServerMessageCheckbox.is(':checked')) {
     optionsHeartbeatTrackServerMessageOptions.show()
   } else {
-    optionsHeartbeatServerMessageInput.hide()
     optionsHeartbeatTrackServerMessageOptions.hide()
     optionsHeartbeatServerMessageTypeObject.hide()
     optionsHeartbeatServerMessageTypeString.hide()
   }
 })
 
-optionsHeartbeatDisplayServerMessageCheckbox.on('change', function () {
-  if (optionsHeartbeatDisplayServerMessageCheckbox.is(':checked')) {
-    console.log('optionsHeartbeatDisplayServerMessageCheckbox checked')
-  } else {
-    console.log('optionsHeartbeatDisplayServerMessageCheckbox not checked')
+// Show and hide elements based on server message type selection
+optionsHeartbeatServerMessageTypeSelect.on('change', function () {
+  const value = optionsHeartbeatServerMessageTypeSelect.val()
+  optionsHeartbeatDisplayServerMessage.show()
+  optionsHeartbeatServerTypeInvalid.hide()
+  if (value === 'object') {
+    optionsHeartbeatServerMessageTypeObject.show()
+    optionsHeartbeatServerMessageTypeString.hide()
+  }
+  if (value === 'string') {
+    optionsHeartbeatServerMessageTypeObject.hide()
+    optionsHeartbeatServerMessageTypeString.show()
   }
 })
 
+// Show and hide elements based on server message object operator selection
+optionsHeartbeatServerMessageTypeObjectOperatorSelect.on('change', function () {
+  switch (optionsHeartbeatServerMessageTypeObjectOperatorSelect.val()) {
+    case 'noValue':
+      optionsHeartbeatServerMessageTypeObjectValue.hide()
+      break
+    case 'equals':
+      optionsHeartbeatServerMessageTypeObjectValue.show()
+      break
+    case 'notEquals':
+      optionsHeartbeatServerMessageTypeObjectValue.show()
+      break
+    default:
+      optionsHeartbeatServerMessageTypeObjectValue.hide()
+  }
+})
+
+// Rest all heartbeat input elements to their default values on cancel button click
 optionsHeartbeatCancelEditButton.on('click', function () {
   resetHeartbeatOptions()
 })
 
-// CLIENT: HEARTBEAT
-
-/* TODO
-heartbeatClientStatusTime
-heartbeatServerStatusTime class="text-success || text-danger"
- */
-$('.dropdown-item.heartbeat').on('click', function () {
-  const value = jQuery(this).data('value')
-  heartbeatSelectMenu.text(value)
-  heartbeatStartButton.prop('disabled', false)
-})
-
-heartbeatStartButton.on('click', function () {
-  heartbeatStartButton.hide()
-  heartbeatStopButton.show()
-  heartbeatClientStatus.show()
-  heartbeatServerStatus.show()
-})
-
-heartbeatStopButton.on('click', function () {
-  heartbeatStartButton.show()
-  heartbeatStopButton.hide()
-  heartbeatClientStatus.hide()
-  heartbeatServerStatus.hide()
-  heartbeatSelectMenu.text('Saved Heartbeats')
+// Persist heartbeat to storage on save button click
+optionsHeartbeatSaveButton.on('click', function () {
+  if (editingHeartbeat) {
+    console.log(`DELETING: ${editingHeartbeatTargetName}`)
+    deleteSavedOptions('heartbeat', editingHeartbeatTargetName)
+  }
+  const heartbeatObject = optionsHeartbeatObject
+  heartbeatObject.name = optionsHeartbeatNameInput.val().trim()
+  heartbeatObject.interval = optionsHeartbeatIntervalInput.val().trim()
+  heartbeatObject.clientMessage = optionsHeartbeatClientMessageTextarea.val().trim()
+  heartbeatObject.trackServerMessage = optionsHeartbeatTrackServerMessageCheckbox.is(':checked')
+  heartbeatObject.serverMessageType = optionsHeartbeatServerMessageTypeSelect.val()
+  heartbeatObject.serverMessageObjectKey = optionsHeartbeatServerMessageTypeObjectKeyInput.val().trim()
+  heartbeatObject.serverMessageObjectOperator = optionsHeartbeatServerMessageTypeObjectOperatorSelect.val()
+  heartbeatObject.serverMessageObjectValue = optionsHeartbeatServerMessageTypeObjectValueInput.val().trim()
+  heartbeatObject.serverMessageString = optionsHeartbeatServerMessageTypeStringInput.val().trim()
+  heartbeatObject.displayServerMessage = optionsHeartbeatDisplayServerMessageCheckbox.is(':checked')
+  savedOptions.heartbeats.push(JSON.stringify(heartbeatObject))
+  saveOptions()
+  resetHeartbeatOptions()
+  optionsHeartbeatStatus
+    .show()
+    .text('Heartbeat saved.')
 })
 
 // OPTIONS: MESSAGE PERSISTENCE
@@ -794,7 +1030,7 @@ const formatTextarea = function (checkbox, textarea) {
   } else if (checked) {
     textarea.val(JSON.stringify(JSON.parse(message), null, 2))
   } else {
-    textarea.val(editingMessageTargetBody)
+    textarea.val(JSON.stringify(JSON.parse(message)))
   }
 }
 
@@ -853,7 +1089,6 @@ const validateOptionsMessageTextarea = function () {
 const editMessage = function (message) {
   const [name, body] = message.split(SEPARATOR)
   editingMessage = true
-  editingMessageTargetBody = body
   editingMessageTargetName = `${name}${SEPARATOR}`
   optionsMessageCancelEditButton.show()
   optionsMessageTextareaEmpty.hide()
@@ -932,7 +1167,6 @@ optionsMessageTextareaFormatCheckbox.on('change', function () {
 // Cancel message edit and reset elements
 optionsMessageCancelEditButton.on('click', function () {
   editingMessage = false
-  editingMessageTargetBody = ''
   editingMessageTargetName = ''
   optionsMessageTextareaEmpty.hide()
   optionsMessageJsonInvalidWarning.hide()
@@ -948,8 +1182,8 @@ optionsMessageCancelEditButton.on('click', function () {
 
 // Persist message to storage on save button click
 optionsMessageSaveButton.on('click', function () {
-  const name = optionsMessageNameInput.val()
-  const body = optionsMessageTextarea.val()
+  const name = optionsMessageNameInput.val().trim()
+  const body = optionsMessageTextarea.val().trim()
   const message = `${name}${SEPARATOR}${body}`
   if (editingMessage) {
     deleteSavedOptions('message', editingMessageTargetName)
@@ -1048,11 +1282,11 @@ const validateClientMessage = function () {
 
 // Enable and disable connect button based on URL input length and validation
 urlInput.on('keyup', function () {
-  if (urlInput.val().length === 0) {
+  if (urlInput.val().trim().length === 0) {
     urlInvalidWarning.hide()
     connectButton.prop('disabled', true)
   } else {
-    if (isValidUrl(urlInput.val())) {
+    if (isValidUrl(urlInput.val().trim())) {
       connectButton.prop('disabled', false)
       urlInvalidWarning.hide()
     } else {
@@ -1078,11 +1312,170 @@ clearMessagesButton.on('click', function () {
   clearMessagesButton.prop('disabled', true)
 })
 
+// CLIENT: HEARTBEAT
+
+// Populate the heartbeat select element
+const populateSavedHeartbeatSelect = function () {
+  const heartbeats = savedOptions.heartbeats.sort()
+  let options = ''
+  $.each(heartbeats, function (key, heartbeat) {
+    const heartbeatObject = JSON.parse(heartbeat)
+    options += `<button class="dropdown-item heartbeat" type="button" data-value='${heartbeat}'>${heartbeatObject.name}</button>`
+  })
+  heartbeatSelectOptions
+    .html('')
+    .append(options)
+  $('.dropdown-item.heartbeat').on('click', function () {
+    const heartbeat = jQuery(this).data('value')
+    clientHeartbeat = heartbeat
+    clientHeartbeatName.show()
+    clientHeartbeatNameText.text(heartbeat.name)
+    heartbeatStartButton.prop('disabled', false)
+  })
+}
+
+// Start the selected heartbeat
+const startHeartbeat = function () {
+  heartbeatClientTimer = setInterval(
+    function () {
+      sendHeartbeat()
+    },
+    clientHeartbeat.interval * 1000
+  )
+  heartbeatStartButton.hide()
+  heartbeatStopButton.show()
+  heartbeatClientStatus.show()
+  heartbeatServerStatus.show()
+}
+
+// Send client heartbeat message and update client status time
+const sendHeartbeat = function () {
+  const date = new Date()
+  const time = date.toLocaleTimeString()
+  let message = clientHeartbeat.clientMessage
+  ws.send(message)
+  heartbeatClientStatusTime
+    .removeClass('text-danger')
+    .text(time)
+  updateHeartbeatServerStatus()
+}
+
+// Parse all incoming messages for server heartbeat message
+const checkMessageForHeartbeat = function (data) {
+  const displayServerMessage = clientHeartbeat.displayServerMessage || false
+  let heartbeatMessage = false
+  let json = null
+  if (clientHeartbeat.trackServerMessage) {
+    switch (clientHeartbeat.serverMessageType) {
+      case 'object':
+        try {
+          json = Object.create(JSON.parse(data))
+        } catch (e) {
+          console.error('The server message below is not valid JSON:')
+          console.error(data)
+        }
+        switch (clientHeartbeat.serverMessageObjectOperator) {
+          case 'noValue':
+            if (lodash.has(json, clientHeartbeat.serverMessageObjectKey)) {
+              heartbeatMessage = true
+            }
+            break
+          case 'equals':
+            if (lodash.get(json, clientHeartbeat.serverMessageObjectKey) === clientHeartbeat.serverMessageObjectValue) {
+              heartbeatMessage = true
+            }
+            break
+          case 'notEquals':
+            if (json.hasOwnProperty(clientHeartbeat.serverMessageObjectKey)) {
+              if (json[clientHeartbeat.serverMessageObjectKey] !== clientHeartbeat.serverMessageObjectValue) {
+                heartbeatMessage = true
+              }
+            }
+            break
+          default:
+            console.error(`${clientHeartbeat.serverMessageObjectOperator} is not a valid value for serverMessageObjectOperator`)
+        }
+        break
+      case 'string':
+        if (data.includes(clientHeartbeat.serverMessageString)) {
+          heartbeatMessage = true
+        }
+        break
+      default:
+        console.error(`${clientHeartbeat.serverMessageType} is not a valid value for serverMessageType`)
+    }
+  }
+  if (displayServerMessage && heartbeatMessage) {
+    heartbeatLastServerMessageTime = Date.now()
+    updateHeartbeatServerStatus()
+    addMessage(data, null)
+  } else if (heartbeatMessage) {
+    heartbeatLastServerMessageTime = Date.now()
+    updateHeartbeatServerStatus()
+  } else {
+    addMessage(data, null)
+  }
+}
+
+// Update the server status time element
+const updateHeartbeatServerStatus = function () {
+  const unknown = heartbeatLastServerMessageTime === null
+  let overdue = false
+  if ((Date.now() - heartbeatLastServerMessageTime) > 1000 * clientHeartbeat.interval) {
+    overdue = true
+  }
+  if (unknown) {
+    heartbeatServerStatusTime.text('Unknown')
+  } else {
+    const date = new Date(heartbeatLastServerMessageTime)
+    const time = date.toLocaleTimeString()
+    heartbeatServerStatusTime.text(time)
+  }
+  if (overdue || unknown) {
+    heartbeatServerStatusTime
+      .removeClass('text-success')
+      .addClass('text-danger')
+  } else {
+    heartbeatServerStatusTime
+      .removeClass('text-danger')
+      .addClass('text-success')
+  }
+}
+
+// Stop the client heartbeat messaging and reset elements to their defaults
+const stopHeartbeat = function () {
+  clearInterval(heartbeatClientTimer)
+  clearInterval(heartbeatServerTimer)
+  heartbeatStartButton.show()
+  heartbeatStartButton.prop('disabled', true)
+  heartbeatStopButton.hide()
+  heartbeatClientStatus.hide()
+  heartbeatServerStatus.hide()
+  clientHeartbeatName.hide()
+  heartbeatClientStatusTime
+    .text('Waiting ...')
+    .addClass('text-danger')
+  heartbeatServerStatusTime
+    .text('Unknown')
+    .removeClass('text-danger')
+    .addClass('text-success')
+}
+
+// Trigger heartbeat start
+heartbeatStartButton.on('click', function () {
+  startHeartbeat()
+})
+
+// Trigger heartbeat stop
+heartbeatStopButton.on('click', function () {
+  stopHeartbeat()
+})
+
 // CLIENT: WEBSOCKET
 
 // Open WebSocket connection
 const open = function () {
-  let url = urlInput.val().toString()
+  let url = urlInput.val().trim().toString()
   let protocol = getProtocols(protocolInput)
   if (protocol) { ws = new WebSocket(url, protocol) } else { ws = new WebSocket(url) }
   ws.onopen = onOpen
@@ -1097,13 +1490,14 @@ const close = function () {
   if (ws) {
     console.log('CLOSING CONNECTION ...')
     wsPoliteDisconnection = true
+    stopHeartbeat()
     ws.close()
   }
 }
 
 // WebSocket onOpen handler
 const onOpen = function () {
-  console.log('OPENED: ' + urlInput.val())
+  console.log('OPENED: ' + urlInput.val().trim())
   connectButton
     .prop('disabled', true)
     .hide()
@@ -1120,7 +1514,7 @@ const onOpen = function () {
 const onClose = function () {
   let disconnectionMessage = 'CLOSED'
   disconnectionMessage += (wsPoliteDisconnection) ? '' : '. Disconnected by the server.'
-  console.log('CLOSED: ' + urlInput.val())
+  console.log('CLOSED: ' + urlInput.val().trim())
   ws = null
   connectButton
     .prop('disabled', false)
@@ -1135,7 +1529,7 @@ const onClose = function () {
 
 // WebSocket onMessage handler
 const onMessage = function (event) {
-  addMessage(event.data)
+  checkMessageForHeartbeat(event.data)
 }
 
 // WebSocket onError handler
@@ -1172,7 +1566,7 @@ const addMessage = function (data, type) {
 
 // Add outgoing message to DOM and send it to server
 const sendMessage = function () {
-  let message = messageTextarea.val()
+  const message = messageTextarea.val()
   addMessage(message, 'SENT')
   ws.send(message)
 }

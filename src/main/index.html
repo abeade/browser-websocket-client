@@ -60,95 +60,119 @@
 							 aria-labelledby="optionsPreferencesHeading"
 							 data-parent="#options">
 							<div class="card-body">
-								<h5>
+								<h5 class="bwc-margin-top">
 									Invalid URL Inputs
 								</h5>
-								<div class="bwc-slider-row">
-									<label class="bwc-switch" for="preferencesOptionsUrlCheckbox">
-										<input id="preferencesOptionsUrlCheckbox" type="checkbox">
-										<span id="preferencesOptionsUrlSlider"
-											  class="bwc-slider"></span>
-									</label>
-									<span class="bwc-switch-label">
+								<div class="bwc-margin-top">
+									<div>
+										<label class="bwc-switch" for="preferencesOptionsUrlCheckbox">
+											<input id="preferencesOptionsUrlCheckbox" type="checkbox">
+											<span id="preferencesOptionsUrlSlider"
+												  class="bwc-slider"></span>
+										</label>
+										<span class="bwc-switch-label">
 										Prevent <u>saving</u> an invalid URL in the Options section.
-										<span class="bwc-preferences-info"
-											  aria-hidden="true"
-											  data-container="body"
-											  data-toggle="popover"
-											  data-test="popover-save-url"
-											  data-placement="top"
-											  data-html="true"
-											  data-title="Prevent Saving Invalid URL"
-											  data-content="If enabled, you cannot save URLs that do not begin with <code>ws://</code> or <code>wss://</code>. If disabled, the invalid URL warning will still appear; however, the Save button will be enabled.">
-											<i class="fa fa-info-circle fa-lg"></i>
+											<a tabindex="100"
+											   class="bwc-preferences-info"
+											   data-container="body"
+											   data-html="true"
+											   data-placement="top"
+											   data-toggle="popover"
+											   data-trigger="focus"
+											   role="button"
+											   data-test="popover-save-url"
+											   data-title="Prevent Saving Invalid URL"
+											   data-content="
+<p>If enabled, you cannot save URLs that do not begin with <code>ws://</code> or <code>wss://</code>.</p>
+<p>If disabled, the invalid URL warning will still appear; however, the Save button will be enabled.</p>
+">
+												<i class="fa fa-info-circle fa-lg"></i>
+											</a>
 										</span>
-									</span>
-								</div>
-								<div class="bwc-slider-row">
-									<label class="bwc-switch" for="preferencesClientUrlCheckbox">
-										<input id="preferencesClientUrlCheckbox" type="checkbox">
-										<span id="preferencesClientUrlSlider"
-											  class="bwc-slider"></span>
-									</label>
-									<span class="bwc-switch-label">
-										Prevent <u>using</u> an invalid URL in the Client section.
-										<span class="bwc-preferences-info"
-											  aria-hidden="true"
-											  data-container="body"
-											  data-toggle="popover"
-											  data-test="popover-use-url"
-											  data-placement="bottom"
-											  data-html="true"
-											  data-title="Prevent Using Invalid URL"
-											  data-content="If enabled, you cannot use URLs in the Client section that do not begin with <code>ws://</code> or <code>wss://</code>. If disabled, the invalid URL warning will still appear; however, the Connect button will be enabled.">
-											<i class="fa fa-info-circle fa-lg"></i>
+									</div>
+									<div>
+										<label class="bwc-switch" for="preferencesClientUrlCheckbox">
+											<input id="preferencesClientUrlCheckbox" type="checkbox">
+											<span id="preferencesClientUrlSlider"
+												  class="bwc-slider"></span>
+										</label>
+										<span class="bwc-switch-label">
+											Prevent <u>using</u> an invalid URL in the Client section.
+											<a tabindex="100"
+											   class="bwc-preferences-info"
+											   data-container="body"
+											   data-html="true"
+											   data-placement="top"
+											   data-toggle="popover"
+											   data-trigger="focus"
+											   role="button"
+											   data-test="popover-use-url"
+											   data-title="Prevent Using Invalid URL"
+											   data-content="
+<p>If enabled, you cannot use URLs in the Client section that do not begin with <code>ws://</code> or <code>wss://</code>.</p>
+<p>If disabled, the invalid URL warning will still appear; however, the Connect button will be enabled.</p>
+">
+												<i class="fa fa-info-circle fa-lg"></i>
+											</a>
 										</span>
-									</span>
+									</div>
 								</div>
-								<h5>
+								<h5 class="bwc-margin-top-section">
 									Invalid Message Body Inputs
 								</h5>
-								<div class="bwc-slider-row">
-									<label class="bwc-switch" for="preferencesOptionsMessageCheckbox">
-										<input id="preferencesOptionsMessageCheckbox" type="checkbox">
-										<span id="preferencesOptionsMessageSlider"
-											  class="bwc-slider"></span>
-									</label>
-									<span class="bwc-switch-label">
-										Prevent <u>saving</u> an invalid message body in the Options section.
-										<span class="bwc-preferences-info"
-											  aria-hidden="true"
-											  data-container="body"
-											  data-toggle="popover"
-											  data-test="popover-save-message"
-											  data-placement="top"
-											  data-html="true"
-											  data-title="Prevent Saving Message Body with Invalid JSON"
-											  data-content="If enabled, you cannot save a message unless the body is valid JSON. If disabled, the invalid JSON warning will still appear; however, the Save button will be enabled.">
-											<i class="fa fa-info-circle fa-lg"></i>
+								<div class="bwc-margin-top">
+									<div>
+										<label class="bwc-switch" for="preferencesOptionsMessageCheckbox">
+											<input id="preferencesOptionsMessageCheckbox" type="checkbox">
+											<span id="preferencesOptionsMessageSlider"
+												  class="bwc-slider"></span>
+										</label>
+										<span class="bwc-switch-label">
+											Prevent <u>saving</u> an invalid message body in the Options section.
+											<a tabindex="100"
+											   class="bwc-preferences-info"
+											   data-container="body"
+											   data-html="true"
+											   data-placement="top"
+											   data-toggle="popover"
+											   data-trigger="focus"
+											   role="button"
+											   data-test="popover-save-message"
+											   data-title="Prevent Saving Message Body with Invalid JSON"
+											   data-content="
+<p>If enabled, you cannot save a message unless the body is valid JSON.</p>
+<p>If disabled, the invalid JSON warning will still appear; however, the Save button will be enabled.</p>
+">
+												<i class="fa fa-info-circle fa-lg"></i>
+											</a>
 										</span>
-									</span>
-								</div>
-								<div class="bwc-slider-row">
-									<label class="bwc-switch" for="preferencesClientMessageCheckbox">
-										<input id="preferencesClientMessageCheckbox" type="checkbox">
-										<span id="preferencesClientMessageSlider"
-											  class="bwc-slider"></span>
-									</label>
-									<span class="bwc-switch-label">
-										Prevent <u>using</u> an invalid message body in the Client section.
-										<span class="bwc-preferences-info"
-											  aria-hidden="true"
-											  data-container="body"
-											  data-toggle="popover"
-											  data-test="popover-use-message"
-											  data-placement="bottom"
-											  data-html="true"
-											  data-title="Prevent Using Message Body with Invalid JSON"
-											  data-content="If enabled, you cannot use a message in the Client section unless the body is valid JSON. If disabled, the invalid JSON warning will still appear; however, the Send button will be enabled.">
-											<i class="fa fa-info-circle fa-lg"></i>
+									</div>
+									<div>
+										<label class="bwc-switch" for="preferencesClientMessageCheckbox">
+											<input id="preferencesClientMessageCheckbox" type="checkbox">
+											<span id="preferencesClientMessageSlider"
+												  class="bwc-slider"></span>
+										</label>
+										<span class="bwc-switch-label">
+											Prevent <u>using</u> an invalid message body in the Client section.
+											<a tabindex="100"
+											   class="bwc-preferences-info"
+											   data-container="body"
+											   data-html="true"
+											   data-placement="top"
+											   data-toggle="popover"
+											   data-trigger="focus"
+											   role="button"
+											   data-test="popover-use-message"
+											   data-title="Prevent Using Message Body with Invalid JSON"
+											   data-content="
+<p>If enabled, you cannot use a message in the Client section unless the body is valid JSON.</p>
+<p>If disabled, the invalid JSON warning will still appear; however, the Send button will be enabled.</p>
+">
+												<i class="fa fa-info-circle fa-lg"></i>
+											</a>
 										</span>
-									</span>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -178,7 +202,7 @@
 							 aria-labelledby="optionsUrlsHeading"
 							 data-parent="#options">
 							<div class="card-body">
-								<h5>
+								<h5 class="bwc-margin-top">
 									Saved URLs
 								</h5>
 								<p id="optionsUrlNoneSaved">
@@ -204,12 +228,14 @@
 									contain any
 									spaces.
 								</p>
-								<button id="optionsUrlSaveButton" class="btn btn-primary" disabled="disabled">
-									Save URL
-								</button>
-								<button id="optionsUrlCancelEditButton" class="btn btn-secondary">
-									Cancel
-								</button>
+								<div class="bwc-margin-top-section">
+									<button id="optionsUrlSaveButton" class="btn btn-primary" disabled="disabled">
+										Save URL
+									</button>
+									<button id="optionsUrlCancelEditButton" class="btn btn-secondary">
+										Cancel
+									</button>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -237,7 +263,7 @@
 							 aria-labelledby="optionsProtocolsHeading"
 							 data-parent="#options">
 							<div class="card-body">
-								<h5>
+								<h5 class="bwc-margin-top">
 									Saved Protocols
 								</h5>
 								<p id="optionsProtocolNoneSaved">
@@ -265,12 +291,14 @@
 								<p id="optionsProtocolInputEmpty" class="alert alert-warning rounded hide" role="alert">
 									You must enter a protocol name.
 								</p>
-								<button id="optionsProtocolSaveButton" class="btn btn-primary" disabled="disabled">
-									Save Protocol
-								</button>
-								<button id="optionsProtocolCancelEditButton" class="btn btn-secondary">
-									Cancel
-								</button>
+								<div class="bwc-margin-top-section">
+									<button id="optionsProtocolSaveButton" class="btn btn-primary" disabled="disabled">
+										Save Protocol
+									</button>
+									<button id="optionsProtocolCancelEditButton" class="btn btn-secondary">
+										Cancel
+									</button>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -298,87 +326,90 @@
 							 aria-labelledby="optionsHeartbeatsHeading"
 							 data-parent="#options">
 							<div class="card-body">
-								<h5>
+								<h5 class="bwc-margin-top">
 									Saved Heartbeats
 								</h5>
 								<p id="optionsHeartbeatNoneSaved">
 									You have not saved any heartbeats.
 								</p>
 								<div id="optionsHeartbeatSavedTable" class="clearfix"></div>
-								<h5 class="bwc-margin-top">
+								<h5 class="bwc-margin-top-section">
 									Save a heartbeat
 								</h5>
+
 								<!--HEARTBEAT NAME-->
-								<label id="optionsHeartbeatNameInputLabel" for="optionsHeartbeatNameInput">
-									The display name appears in the "Saved Heartbeats" table and Client drop-down menu:
-								</label>
-								<input id="optionsHeartbeatNameInput"
-									   class="form-control"
-									   type="text"
-									   placeholder="Display Name"/>
-								<p id="optionsHeartbeatNameInvalid" class="alert alert-warning rounded hide"
-								   role="alert">
-									You must enter a display name.
-								</p>
-								<!--TODO validation alert-->
-								<!--HEARTBEAT FREQUENCY-->
-								<label id="optionsHeartbeatFrequencyInputLabel" for="optionsHeartbeatFrequencyInput">
-									Frequency in seconds (accepts 1 through 300):
-								</label>
-								<span class="bwc-preferences-info"
-									  aria-hidden="true"
-									  data-container="body"
-									  data-toggle="popover"
-									  data-test="popover-save-url"
-									  data-placement="top"
-									  data-html="true"
-									  data-title="Heartbeat Frequency"
-									  data-content="This value determines how often the client will send the heartbeat message to the server.">
-									<i class="fa fa-info-circle fa-lg"></i>
-								</span>
-								<input id="optionsHeartbeatFrequencyInput"
-									   class="form-control"
-									   type="text"
-									   placeholder="Frequency"/>
-								<!--HEARTBEAT CLIENT MESSAGE-->
-								<label id="optionsHeartbeatTextareaLabel" for="optionsHeartbeatTextarea">
-									Message to send from the client to the server:
-									<span class="bwc-preferences-info"
-										  aria-hidden="true"
-										  data-container="body"
-										  data-toggle="popover"
-										  data-test="popover-save-url"
-										  data-placement="top"
-										  data-html="true"
-										  data-title="Heartbeat Message from Client"
-										  data-content="The message the client sends to the server can be a JSON object or a string.">
-										<i class="fa fa-info-circle fa-lg"></i>
-									</span>
-								</label>
-								<textarea id="optionsHeartbeatTextarea"
-										  class="form-control"
-										  placeholder="Message from Client"></textarea>
-								<p id="optionsHeartbeatStatus" class="hide"></p>
-								<p id="optionsHeartbeatTextareaEmpty" class="alert alert-warning rounded hide"
-								   role="alert">
-									You must enter a message body.
-								</p>
-								<p id="optionsHeartbeatJsonInvalidWarning" class="alert alert-warning rounded hide"
-								   role="alert">
-									Invalid JSON! You entered invalid JSON in the message body.
-								</p>
-								<div class="bwc-slider-row">
-									<label class="bwc-switch" for="optionsHeartbeatTextareaFormatCheckbox">
-										<input id="optionsHeartbeatTextareaFormatCheckbox" type="checkbox">
-										<span id="optionsHeartbeatTextareaFormatSlider"
-											  class="bwc-slider bwc-slider-disabled"></span>
+
+								<div class="bwc-margin-top">
+									<label id="optionsHeartbeatNameInputLabel" for="optionsHeartbeatNameInput">
+										The display name appears in the "Saved Heartbeats" table and Client drop-down
+										menu:
 									</label>
-									<span class="bwc-switch-label">
-										Toggle JSON formatting from single line to multi-line.
-									</span>
+									<input id="optionsHeartbeatNameInput"
+										   class="form-control bwc-heartbeat-keyup"
+										   type="text"
+										   placeholder="Display Name"/>
+									<p id="optionsHeartbeatNameInvalid"
+									   class="bwc-options-heartbeat alert alert-warning rounded hide"
+									   role="alert">
+									</p>
 								</div>
+
+								<!--HEARTBEAT FREQUENCY-->
+
+								<div class="bwc-margin-top-section">
+									<label id="optionsHeartbeatIntervalInputLabel"
+										   for="optionsHeartbeatIntervalInput">
+										Interval in seconds to send the client message (accepts 1 through 300):
+									</label>
+									<input id="optionsHeartbeatIntervalInput"
+										   class="form-control bwc-heartbeat-keyup"
+										   type="text"
+										   placeholder="Interval"/>
+									<p id="optionsHeartbeatIntervalInvalid"
+									   class="bwc-options-heartbeat alert alert-warning rounded hide"
+									   role="alert">
+										You must enter a value from 1 to 300.
+									</p>
+								</div>
+
+								<!--HEARTBEAT CLIENT MESSAGE-->
+
+								<div class="bwc-margin-top-section">
+									<label id="optionsHeartbeatClientMessageTextareaLabel"
+										   for="optionsHeartbeatClientMessageTextarea">
+										Message to send from the client to the server (JSON object or string):
+									</label>
+									<textarea id="optionsHeartbeatClientMessageTextarea"
+											  class="form-control bwc-heartbeat-keyup"
+											  placeholder="Message from Client"></textarea>
+									<p id="optionsHeartbeatStatus" class="hide"></p>
+									<p id="optionsHeartbeatClientMessageTextareaEmpty"
+									   class="bwc-options-heartbeat alert alert-warning rounded hide"
+									   role="alert">
+										You must enter a message body.
+									</p>
+									<p id="optionsHeartbeatJsonInvalidWarning"
+									   class="bwc-options-heartbeat alert alert-warning rounded hide"
+									   role="alert">
+										Invalid JSON! You entered invalid JSON in the message body.
+									</p>
+									<div>
+										<label class="bwc-switch"
+											   for="optionsHeartbeatClientMessageTextareaFormatCheckbox">
+											<input id="optionsHeartbeatClientMessageTextareaFormatCheckbox"
+												   type="checkbox">
+											<span id="optionsHeartbeatClientMessageTextareaFormatSlider"
+												  class="bwc-slider bwc-slider-disabled"></span>
+										</label>
+										<span class="bwc-switch-label">
+											Toggle JSON formatting from single line to multi-line.
+										</span>
+									</div>
+								</div>
+
 								<!--HEARTBEAT TRACK SERVER MESSAGES-->
-								<div class="bwc-slider-row">
+
+								<div class="bwc-margin-top">
 									<label class="bwc-switch" for="optionsHeartbeatTrackServerMessageCheckbox">
 										<input id="optionsHeartbeatTrackServerMessageCheckbox" type="checkbox">
 										<span id="optionsHeartbeatTrackServerMessageSlider"
@@ -386,197 +417,321 @@
 									</label>
 									<span class="bwc-switch-label">
 										Track Server Heartbeat Messages
-										<span class="bwc-preferences-info"
-											  aria-hidden="true"
-											  data-container="body"
-											  data-toggle="popover"
-											  data-test="popover-save-url"
-											  data-placement="top"
-											  data-html="true"
-											  data-title="Track Server Heartbeat Messages"
-											  data-content="This section allows the client to determine when a heartbeat message is received from the server. Using this option will allow the client to track server heartbeat messages and display the last-received time. If a message from the server is overdue, the last-received time will be highlighted in red.">
+										<a tabindex="100"
+										   class="bwc-preferences-info"
+										   data-container="body"
+										   data-html="true"
+										   data-placement="top"
+										   data-toggle="popover"
+										   data-trigger="focus"
+										   role="button"
+										   data-test="popover-heartbeat-track-server-message"
+										   data-title="Track Server Heartbeat Messages"
+										   data-content="
+<p>This section allows the client to determine when a heartbeat message is received from the server.</p>
+<p>Using this option will allow the client to track server heartbeat messages and display the last-received time.</p>
+<p>If a message from the server is overdue, the last-received time will be highlighted in red.</p>
+">
 											<i class="fa fa-info-circle fa-lg"></i>
-										</span>
+										</a>
 									</span>
 								</div>
-								<div id="optionsHeartbeatTrackServerMessageOptions" class="mb-4 hide">
-									<div id="optionsHeartbeatServerMessageTypeSelect" class="dropdown">
-										<button id="optionsHeartbeatServerMessageTypeSelectMenu"
-												class="btn btn-primary dropdown-toggle"
-												type="button"
-												data-toggle="dropdown"
-												aria-haspopup="true"
-												aria-expanded="false">
-											Server Message Type
-										</button>
-										<div id="optionsHeartbeatServerMessageTypeSelectOptions"
-											 class="dropdown-menu"
-											 aria-labelledby="optionsHeartbeatServerMessageTypeSelectMenu">
-											<button class="dropdown-item heartbeat-server-message-type"
-													type="button"
-													data-value="Object">
-												Object
-											</button>
-											<button class="dropdown-item heartbeat-server-message-type"
-													type="button"
-													data-value="String">
-												String
-											</button>
+
+								<div id="optionsHeartbeatTrackServerMessageOptions" class="hide">
+
+									<!--HEARTBEAT TRACK SERVER MESSAGE TYPE -->
+
+									<div class="bwc-margin-top">
+										<div class="input-group col-sm-4 bwc-no-padding-left">
+											<div class="input-group-prepend">
+												<label class="input-group-text">
+													<a tabindex="100"
+													   class="bwc-preferences-info"
+													   data-container="body"
+													   data-html="true"
+													   data-placement="top"
+													   data-toggle="popover"
+													   data-trigger="focus"
+													   role="button"
+													   data-test="popover-heartbeat-object-type"
+													   data-title="Server Message Type"
+													   data-content="
+<p>Messages from the server will be parsed and searched for either the object or string defined below.</p>
+<p>If 'Object' is selected, messages can be examined for either a property accessor such as <code>message.type</code> or whether a property accessor has a specific value, e.g. <code>message.type === 'heartbeat'</code> or <code>message.type !== 'chat'</code>.</p>
+<p>If 'String' is selected, messages will be searched for the specific string before they are converted to a JSON object.</p>
+">
+														<i class="fa fa-info-circle fa-lg"></i>
+													</a>
+												</label>
+											</div>
+											<select id="optionsHeartbeatServerMessageTypeSelect"
+													class="custom-select">
+												<option value="label" selected>Server Message Type</option>
+												<option value="object">Object</option>
+												<option value="string">String</option>
+											</select>
 										</div>
-										<span class="bwc-preferences-info"
-											  aria-hidden="true"
-											  data-container="body"
-											  data-toggle="popover"
-											  data-test="popover-save-url"
-											  data-placement="top"
-											  data-html="true"
-											  data-title="Server Heartbeat Message Type"
-											  data-content="TODO"> <!--TODO-->
-											<i class="fa fa-info-circle fa-lg"></i>
-										</span>
 									</div>
-									<label for="optionsHeartbeatServerMessageInput">
-										<p id="optionsHeartbeatServerMessageTypeObject" class="hide">
-											The heartbeat message from the server must contain an <code>object</code> with the following property:
-											<span class="bwc-preferences-info"
-												  aria-hidden="true"
-												  data-container="body"
-												  data-toggle="popover"
-												  data-test="popover-save-url"
-												  data-placement="top"
-												  data-html="true"
-												  data-title="Server Heartbeat Message Property"
-												  data-content="For example, <code>messageType.heartbeat</code>"> <!--TODO-->
-												<i class="fa fa-info-circle fa-lg"></i>
-											</span>
-										</p>
-										<p id="optionsHeartbeatServerMessageTypeString" class="hide">
-											The heartbeat message from the server must contain the following <code>string</code>:
-											<span class="bwc-preferences-info"
-												  aria-hidden="true"
-												  data-container="body"
-												  data-toggle="popover"
-												  data-test="popover-save-url"
-												  data-placement="top"
-												  data-html="true"
-												  data-title="Server Heartbeat Message String"
-												  data-content="For example, <code>this is a heartbeat message from the server</code>"> <!--TODO-->
-												<i class="fa fa-info-circle fa-lg"></i>
-											</span>
-										</p>
-										<input id="optionsHeartbeatServerMessageInput"
-											   class="form-control hide"
+
+									<!--HEARTBEAT TRACK SERVER MESSAGE TYPE OBJECT-->
+
+									<div id="optionsHeartbeatServerMessageTypeObject"
+										 class="form-inline bwc-margin-top-section hide">
+										<div class="input-group col-sm-5 bwc-no-padding-left">
+											<div class="input-group-prepend">
+												<div class="input-group-text">
+													<a tabindex="100"
+													   class="bwc-preferences-info"
+													   data-container="body"
+													   data-html="true"
+													   data-placement="top"
+													   data-toggle="popover"
+													   data-trigger="focus"
+													   role="button"
+													   data-test="popover-heartbeat-object-key"
+													   data-title="Property Accessor"
+													   data-content="
+<p>Enter an object property accessor using dot notation (without quotes): <code>message.type.heartbeat</code></p>
+">
+														<i class="fa fa-info-circle fa-lg"></i>
+													</a>
+												</div>
+											</div>
+											<input id="optionsHeartbeatServerMessageTypeObjectKeyInput"
+												   class="form-control bwc-heartbeat-keyup"
+												   type="text"
+												   placeholder="Property Accessor"/>
+										</div>
+
+										<div class="input-group col-sm-2 bwc-no-padding-left">
+											<div class="input-group-prepend">
+												<label class="input-group-text">
+													<a tabindex="100"
+													   class="bwc-preferences-info"
+													   data-container="body"
+													   data-html="true"
+													   data-placement="top"
+													   data-toggle="popover"
+													   data-trigger="focus"
+													   role="button"
+													   data-test="popover-heartbeat-object-operator"
+													   data-title="Object Operator"
+													   data-content="
+<p>If you want to search incoming messages for only a property accessor, ie. <code>message.type</code>, choose 'No Value'.</p>
+<p>if you want to ensure a property accessor has a specific value, choose '==='.</p>
+<p>If you want to ensure a property accessor does not have a specific value, choose '!=='.</p>
+">
+														<i class="fa fa-info-circle fa-lg"></i>
+													</a>
+												</label>
+											</div>
+											<select id="optionsHeartbeatServerMessageTypeObjectOperatorSelect"
+													class="custom-select">
+												<option value="noValue" selected>No Value</option>
+												<option value="equals">===</option>
+												<option value="notEquals">!==</option>
+											</select>
+										</div>
+
+										<div id="optionsHeartbeatServerMessageTypeObjectValue"
+											 class="input-group col-sm-5 bwc-no-padding-left hide">
+											<div class="input-group-prepend">
+												<div class="input-group-text">
+													<a tabindex="100"
+													   class="bwc-preferences-info"
+													   data-container="body"
+													   data-html="true"
+													   data-placement="top"
+													   data-toggle="popover"
+													   data-trigger="focus"
+													   role="button"
+													   data-test="popover-heartbeat-object-value"
+													   data-title="Property Value"
+													   data-content="
+<p>Enter a string property value without quotes.</p>
+">
+														<i class="fa fa-info-circle fa-lg"></i>
+													</a>
+												</div>
+											</div>
+											<input id="optionsHeartbeatServerMessageTypeObjectValueInput"
+												   class="form-control bwc-heartbeat-keyup"
+												   type="text"
+												   placeholder="Property Value"/>
+										</div>
+									</div>
+
+									<!--HEARTBEAT TRACK SERVER MESSAGE TYPE STRING-->
+
+									<div id="optionsHeartbeatServerMessageTypeString"
+										 class="form-inline bwc-margin-top-section hide">
+										<div class="input-group col-sm-10 bwc-no-padding-left">
+											<div class="input-group-prepend">
+												<div class="input-group-text">
+													<a tabindex="100"
+													   class="bwc-preferences-info"
+													   data-container="body"
+													   data-html="true"
+													   data-placement="top"
+													   data-toggle="popover"
+													   data-trigger="focus"
+													   role="button"
+													   data-test="popover-heartbeat-string"
+													   data-title="Message String"
+													   data-content="
+<p>Enter a string (without quotes). For example, <code>this is a heartbeat message from the server</code>.</p>
+">
+														<i class="fa fa-info-circle fa-lg"></i>
+													</a>
+												</div>
+											</div>
+											<input id="optionsHeartbeatServerMessageTypeStringInput"
+												   class="form-control bwc-heartbeat-keyup"
+												   type="text"
+												   placeholder="Message String"/>
+										</div>
+									</div>
+
+									<div id="optionsHeartbeatServerTypeInvalid"
+										 class="bwc-options-heartbeat alert alert-warning rounded bwc-margin-top hide"
+										 role="alert">
+									</div>
+
+									<!--HEARTBEAT DISPLAY SERVER MESSAGE-->
+
+									<div class="bwc-margin-top-section">
+										<div id="optionsHeartbeatDisplayServerMessage"
+											 class="hide">
+											<label class="bwc-switch"
+												   for="optionsHeartbeatDisplayServerMessageCheckbox">
+												<input id="optionsHeartbeatDisplayServerMessageCheckbox"
+													   type="checkbox">
+												<span id="optionsHeartbeatDisplayServerMessageSlider"
+													  class="bwc-slider bwc-slider-disabled"></span>
+											</label>
+											<span class="bwc-switch-label">
+														Display Server Heartbeat Messages
+													<a tabindex="100"
+													   class="bwc-preferences-info"
+													   data-container="body"
+													   data-html="true"
+													   data-placement="top"
+													   data-toggle="popover"
+													   data-trigger="focus"
+													   role="button"
+													   data-test="popover-heartbeat-display-server-message"
+													   data-title="Display Server Heartbeat Messages"
+													   data-content="
+<p>If this option is enabled, all heartbeat messages from the server will be displayed in the client 'Received Messages' area.</p>
+">
+															<i class="fa fa-info-circle fa-lg"></i>
+													</a>
+												</span>
+										</div>
+									</div>
+								</div>
+
+								<!--HEARTBEAT SAVE BUTTONS-->
+
+								<div class="bwc-margin-top-section">
+									<button id="optionsHeartbeatSaveButton" class="btn btn-primary" disabled="disabled">
+										Save Heartbeat
+									</button>
+									<button id="optionsHeartbeatCancelEditButton" class="btn btn-secondary">
+										Cancel
+									</button>
+								</div>
+							</div>
+						</div>
+
+						<!--MESSAGES-->
+
+						<div class="card">
+							<div id="optionsMessagesHeading" class="card-header" role="tab">
+								<h5 class="mb-0">
+									<a id="optionsMessagesAnchor"
+									   class="bwc-accordion-anchor"
+									   data-toggle="collapse"
+									   href="#optionsMessages"
+									   aria-expanded="false"
+									   aria-controls="optionsMessages">
+										Messages
+										<i class="fa fa-chevron-down bwc-accordion-heading-icon float-right"
+										   aria-hidden="true"></i>
+									</a>
+								</h5>
+							</div>
+							<div id="optionsMessages"
+								 class="collapse"
+								 role="tabpanel"
+								 aria-labelledby="optionsMessagesHeading"
+								 data-parent="#options">
+								<div class="card-body">
+									<h5 class="bwc-margin-top">
+										Saved Messages
+									</h5>
+									<p id="optionsMessageNoneSaved">
+										You have not saved any messages.
+									</p>
+									<div id="optionsMessageSavedTable" class="clearfix"></div>
+									<h5 class="bwc-margin-top">
+										Save a message
+									</h5>
+									<div class="bwc-margin-top">
+										<label id="optionsMessageNameInputLabel" for="optionsMessageNameInput">
+											The display name appears in the "Saved Messages" table and Client
+											drop-down
+											menu:
+										</label>
+										<input id="optionsMessageNameInput"
+											   class="form-control"
 											   type="text"
-											   placeholder="Server Heartbeat Message Object or String"/>
-									</label>
-									<div id="optionsHeartbeatDisplayServerMessage" class="bwc-slider-row mt-2 hide">
-										<label class="bwc-switch" for="optionsHeartbeatDisplayServerMessageCheckbox">
-											<input id="optionsHeartbeatDisplayServerMessageCheckbox" type="checkbox">
-											<span id="optionsHeartbeatDisplayServerMessageSlider"
+											   placeholder="Display Name"/>
+									</div>
+									<div class="bwc-margin-top">
+										<label id="optionsMessageTextareaLabel" for="optionsMessageTextarea">
+											The message body does not appear in the "Saved Messages" table or Client
+											drop-down
+											menu:
+										</label>
+										<textarea id="optionsMessageTextarea"
+												  class="form-control"
+												  placeholder="Message Body"></textarea>
+									</div>
+									<p id="optionsMessageStatus" class="hide"></p>
+									<p id="optionsMessageNameInvalid"
+									   class="alert alert-warning rounded hide" role="alert">
+										You must enter a display name.
+									</p>
+									<p id="optionsMessageTextareaEmpty" class="alert alert-warning rounded hide"
+									   role="alert">
+										You must enter a message body.
+									</p>
+									<p id="optionsMessageJsonInvalidWarning"
+									   class="alert alert-warning rounded hide"
+									   role="alert">
+										Invalid JSON! You entered invalid JSON in the message body.
+									</p>
+									<div>
+										<label class="bwc-switch" for="optionsMessageTextareaFormatCheckbox">
+											<input id="optionsMessageTextareaFormatCheckbox" type="checkbox">
+											<span id="optionsMessageTextareaFormatSlider"
 												  class="bwc-slider bwc-slider-disabled"></span>
 										</label>
 										<span class="bwc-switch-label">
-											Display Server Heartbeat Messages
-											<span class="bwc-preferences-info"
-												  aria-hidden="true"
-												  data-container="body"
-												  data-toggle="popover"
-												  data-test="popover-save-url"
-												  data-placement="top"
-												  data-html="true"
-												  data-title="Display Server Heartbeat Messages"
-												  data-content="If this option is enabled, all heartbeat messages from the server will be displayed in the client received messages area.">
-												<i class="fa fa-info-circle fa-lg"></i>
-											</span>
+											Toggle JSON formatting from single line to multi-line.
 										</span>
 									</div>
+									<div class="bwc-margin-top-section">
+										<button id="optionsMessageSaveButton" class="btn btn-primary"
+												disabled="disabled">
+											Save Message
+										</button>
+										<button id="optionsMessageCancelEditButton" class="btn btn-secondary">
+											Cancel
+										</button>
+									</div>
 								</div>
-								<!--HEARTBEAT SAVE BUTTONS-->
-								<button id="optionsHeartbeatSaveButton" class="btn btn-primary" disabled="disabled">
-									Save Heartbeat
-								</button>
-								<button id="optionsHeartbeatCancelEditButton" class="btn btn-secondary">
-									Cancel
-								</button>
-							</div>
-						</div>
-					</div>
-
-					<!--MESSAGES-->
-
-					<div class="card">
-						<div id="optionsMessagesHeading" class="card-header" role="tab">
-							<h5 class="mb-0">
-								<a id="optionsMessagesAnchor"
-								   class="bwc-accordion-anchor"
-								   data-toggle="collapse"
-								   href="#optionsMessages"
-								   aria-expanded="false"
-								   aria-controls="optionsMessages">
-									Messages
-									<i class="fa fa-chevron-down bwc-accordion-heading-icon float-right"
-									   aria-hidden="true"></i>
-								</a>
-							</h5>
-						</div>
-						<div id="optionsMessages"
-							 class="collapse"
-							 role="tabpanel"
-							 aria-labelledby="optionsMessagesHeading"
-							 data-parent="#options">
-							<div class="card-body">
-								<h5>
-									Saved Messages
-								</h5>
-								<p id="optionsMessageNoneSaved">
-									You have not saved any messages.
-								</p>
-								<div id="optionsMessageSavedTable" class="clearfix"></div>
-								<h5 class="bwc-margin-top">
-									Save a message
-								</h5>
-								<label id="optionsMessageNameInputLabel" for="optionsMessageNameInput">
-									The display name appears in the "Saved Messages" table and Client drop-down menu:
-								</label>
-								<input id="optionsMessageNameInput"
-									   class="form-control"
-									   type="text"
-									   placeholder="Display Name"/>
-								<label id="optionsMessageTextareaLabel" for="optionsMessageTextarea">
-									The message body does not appear in the "Saved Messages" table or Client drop-down
-									menu:
-								</label>
-								<textarea id="optionsMessageTextarea"
-										  class="form-control"
-										  placeholder="Message Body"></textarea>
-								<p id="optionsMessageStatus" class="hide"></p>
-								<p id="optionsMessageNameInvalid" class="alert alert-warning rounded hide" role="alert">
-									You must enter a display name.
-								</p>
-								<p id="optionsMessageTextareaEmpty" class="alert alert-warning rounded hide"
-								   role="alert">
-									You must enter a message body.
-								</p>
-								<p id="optionsMessageJsonInvalidWarning" class="alert alert-warning rounded hide"
-								   role="alert">
-									Invalid JSON! You entered invalid JSON in the message body.
-								</p>
-								<div class="bwc-slider-row">
-									<label class="bwc-switch" for="optionsMessageTextareaFormatCheckbox">
-										<input id="optionsMessageTextareaFormatCheckbox" type="checkbox">
-										<span id="optionsMessageTextareaFormatSlider"
-											  class="bwc-slider bwc-slider-disabled"></span>
-									</label>
-									<span class="bwc-switch-label">
-										Toggle JSON formatting from single line to multi-line.
-									</span>
-								</div>
-								<button id="optionsMessageSaveButton" class="btn btn-primary" disabled="disabled">
-									Save Message
-								</button>
-								<button id="optionsMessageCancelEditButton" class="btn btn-secondary">
-									Cancel
-								</button>
 							</div>
 						</div>
 					</div>
@@ -596,7 +751,8 @@
 					   aria-expanded="true"
 					   aria-controls="client">
 						Client
-						<i class="fa fa-chevron-up bwc-accordion-heading-icon float-right" aria-hidden="true"></i>
+						<i class="fa fa-chevron-up bwc-accordion-heading-icon float-right"
+						   aria-hidden="true"></i>
 					</a>
 				</h5>
 			</div>
@@ -609,10 +765,10 @@
 
 					<!--URL-->
 
-					<h5>
+					<h5 class="bwc-margin-top">
 						Server URL (Required)
 					</h5>
-					<div id="urlSelect" class="dropdown hide">
+					<div id="urlSelect" class="hide">
 						<button id="urlSelectMenu"
 								class="btn btn-primary dropdown-toggle"
 								type="button"
@@ -626,24 +782,28 @@
 							 aria-labelledby="urlSelectMenu">
 						</div>
 					</div>
-					<label for="urlInput">
-						Enter the server URL:
-					</label>
-					<input id="urlInput"
-						   class="form-control"
-						   type="text"
-						   placeholder="URL"/>
+					<div class="bwc-margin-top">
+						<label for="urlInput">
+							Enter the server URL:
+						</label>
+						<input id="urlInput"
+							   class="form-control"
+							   type="text"
+							   placeholder="URL"/>
+					</div>
 					<p id="urlInvalidWarning" class="alert alert-warning rounded hide" role="alert">
-						Invalid URL! It should begin with <code>ws://</code> or <code>wss://</code> and not contain any
+						Invalid URL! It should begin with <code>ws://</code> or <code>wss://</code> and not
+						contain
+						any
 						spaces.
 					</p>
 
 					<!--PROTOCOL-->
 
-					<h5>
+					<h5 class="bwc-margin-top-section">
 						Server Protocol (Optional)
 					</h5>
-					<div id="protocolSelect" class="dropdown hide">
+					<div id="protocolSelect" class="hide">
 						<button id="protocolSelectMenu"
 								class="btn btn-primary dropdown-toggle"
 								type="button"
@@ -658,33 +818,41 @@
 						</div>
 					</div>
 					<label for="protocolInput">
-						Enter a single protocol name or multiple comma-separated names without quotes (whitespace will
+						Enter a single protocol name or multiple comma-separated names without quotes
+						(whitespace
+						will
 						be ignored):
 					</label>
 					<input id="protocolInput"
 						   class="form-control"
 						   type="text"
 						   placeholder="Protocol"/>
-					<p>
+					<p class="bwc-margin-top-section">
 						Connection Status:
 						<span id="connectionStatus">
 							CLOSED
 						</span>
 					</p>
-					<button id="connectButton" class="btn btn-primary" disabled="disabled">
-						Connect
-					</button>
-					<button id="disconnectButton" class="btn btn-danger hide">
-						Disconnect
-					</button>
+					<div class="bwc-margin-top-section">
+						<button id="connectButton" class="btn btn-primary" disabled="disabled">
+							Connect
+						</button>
+						<button id="disconnectButton" class="btn btn-danger hide">
+							Disconnect
+						</button>
+					</div>
 					<hr/>
 
 					<!--HEARTBEAT-->
 
-					<h5>
+					<h5 class="bwc-margin-top-section">
 						Heartbeat
 					</h5>
-					<div id="heartbeatSelect" class="dropdown">
+					<p id="heartbeatSelectNone" class="bwc-margin-top-section hide">
+						You must first save at least one 'Heartbeat' in the Options > Heartbeats section to use this
+						feature.
+					</p>
+					<div id="heartbeatSelect" class="bwc-margin-top-section hide">
 						<button id="heartbeatSelectMenu"
 								class="btn btn-primary dropdown-toggle"
 								type="button"
@@ -696,45 +864,42 @@
 						<div id="heartbeatSelectOptions"
 							 class="dropdown-menu"
 							 aria-labelledby="heartbeatSelectMenu">
-							<button class="dropdown-item heartbeat"
-									type="button"
-									data-value="TODO 1">
-								TODO 1
-							</button>
-							<button class="dropdown-item heartbeat"
-									type="button"
-									data-value="TODO 2">
-								TODO 2
-							</button>
 						</div>
 					</div>
 
-					<div class="mt-3 mb-3">
+					<p id="clientHeartbeatName" class="bwc-margin-top-section hide">
+						Using heartbeat: <span id="clientHeartbeatNameText"></span>
+					</p>
+
+					<div class="bwc-margin-top-section">
 						<button id="heartbeatStartButton" class="btn btn-primary" disabled="disabled">
 							Start
 						</button>
+					</div>
+
+					<p id="heartbeatClientStatus" class="bwc-margin-top hide">
+						Last message sent from client:
+						<span id="heartbeatClientStatusTime" class="text-danger">Waiting ...</span>
+					</p>
+
+					<p id="heartbeatServerStatus" class="bwc-margin-top hide">
+						Last message received from server:
+						<span id="heartbeatServerStatusTime" class="text-danger">Unknown</span>
+					</p>
+
+					<div class="bwc-margin-top-section">
 						<button id="heartbeatStopButton" class="btn btn-danger hide">
 							Stop
 						</button>
 					</div>
-
-					<!--TODO-->
-					<p id="heartbeatClientStatus" class="hide">
-						Last message sent from client: <span id="heartbeatClientStatusTime">13:45:26</span>
-					</p>
-
-					<!--TODO-->
-					<p id="heartbeatServerStatus" class="hide">
-						Last message received from server: <span id=heartbeatServerStatusTime" class="text-danger">13:42:26</span>
-					</p>
 					<hr/>
 
 					<!--MESSAGE-->
 
-					<h5>
+					<h5 class="bwc-margin-top-section">
 						Send a Message
 					</h5>
-					<div id="messageSelect" class="dropdown hide">
+					<div id="messageSelect" class="bwc-margin-top hide">
 						<button id="messageSelectMenu"
 								class="btn btn-primary dropdown-toggle"
 								type="button"
@@ -748,30 +913,35 @@
 							 aria-labelledby="messageSelectMenu">
 						</div>
 					</div>
-					<label for="messageTextarea">
-						Enter a message and press Ctrl+Enter or click the Send button after connecting to a server:
-					</label>
-					<textarea id="messageTextarea"
-							  class="form-control"
-							  placeholder="Message"></textarea>
-					<p id="messageJsonInvalidWarning" class="alert alert-warning rounded hide" role="alert">
-						Invalid JSON! You entered invalid JSON in the message body.
-					</p>
-					<div class="bwc-slider-row">
-						<label class="bwc-switch" for="messageTextareaFormatCheckbox">
-							<input id="messageTextareaFormatCheckbox" type="checkbox">
-							<span id="messageTextareaFormatSlider"
-								  class="bwc-slider bwc-slider-disabled"></span>
+					<div class="bwc-margin-top-section">
+						<label for="messageTextarea">
+							Enter a message and press Ctrl+Enter or click the Send button after connecting to a
+							server:
 						</label>
-						<span class="bwc-switch-label">
-							Toggle JSON formatting from single line to multi-line.
-						</span>
+						<textarea id="messageTextarea"
+								  class="form-control"
+								  placeholder="Message"></textarea>
+						<p id="messageJsonInvalidWarning" class="alert alert-warning rounded hide" role="alert">
+							Invalid JSON! You entered invalid JSON in the message body.
+						</p>
+						<div>
+							<label class="bwc-switch" for="messageTextareaFormatCheckbox">
+								<input id="messageTextareaFormatCheckbox" type="checkbox">
+								<span id="messageTextareaFormatSlider"
+									  class="bwc-slider bwc-slider-disabled"></span>
+							</label>
+							<span class="bwc-switch-label">
+								Toggle JSON formatting from single line to multi-line.
+							</span>
+						</div>
 					</div>
-					<button id="messageSendButton" class="btn btn-primary" disabled="disabled">
-						Send
-					</button>
+					<div class="bwc-margin-top">
+						<button id="messageSendButton" class="btn btn-primary" disabled="disabled">
+							Send
+						</button>
+					</div>
 					<hr/>
-					<h5>
+					<h5 class="bwc-margin-top-section">
 						Received Messages
 					</h5>
 					<p>
@@ -779,10 +949,12 @@
 						Incoming messages from the server are shown in black.
 						Click on on an incoming message to pretty-print it.
 					</p>
-					<button id="clearMessagesButton" class="btn btn-danger" disabled="disabled">
-						Clear Messages
-					</button>
-					<div id="messages" class="border border-secondary rounded"></div>
+					<div class="bwc-margin-top">
+						<button id="clearMessagesButton" class="btn btn-danger" disabled="disabled">
+							Clear Messages
+						</button>
+					</div>
+					<div id="messages" class="bwc-margin-top border border-secondary rounded"></div>
 				</div>
 			</div>
 		</div>
@@ -811,7 +983,8 @@
 				<button id="deleteModalDeleteButton" type="button" class="btn btn-danger" data-target="">
 					Delete!
 				</button>
-				<button id="deleteModalCancelButton" type="button" class="btn btn-secondary" data-dismiss="modal">
+				<button id="deleteModalCancelButton" type="button" class="btn btn-secondary"
+						data-dismiss="modal">
 					Cancel
 				</button>
 			</div>

@@ -12,16 +12,12 @@ body {
 }
 
 hr {
-  margin-top: 30px;
+  margin-top: 20px;
   margin-bottom: 20px;
 }
 
-input {
-  font-family: monospace;
-  min-width: 300px;
-  width: 50%;
-  padding: 1px 3px;
-  margin-bottom: 10px;
+p {
+  margin-top: $bwc-margin-top;
 }
 
 textarea {
@@ -39,10 +35,6 @@ textarea {
   padding: 0;
 }
 
-.dropdown {
-  margin-bottom: 10px;
-}
-
 .mb-0 > a {
   display: inline-block;
   width: 100%;
@@ -51,7 +43,7 @@ textarea {
 
 // Custom id styles
 
-#connectionStatus {
+#clientHeartbeatNameText, #connectionStatus {
   font-weight: bold;
 }
 
@@ -67,7 +59,15 @@ textarea {
 // Custom class styles
 
 .bwc-margin-top {
-  margin-top: 15px;
+  margin-top: $bwc-margin-top;
+}
+
+.bwc-margin-top-section {
+  margin-top: $bwc-margin-top-section;
+}
+
+.bwc-no-padding-left {
+  padding-left: 0 !important;
 }
 
 .bwc-pointer {
@@ -117,7 +117,8 @@ textarea {
 
 .bwc-preferences-info {
   cursor: pointer;
-  color: $primary;
+  color: $info;
+  outline: none !important;
 }
 
 .bwc-string {
@@ -125,10 +126,6 @@ textarea {
 }
 
 // Slider checkbox
-
-.bwc-slider-row {
-  margin-bottom: 10px;
-}
 
 .bwc-switch {
   position: relative;
