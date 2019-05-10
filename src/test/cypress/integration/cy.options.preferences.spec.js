@@ -9,6 +9,7 @@ describe('Options -> Preferences', function () {
   })
 
   it('clicking "i" icon should show and hide popover', function() {
+    // TODO redo these 
     // Prevent Saving Invalid URL
     cy.log('Prevent Saving Invalid URL')
     cy.get('[data-test=popover-save-url]').click()

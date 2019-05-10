@@ -38,7 +38,7 @@ describe('Client', function () {
   })
 
   it('connection and message tests', function () {
-    const echoServer = 'ws://demos.kaazing.com/echo'
+    const echoServer = Cypress.env('webSocketServer')
     const textareaFormatSliderEnabledClass = 'bwc-slider'
 
     // connect to server

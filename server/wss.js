@@ -1,5 +1,4 @@
 const WebSocket = require('ws')
-
 const arg = process.argv[2]
 const port = 4000
 const stringMessage = 'heartbeat message from server'
@@ -13,10 +12,17 @@ const objectMessage = {
 let counter = 0
 let timeout = 3600 * 1000
 let timer
+let wss
 
-if (arg === 'auto') {
-  // stop server one minute after last message received
-  timeout = 60 * 1000
+// stop server 'x' seconds after last message received
+if (arg) {
+  const number = parseInt(arg, 10)
+  if (Number.isInteger(number)) {
+    timeout = number * 1000
+    console.log(`wss will stop ${number} seconds after last message is received\n`)
+  } else {
+    console.error(`'${arg}' is not an integer\nwss will stop one hour after last message is received\n`)
+  }
 }
 
 const startTimer = function () {
@@ -28,11 +34,6 @@ const stop = function () {
   process.exit(0)
 }
 
-const wss = new WebSocket.Server({port: port}, () => {
-  console.log('wss listening on port 4000')
-  startTimer()
-})
-
 const handleHeartbeatMessage = function (ws, message) {
   counter++
   if (counter >= 2) {
@@ -41,6 +42,13 @@ const handleHeartbeatMessage = function (ws, message) {
     ws.send(message)
   }
 }
+
+wss = new WebSocket.Server({port: port}, () => {
+  console.log('wss listening on port 4000')
+  startTimer()
+})
+
+wss.on('error', (e) => console.error(e))
 
 wss.on('connection', (ws) => {
   let date = new Date()

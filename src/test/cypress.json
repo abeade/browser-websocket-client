@@ -3,5 +3,8 @@
   "pluginsFile": "cypress/plugins/plugins.js",
   "projectId": "bhz82e",
   "supportFile": "cypress/support/support.js",
-  "watchForFileChanges": true
+  "watchForFileChanges": true,
+  "env": {
+    "webSocketServer": "ws://localhost:4000"
+  }
 }

@@ -1,6 +1,6 @@
 describe('Options -> URLs', function () {
   const urlInvalid = 's://test'
-  const echoServer = 'ws://demos.kaazing.com/echo'
+  const echoServer = Cypress.env('webSocketServer')
   const urlNameNew = `${echoServer}/test`
 
   beforeEach(function () {
