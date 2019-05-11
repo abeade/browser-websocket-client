@@ -22,6 +22,9 @@ require('bootstrap/js/src/util')
 window.$ = $
 window.jQuery = $
 
+// Exportable functions used in unit tests
+const functions = {}
+
 // Define savedOptions object
 const savedOptions = {
   preferences: {
@@ -405,7 +408,7 @@ const loadOptions = function () {
 
 // Delete from savedOptions
 const deleteSavedOptions = function (option, target) {
-  const options = deleteOptions(option, target, savedOptions)
+  const options = functions.deleteOptions(option, target, savedOptions)
   savedOptions.heartbeats = options.heartbeats
   savedOptions.messages = options.messages
   savedOptions.protocols = options.protocols
@@ -413,7 +416,7 @@ const deleteSavedOptions = function (option, target) {
 }
 
 // Delete options
-const deleteOptions = function (option, target, options) {
+functions.deleteOptions = function (option, target, options) {
   let heartbeats, messages, protocols, urls
   switch (option) {
     case 'heartbeat':
@@ -470,7 +473,7 @@ const populateUrlTable = function () {
 }
 
 // Test if URL begins with ws:// or wss:// and has no spaces
-const isValidUrl = function (url) {
+functions.isValidUrl = function (url) {
   return /^(ws|wss):\/\/[^ "]+$/.test(url)
 }
 
@@ -513,12 +516,12 @@ optionsUrlInput.on('keyup', function () {
   } else {
     optionsUrlInputEmpty.show()
   }
-  if (isValidUrl(optionsUrlInput.val())) {
+  if (functions.isValidUrl(optionsUrlInput.val())) {
     optionsUrlInvalidWarning.hide()
   } else {
     optionsUrlInvalidWarning.show()
   }
-  if (optionsUrlInput.val().trim().length > 0 && isValidUrl(optionsUrlInput.val().trim())) {
+  if (optionsUrlInput.val().trim().length > 0 && functions.isValidUrl(optionsUrlInput.val().trim())) {
     optionsUrlSaveButton.prop('disabled', false)
   } else {
     optionsUrlSaveButton.prop('disabled', savedOptions.preferences.preventSavingUrl)
@@ -558,7 +561,7 @@ optionsUrlSaveButton.on('click', function () {
 
 // Convert protocol input value to an array if necessary and
 // trim unnecessary commas and spaces
-const getProtocols = function (input) {
+functions.getProtocols = function (input) {
   const protocolsInput = input.val()
   const protocolsResult = protocolsInput
     .split(',')
@@ -650,7 +653,7 @@ optionsProtocolCancelEditButton.on('click', function () {
 
 // Persist protocol to storage on save button click
 optionsProtocolSaveButton.on('click', function () {
-  let protocol = getProtocols(optionsProtocolInput)
+  let protocol = functions.getProtocols(optionsProtocolInput)
   if (editingProtocol) {
     deleteSavedOptions('protocol', editingProtocolTarget)
   } else {
@@ -1001,7 +1004,7 @@ const populateMessageTable = function () {
 }
 
 // Test a string to determine if it is valid JSON
-const isValidJson = function (string) {
+functions.isValidJson = function (string) {
   try {
     const test = JSON.parse(string)
     if (test && typeof test === 'object') {
@@ -1012,7 +1015,7 @@ const isValidJson = function (string) {
 }
 
 // Convert JSON object to a string
-const stringifyJson = function (input) {
+functions.stringifyJson = function (input) {
   if (typeof input === 'object') {
     return JSON.stringify(input)
   } else {
@@ -1024,7 +1027,7 @@ const stringifyJson = function (input) {
 const formatTextarea = function (checkbox, textarea) {
   const checked = checkbox.is(':checked')
   const message = textarea.val()
-  const valid = isValidJson(message)
+  const valid = functions.isValidJson(message)
   if (!valid) {
     checkbox.prop('checked', false)
   } else if (checked) {
@@ -1039,7 +1042,7 @@ const formatTextarea = function (checkbox, textarea) {
 const validateOptionsMessage = function () {
   const validMessageName = optionsMessageNameInput.val().trim().length > 0
   const validMessageLength = optionsMessageTextarea.val().trim().length > 0
-  const validMessageJson = isValidJson(optionsMessageTextarea.val())
+  const validMessageJson = functions.isValidJson(optionsMessageTextarea.val())
   if (validMessageName && validMessageLength && validMessageJson) {
     optionsMessageSaveButton.prop('disabled', false)
     optionsMessageTextareaFormatSlider.removeClass('bwc-slider-disabled')
@@ -1067,7 +1070,7 @@ const validateOptionsMessageName = function () {
 // Validate message textarea value and show user feedback
 const validateOptionsMessageTextarea = function () {
   const validMessageLength = optionsMessageTextarea.val().trim().length > 0
-  const validMessageJson = isValidJson(optionsMessageTextarea.val())
+  const validMessageJson = functions.isValidJson(optionsMessageTextarea.val())
   let valid = true
   optionsMessageJsonInvalidWarning.hide()
   if (validMessageLength) {
@@ -1121,7 +1124,7 @@ const deleteMessage = function (all) {
 }
 
 // Format JSON for pretty-print modal
-const highlightJson = function (string) {
+functions.highlightJson = function (string) {
   return JSON.stringify(JSON.parse(string), null, 2)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
@@ -1145,7 +1148,7 @@ const highlightJson = function (string) {
 const printMessage = function (message) {
   const [title, body] = message.split(SEPARATOR)
   jsonModalTitle.html(title)
-  jsonModalBody.html(getJsonModalBody(body))
+  jsonModalBody.html(functions.getJsonModalBody(body))
   jsonModal.modal('show')
 }
 
@@ -1251,7 +1254,7 @@ const populateSavedMessageSelect = function () {
     .html('')
     .append(options)
   $('.dropdown-item.message').on('click', function () {
-    messageTextarea.val(stringifyJson(jQuery(this).data('value')))
+    messageTextarea.val(functions.stringifyJson(jQuery(this).data('value')))
     validateClientMessage()
   })
 }
@@ -1259,7 +1262,7 @@ const populateSavedMessageSelect = function () {
 // Validate message textarea value, show user feedback,
 // and enable or disable send button
 const validateClientMessage = function () {
-  const validJson = isValidJson(messageTextarea.val())
+  const validJson = functions.isValidJson(messageTextarea.val())
   if (validJson) {
     if (wsConnected) {
       messageSendButton.prop('disabled', false)
@@ -1286,7 +1289,7 @@ urlInput.on('keyup', function () {
     urlInvalidWarning.hide()
     connectButton.prop('disabled', true)
   } else {
-    if (isValidUrl(urlInput.val().trim())) {
+    if (functions.isValidUrl(urlInput.val().trim())) {
       connectButton.prop('disabled', false)
       urlInvalidWarning.hide()
     } else {
@@ -1357,11 +1360,11 @@ const sendHeartbeat = function () {
   heartbeatClientStatusTime
     .removeClass('text-danger')
     .text(time)
-  updateHeartbeatServerStatus()
+  functions.updateHeartbeatServerStatus()
 }
 
 // Parse all incoming messages for server heartbeat message
-const checkMessageForHeartbeat = function (data) {
+functions.checkMessageForHeartbeat = function (clientHeartbeat, data) {
   const displayServerMessage = clientHeartbeat.displayServerMessage || false
   let heartbeatMessage = false
   let json = null
@@ -1407,18 +1410,18 @@ const checkMessageForHeartbeat = function (data) {
   }
   if (displayServerMessage && heartbeatMessage) {
     heartbeatLastServerMessageTime = Date.now()
-    updateHeartbeatServerStatus()
-    addMessage(data, null)
+    functions.updateHeartbeatServerStatus()
+    functions.addMessage(data, null)
   } else if (heartbeatMessage) {
     heartbeatLastServerMessageTime = Date.now()
-    updateHeartbeatServerStatus()
+    functions.updateHeartbeatServerStatus()
   } else {
-    addMessage(data, null)
+    functions.addMessage(data, null)
   }
 }
 
 // Update the server status time element
-const updateHeartbeatServerStatus = function () {
+functions.updateHeartbeatServerStatus = function () {
   const unknown = heartbeatLastServerMessageTime === null
   let overdue = false
   if ((Date.now() - heartbeatLastServerMessageTime) > 1000 * clientHeartbeat.interval) {
@@ -1476,7 +1479,7 @@ heartbeatStopButton.on('click', function () {
 // Open WebSocket connection
 const open = function () {
   let url = urlInput.val().trim().toString()
-  let protocol = getProtocols(protocolInput)
+  let protocol = functions.getProtocols(protocolInput)
   if (protocol) { ws = new WebSocket(url, protocol) } else { ws = new WebSocket(url) }
   ws.onopen = onOpen
   ws.onclose = onClose
@@ -1529,7 +1532,7 @@ const onClose = function () {
 
 // WebSocket onMessage handler
 const onMessage = function (event) {
-  checkMessageForHeartbeat(event.data)
+  functions.checkMessageForHeartbeat(clientHeartbeat, event.data)
 }
 
 // WebSocket onError handler
@@ -1539,7 +1542,7 @@ const onError = function (event) {
 
 // Add outgoing and incoming message to DOM, formatting as necessary
 // Format incoming messages to open JSON pretty-print modal on click
-const addMessage = function (data, type) {
+functions.addMessage = function (data, type) {
   let message, messageBox
   if (type === 'SENT') {
     message = $('<pre>')
@@ -1551,7 +1554,7 @@ const addMessage = function (data, type) {
       .text(data)
       .data('target', data)
       .on('click', function () {
-        jsonModalBody.html(getJsonModalBody(jQuery(this).data('target')))
+        jsonModalBody.html(functions.getJsonModalBody(jQuery(this).data('target')))
         jsonModal.modal('show')
       })
   }
@@ -1567,7 +1570,7 @@ const addMessage = function (data, type) {
 // Add outgoing message to DOM and send it to server
 const sendMessage = function () {
   const message = messageTextarea.val()
-  addMessage(message, 'SENT')
+  functions.addMessage(message, 'SENT')
   ws.send(message)
 }
 
@@ -1599,31 +1602,31 @@ messageTextarea.on('keydown', function (e) {
 
 // Return JSON Modal body used for pretty-printing
 // Handles valid and invalid JSON and valid JSON objects enclosed within a string
-const getJsonModalBody = function (string) {
+functions.getJsonModalBody = function (string) {
   const prefix = '<p><code class="bwc-code">'
   const suffix = '</code></p>'
   let body = ''
   let wrapperPrefix
   let wrapperSuffix
-  if (isValidJson(string)) {
-    body = `<pre>${highlightJson(string)}</pre>`
+  if (functions.isValidJson(string)) {
+    body = `<pre>${functions.highlightJson(string)}</pre>`
   } else {
     const curlyBracketSubstring = string.substring(string.indexOf('{'), string.lastIndexOf('}') + 1)
     const squareBracketSubstring = string.substring(string.indexOf('['), string.lastIndexOf(']') + 1)
-    const curlyValid = isValidJson(curlyBracketSubstring)
-    const squareValid = isValidJson(squareBracketSubstring)
+    const curlyValid = functions.isValidJson(curlyBracketSubstring)
+    const squareValid = functions.isValidJson(squareBracketSubstring)
     const curlyLonger = curlyBracketSubstring.length >= squareBracketSubstring.length
     if (curlyLonger && curlyValid) {
       wrapperPrefix = string.substring(0, string.indexOf('{'))
       wrapperSuffix = string.substring(string.lastIndexOf('}') + 1, string.length)
       if (wrapperPrefix) body += `${prefix}${wrapperPrefix}${suffix}`
-      body += `<pre>${highlightJson(curlyBracketSubstring)}</pre>`
+      body += `<pre>${functions.highlightJson(curlyBracketSubstring)}</pre>`
       if (wrapperSuffix) body += `${prefix}${wrapperSuffix}${suffix}`
     } else if (squareValid) {
       wrapperPrefix = string.substring(0, string.indexOf('['))
       wrapperSuffix = string.substring(string.lastIndexOf(']') + 1, string.length)
       if (wrapperPrefix) body += `${prefix}${wrapperPrefix}${suffix}`
-      body += `<pre>${highlightJson(squareBracketSubstring)}</pre>`
+      body += `<pre>${functions.highlightJson(squareBracketSubstring)}</pre>`
       if (wrapperSuffix) body += `${prefix}${wrapperSuffix}${suffix}`
     } else {
       body = `<p class ="alert alert-warning rounded hide" role="alert">This message does not contain any valid JSON.</p>
@@ -1682,11 +1685,5 @@ $(document).ready(function () {
 
 // Used in unit tests
 export {
-  deleteOptions,
-  getJsonModalBody,
-  getProtocols,
-  highlightJson,
-  isValidJson,
-  isValidUrl,
-  stringifyJson
+  functions
 }

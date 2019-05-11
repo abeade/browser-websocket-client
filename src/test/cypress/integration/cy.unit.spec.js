@@ -1,4 +1,4 @@
-import { deleteOptions, getJsonModalBody, getProtocols, highlightJson, isValidJson, isValidUrl, stringifyJson } from '../../../main/index'
+import { functions } from '../../../main/index'
 
 describe('Unit Tests', function () {
   const jsonMessageInvalid = '"missingLeadingBracket": true}'
@@ -17,7 +17,7 @@ describe('Unit Tests', function () {
   describe('highlightJson()', function () {
     it('should return an element with formatted JSON', function () {
       const json = JSON.parse(jsonMessageValid)
-      const text = highlightJson(JSON.stringify(json, null, 2))
+      const text = functions.highlightJson(JSON.stringify(json, null, 2))
       const element = window.document.createElement('pre')
       element.innerHTML = text
       const children = element.children
@@ -43,14 +43,14 @@ describe('Unit Tests', function () {
 
   describe('getJsonModalBody()', function () {
     it('should return one element with valid JSON', function () {
-      const body = getJsonModalBody(jsonMessageValid)
+      const body = functions.getJsonModalBody(jsonMessageValid)
       const element = window.document.createElement('div')
       element.innerHTML = body
       const children = element.children
       expect(children.length).to.eq(1)
     })
     it('should return two elements and a warning with invalid JSON', function () {
-      const body = getJsonModalBody(jsonMessageInvalid)
+      const body = functions.getJsonModalBody(jsonMessageInvalid)
       const element = window.document.createElement('div')
       element.innerHTML = body
       const children = element.children
@@ -58,7 +58,7 @@ describe('Unit Tests', function () {
       expect(children[0].innerHTML).to.eq('This message does not contain any valid JSON.')
     })
     it('should return two elements with curlyPrefix', function () {
-      const body = getJsonModalBody(curlyPrefix)
+      const body = functions.getJsonModalBody(curlyPrefix)
       const element = window.document.createElement('div')
       element.innerHTML = body
       const children = element.children
@@ -66,7 +66,7 @@ describe('Unit Tests', function () {
       expect(children[0].textContent).to.eq('Prefix')
     })
     it('should return two elements with curlySuffix', function () {
-      const body = getJsonModalBody(curlySuffix)
+      const body = functions.getJsonModalBody(curlySuffix)
       const element = window.document.createElement('div')
       element.innerHTML = body
       const children = element.children
@@ -74,7 +74,7 @@ describe('Unit Tests', function () {
       expect(children[1].textContent).to.eq('Suffix')
     })
     it('should return three elements with curlyWrapper', function () {
-      const body = getJsonModalBody(curlyWrapper)
+      const body = functions.getJsonModalBody(curlyWrapper)
       const element = window.document.createElement('div')
       element.innerHTML = body
       const children = element.children
@@ -83,7 +83,7 @@ describe('Unit Tests', function () {
       expect(children[2].textContent).to.eq('Suffix')
     })
     it('should return two elements with squarePrefix', function () {
-      const body = getJsonModalBody(squarePrefix)
+      const body = functions.getJsonModalBody(squarePrefix)
       const element = window.document.createElement('div')
       element.innerHTML = body
       const children = element.children
@@ -91,7 +91,7 @@ describe('Unit Tests', function () {
       expect(children[0].textContent).to.eq('Prefix')
     })
     it('should return two elements with squareSuffix', function () {
-      const body = getJsonModalBody(squareSuffix)
+      const body = functions.getJsonModalBody(squareSuffix)
       const element = window.document.createElement('div')
       element.innerHTML = body
       const children = element.children
@@ -99,7 +99,7 @@ describe('Unit Tests', function () {
       expect(children[1].textContent).to.eq('Suffix')
     })
     it('should return three elements with squareWrapper', function () {
-      const body = getJsonModalBody(squareWrapper)
+      const body = functions.getJsonModalBody(squareWrapper)
       const element = window.document.createElement('div')
       element.innerHTML = body
       const children = element.children
@@ -115,43 +115,43 @@ describe('Unit Tests', function () {
     const result = '{"question":"answer"}'
 
     it('should return a string if passed an object', function () {
-      expect(stringifyJson(object)).to.eq(result)
+      expect(functions.stringifyJson(object)).to.eq(result)
     })
 
     it('should return the same string if passed a string', function () {
-      expect(stringifyJson(string)).to.eq(string)
+      expect(functions.stringifyJson(string)).to.eq(string)
     })
   })
 
   describe('isValidJson()', function () {
     it('should return false if invalid', function () {
-      expect(isValidJson(jsonMessageInvalid)).to.eq(false)
+      expect(functions.isValidJson(jsonMessageInvalid)).to.eq(false)
     })
 
     it('should return true if valid', function () {
-      expect(isValidJson(jsonMessageValid)).to.eq(true)
+      expect(functions.isValidJson(jsonMessageValid)).to.eq(true)
     })
   })
 
   describe('isValidUrl()', function () {
     it('should return true if begins with ws', function () {
       const url = 'ws://abc'
-      expect(isValidUrl(url)).to.eq(true)
+      expect(functions.isValidUrl(url)).to.eq(true)
     })
 
     it('should return true if begins with wss', function () {
       const url = 'wss://abc'
-      expect(isValidUrl(url)).to.eq(true)
+      expect(functions.isValidUrl(url)).to.eq(true)
     })
 
     it('should return false if it has spaces', function () {
       const url = 'ws://a bc'
-      expect(isValidUrl(url)).to.eq(false)
+      expect(functions.isValidUrl(url)).to.eq(false)
     })
 
     it('should return false if it does not begin with ws or wss', function () {
       const url = 's://abc'
-      expect(isValidUrl(url)).to.eq(false)
+      expect(functions.isValidUrl(url)).to.eq(false)
     })
   })
 
@@ -167,19 +167,19 @@ describe('Unit Tests', function () {
 
     it('should return a string', function () {
       input.val(string)
-      expect(getProtocols(input)).to.eq('protocol1')
+      expect(functions.getProtocols(input)).to.eq('protocol1')
     })
 
     it('should return an array', function () {
       input.val(array)
-      const result = getProtocols(input)
+      const result = functions.getProtocols(input)
       expect(typeof result).to.eq('object')
       expect(result.length).to.eq(3)
     })
 
     it('should return null', function () {
       input.val('')
-      expect(getProtocols(input)).to.eq(null)
+      expect(functions.getProtocols(input)).to.eq(null)
     })
   })
 
@@ -210,21 +210,21 @@ describe('Unit Tests', function () {
     })
 
     it('switch.message', function () {
-      const options = deleteOptions('message', `ONE${SEPARATOR}`, savedOptions)
+      const options = functions.deleteOptions('message', `ONE${SEPARATOR}`, savedOptions)
       expect(options.messages.length).to.eq(2, 'messages')
       expect(options.protocols.length).to.eq(2, 'protocols')
       expect(options.urls.length).to.eq(3, 'urls')
     })
 
     it('switch.protocol', function () {
-      const options = deleteOptions('protocol', 'protocol1', savedOptions)
+      const options = functions.deleteOptions('protocol', 'protocol1', savedOptions)
       expect(options.messages.length).to.eq(3, 'messages')
       expect(options.protocols.length).to.eq(1, 'protocols')
       expect(options.urls.length).to.eq(3, 'urls')
     })
 
     it('switch.url', function () {
-      const options = deleteOptions('url', 'ws://localhost:8080/ws/one', savedOptions)
+      const options = functions.deleteOptions('url', 'ws://localhost:8080/ws/one', savedOptions)
       expect(options.messages.length).to.eq(3, 'messages')
       expect(options.protocols.length).to.eq(2, 'protocols')
       expect(options.urls.length).to.eq(2, 'urls')
