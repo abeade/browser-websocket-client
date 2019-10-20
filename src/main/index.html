@@ -352,6 +352,65 @@
 							</div>
 						</div>
 					</div>
+					
+					<!--IMPORT/EXPORT-->
+
+					<div class="card">
+						<div id="optionsImportExportHeading" class="card-header" role="tab">
+							<h5 class="mb-0">
+								<a id="optionsImportExportAnchor"
+								   class="bwc-accordion-anchor"
+								   data-toggle="collapse"
+								   href="#optionsImportExport"
+								   aria-expanded="false"
+								   aria-controls="optionsImportExport">
+								   	Import/Export
+									<i class="fa fa-chevron-down bwc-accordion-heading-icon float-right"
+									   aria-hidden="true"></i>
+								</a>
+							</h5>
+						</div>
+						<div id="optionsImportExport"
+							 class="collapse"
+							 role="tabpanel"
+							 aria-labelledby="optionsImportExportHeading"
+							 data-parent="#options">
+							<div class="card-body">
+								<h5>
+									Import and export
+								</h5>
+								<p>
+									You can import and export saved data (preferences, URLs, protoclos, and messages).
+								</p>
+								<h5 class="bwc-margin-top">
+									Export data
+								</h5>
+								<p>
+									Exports current saved data.
+								</p>
+								<button id="optionsExportButton" class="btn btn-primary">
+									Export
+								</button>
+								<h5 class="bwc-margin-top">
+									Import data
+								</h5>
+								<p>
+									Imports previously exported saved data.
+								</p>
+								<p id="optionsImportWarning" class="alert alert-warning rounded">
+									Current saved data will be oberrided by imported data.
+								</p>
+								<form id="optionsExportForm">
+									<div class="form-group">
+									  	<input id="optionsFile" type="file" accept=".json" class="form-control-file">
+									</div>
+								</form>
+								<button id="optionsImportButton" class="btn btn-danger" disabled="disabled">
+									Import saved data
+								</button>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

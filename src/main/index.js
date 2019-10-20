@@ -148,6 +148,9 @@ const optionsMessageTextarea = $('#optionsMessageTextarea')
 const optionsMessageTextareaEmpty = $('#optionsMessageTextareaEmpty')
 const optionsMessageTextareaFormatSlider = $('#optionsMessageTextareaFormatSlider')
 const optionsMessageTextareaFormatCheckbox = $('#optionsMessageTextareaFormatCheckbox')
+const optionsExportButton = $('#optionsExportButton')
+const optionsImportButton = $('#optionsImportButton')
+const optionsFile = $('#optionsFile')
 const optionsProtocolCancelEditButton = $('#optionsProtocolCancelEditButton')
 const optionsProtocolInput = $('#optionsProtocolInput')
 const optionsProtocolInputEmpty = $('#optionsProtocolInputEmpty')
@@ -313,6 +316,19 @@ const loadOptions = function () {
       optionsUrlSavedTable.hide()
       urlSelect.hide()
     }
+    optionsFile.val(undefined)
+    optionsFile.change()
+  })
+}
+
+function downloadFile(options) {
+  if(!options.url) {
+      var blob = new Blob([ options.content ], {type : "text/plain;charset=UTF-8"})
+      options.url = window.URL.createObjectURL(blob)
+  }
+  chrome.downloads.download({
+      url: options.url,
+      filename: options.filename
   })
 }
 
@@ -805,6 +821,48 @@ optionsMessageSaveButton.on('click', function () {
   optionsMessageTextarea.val('')
   optionsMessageTextareaFormatSlider.addClass('bwc-slider-disabled')
   optionsMessageTextareaFormatCheckbox.prop('checked', false)
+})
+
+// OPTIONS: EXPORT IMPORT
+
+optionsFile.on('change', function(){ 
+  var file = optionsFile[0].files[0]
+  optionsImportButton.prop('disabled', file === undefined) 
+})
+
+// Dowloads current persisted data
+optionsExportButton.on('click', function () {
+  downloadFile({
+    filename: "wsclient.json",
+    content: JSON.stringify(savedOptions)
+  });
+})
+
+// Imports data
+optionsImportButton.on('click', function () {
+  var file = optionsFile[0].files[0]
+  if (file === undefined) {
+    return
+  }
+  var reader = new FileReader()
+  reader.onload = function(e){
+    var data = null
+    try {
+      data = JSON.parse(e.target.result)
+    } catch(e) {
+      alert('Error parsing data JSON\n' + e);
+    }
+    if (data != null && data.hasOwnProperty('messages') && data.hasOwnProperty('protocols') && data.hasOwnProperty('urls') && data.hasOwnProperty('preferences')) {
+      savedOptions.messages = data.messages
+      savedOptions.protocols = data.protocols
+      savedOptions.urls = data.urls
+      savedOptions.preferences = data.preferences
+      saveOptions()
+    } else {
+      alert('Error parsing data JSON. No expected format found.');
+    }
+  }
+  reader.readAsText(file)
 })
 
 // CLIENT SECTION
