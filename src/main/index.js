@@ -150,6 +150,11 @@ const optionsMessageTextareaFormatSlider = $('#optionsMessageTextareaFormatSlide
 const optionsMessageTextareaFormatCheckbox = $('#optionsMessageTextareaFormatCheckbox')
 const optionsExportButton = $('#optionsExportButton')
 const optionsImportButton = $('#optionsImportButton')
+const importModal = $('#importModal')
+const importModalBody = $('#importModalBody')
+const importModalDescription = $('#importModalDescription')
+const importModalCancelButton = $('#importModalCancelButton')
+const importModalContinueButton = $('#importModalContinueButton')
 const optionsFile = $('#optionsFile')
 const optionsProtocolCancelEditButton = $('#optionsProtocolCancelEditButton')
 const optionsProtocolInput = $('#optionsProtocolInput')
@@ -844,26 +849,49 @@ optionsImportButton.on('click', function () {
   if (file === undefined) {
     return
   }
-  var reader = new FileReader()
-  reader.onload = function(e){
-    var data = null
-    try {
-      data = JSON.parse(e.target.result)
-    } catch(e) {
-      alert('Error parsing data JSON\n' + e);
-    }
-    if (data != null && data.hasOwnProperty('messages') && data.hasOwnProperty('protocols') && data.hasOwnProperty('urls') && data.hasOwnProperty('preferences')) {
-      savedOptions.messages = data.messages
-      savedOptions.protocols = data.protocols
-      savedOptions.urls = data.urls
-      savedOptions.preferences = data.preferences
-      saveOptions()
-    } else {
-      alert('Error parsing data JSON. No expected format found.');
-    }
-  }
-  reader.readAsText(file)
+  importData(file)
 })
+
+// Imports data from file by using confirmation
+const importData = function (file) {
+  importModalBody.text('Are you sure you want to import data oberriding current settings?')
+  importModalContinueButton.show()
+  importModalDescription.hide()
+  importModalContinueButton.on('click', function () {
+      importModalDescription.hide()
+      importModalContinueButton.hide()
+      var reader = new FileReader()
+      reader.onload = function(e){
+        var data = null
+        try {
+          data = JSON.parse(e.target.result)
+        } catch(e) {
+          importModalBody.text('Error parsing data JSON')
+          importModalDescription.text(e)
+          importModalDescription.show()
+          importModalCancelButton.text('Close')
+          return;
+        }
+        if (data != null && data.hasOwnProperty('messages') && data.hasOwnProperty('protocols') && data.hasOwnProperty('urls') && data.hasOwnProperty('preferences')) {
+          savedOptions.messages = data.messages
+          savedOptions.protocols = data.protocols
+          savedOptions.urls = data.urls
+          savedOptions.preferences = data.preferences
+          saveOptions()
+          importModalDescription.hide()
+          importModalBody.text('File successfully imported')
+          importModalCancelButton.text('Close')
+        } else {
+          importModalBody.text('Error parsing data JSON')
+          importModalDescription.text('No expected format found.')
+          importModalDescription.show()
+          importModalCancelButton.text('Close')
+        }
+      }
+      reader.readAsText(file)
+    })
+  importModal.modal('show')
+}
 
 // CLIENT SECTION
 

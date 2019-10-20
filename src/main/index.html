@@ -617,6 +617,36 @@
 	</div>
 </div>
 
+<!--IMPORT MODAL-->
+
+<div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="importModal"
+	 aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="deleteModalTitle">
+					Confirm Import
+				</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<p id="importModalBody"></p>
+				<p id="importModalDescription" class="hide"></p>
+			</div>
+			<div class="modal-footer">
+				<button id="importModalContinueButton" type="button" class="btn btn-danger" data-target="">
+					Continue
+				</button>
+				<button id="importModalCancelButton" type="button" class="btn btn-secondary" data-dismiss="modal">
+					Cancel
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <script src="index.js"></script>
 <script src="styles.js"></script>
 </body>
