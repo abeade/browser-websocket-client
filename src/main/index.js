@@ -148,6 +148,14 @@ const optionsMessageTextarea = $('#optionsMessageTextarea')
 const optionsMessageTextareaEmpty = $('#optionsMessageTextareaEmpty')
 const optionsMessageTextareaFormatSlider = $('#optionsMessageTextareaFormatSlider')
 const optionsMessageTextareaFormatCheckbox = $('#optionsMessageTextareaFormatCheckbox')
+const optionsExportButton = $('#optionsExportButton')
+const optionsImportButton = $('#optionsImportButton')
+const importModal = $('#importModal')
+const importModalBody = $('#importModalBody')
+const importModalDescription = $('#importModalDescription')
+const importModalCancelButton = $('#importModalCancelButton')
+const importModalContinueButton = $('#importModalContinueButton')
+const optionsFile = $('#optionsFile')
 const optionsProtocolCancelEditButton = $('#optionsProtocolCancelEditButton')
 const optionsProtocolInput = $('#optionsProtocolInput')
 const optionsProtocolInputEmpty = $('#optionsProtocolInputEmpty')
@@ -313,6 +321,19 @@ const loadOptions = function () {
       optionsUrlSavedTable.hide()
       urlSelect.hide()
     }
+    optionsFile.val(undefined)
+    optionsFile.change()
+  })
+}
+
+function downloadFile(options) {
+  if(!options.url) {
+      var blob = new Blob([ options.content ], {type : "text/plain;charset=UTF-8"})
+      options.url = window.URL.createObjectURL(blob)
+  }
+  chrome.downloads.download({
+      url: options.url,
+      filename: options.filename
   })
 }
 
@@ -806,6 +827,71 @@ optionsMessageSaveButton.on('click', function () {
   optionsMessageTextareaFormatSlider.addClass('bwc-slider-disabled')
   optionsMessageTextareaFormatCheckbox.prop('checked', false)
 })
+
+// OPTIONS: EXPORT IMPORT
+
+optionsFile.on('change', function(){ 
+  var file = optionsFile[0].files[0]
+  optionsImportButton.prop('disabled', file === undefined) 
+})
+
+// Dowloads current persisted data
+optionsExportButton.on('click', function () {
+  downloadFile({
+    filename: "wsclient.json",
+    content: JSON.stringify(savedOptions)
+  });
+})
+
+// Imports data
+optionsImportButton.on('click', function () {
+  var file = optionsFile[0].files[0]
+  if (file === undefined) {
+    return
+  }
+  importData(file)
+})
+
+// Imports data from file by using confirmation
+const importData = function (file) {
+  importModalBody.text('Are you sure you want to import data oberriding current settings?')
+  importModalContinueButton.show()
+  importModalDescription.hide()
+  importModalContinueButton.on('click', function () {
+      importModalDescription.hide()
+      importModalContinueButton.hide()
+      var reader = new FileReader()
+      reader.onload = function(e){
+        var data = null
+        try {
+          data = JSON.parse(e.target.result)
+        } catch(e) {
+          importModalBody.text('Error parsing data JSON')
+          importModalDescription.text(e)
+          importModalDescription.show()
+          importModalCancelButton.text('Close')
+          return;
+        }
+        if (data != null && data.hasOwnProperty('messages') && data.hasOwnProperty('protocols') && data.hasOwnProperty('urls') && data.hasOwnProperty('preferences')) {
+          savedOptions.messages = data.messages
+          savedOptions.protocols = data.protocols
+          savedOptions.urls = data.urls
+          savedOptions.preferences = data.preferences
+          saveOptions()
+          importModalDescription.hide()
+          importModalBody.text('File successfully imported')
+          importModalCancelButton.text('Close')
+        } else {
+          importModalBody.text('Error parsing data JSON')
+          importModalDescription.text('No expected format found.')
+          importModalDescription.show()
+          importModalCancelButton.text('Close')
+        }
+      }
+      reader.readAsText(file)
+    })
+  importModal.modal('show')
+}
 
 // CLIENT SECTION
 
