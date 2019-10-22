@@ -25,6 +25,9 @@ window.jQuery = $
 // Exportable functions used in unit tests
 const functions = {}
 
+// Exportable variables used in unit tests
+const variables = {}
+
 // Define savedOptions object
 const savedOptions = {
   preferences: {
@@ -269,7 +272,7 @@ const optionsHeartbeatObject = {
 }
 
 // Mutable variables
-let clientHeartbeat = optionsHeartbeatObject
+variables.clientHeartbeat = optionsHeartbeatObject
 let editingHeartbeat = false
 let editingHeartbeatTargetName = ''
 let editingMessage = false
@@ -1330,7 +1333,7 @@ const populateSavedHeartbeatSelect = function () {
     .append(options)
   $('.dropdown-item.heartbeat').on('click', function () {
     const heartbeat = jQuery(this).data('value')
-    clientHeartbeat = heartbeat
+    variables.clientHeartbeat = heartbeat
     clientHeartbeatName.show()
     clientHeartbeatNameText.text(heartbeat.name)
     heartbeatStartButton.prop('disabled', false)
@@ -1343,7 +1346,7 @@ const startHeartbeat = function () {
     function () {
       sendHeartbeat()
     },
-    clientHeartbeat.interval * 1000
+    variables.clientHeartbeat.interval * 1000
   )
   heartbeatStartButton.hide()
   heartbeatStopButton.show()
@@ -1355,7 +1358,7 @@ const startHeartbeat = function () {
 const sendHeartbeat = function () {
   const date = new Date()
   const time = date.toLocaleTimeString()
-  let message = clientHeartbeat.clientMessage
+  let message = variables.clientHeartbeat.clientMessage
   ws.send(message)
   heartbeatClientStatusTime
     .removeClass('text-danger')
@@ -1364,12 +1367,12 @@ const sendHeartbeat = function () {
 }
 
 // Parse all incoming messages for server heartbeat message
-functions.checkMessageForHeartbeat = function (clientHeartbeat, data) {
-  const displayServerMessage = clientHeartbeat.displayServerMessage || false
+functions.checkMessageForHeartbeat = function (data) {
+  const displayServerMessage = variables.clientHeartbeat.displayServerMessage || false
   let heartbeatMessage = false
   let json = null
-  if (clientHeartbeat.trackServerMessage) {
-    switch (clientHeartbeat.serverMessageType) {
+  if (variables.clientHeartbeat.trackServerMessage) {
+    switch (variables.clientHeartbeat.serverMessageType) {
       case 'object':
         try {
           json = Object.create(JSON.parse(data))
@@ -1377,42 +1380,42 @@ functions.checkMessageForHeartbeat = function (clientHeartbeat, data) {
           console.error('The server message below is not valid JSON:')
           console.error(data)
         }
-        switch (clientHeartbeat.serverMessageObjectOperator) {
+        switch (variables.clientHeartbeat.serverMessageObjectOperator) {
           case 'noValue':
-            if (lodash.has(json, clientHeartbeat.serverMessageObjectKey)) {
+            if (lodash.has(json, variables.clientHeartbeat.serverMessageObjectKey)) {
               heartbeatMessage = true
             }
             break
           case 'equals':
-            if (lodash.get(json, clientHeartbeat.serverMessageObjectKey) === clientHeartbeat.serverMessageObjectValue) {
+            if (lodash.get(json, variables.clientHeartbeat.serverMessageObjectKey) === variables.clientHeartbeat.serverMessageObjectValue) {
               heartbeatMessage = true
             }
             break
           case 'notEquals':
-            if (json.hasOwnProperty(clientHeartbeat.serverMessageObjectKey)) {
-              if (json[clientHeartbeat.serverMessageObjectKey] !== clientHeartbeat.serverMessageObjectValue) {
+            if (json.hasOwnProperty(variables.clientHeartbeat.serverMessageObjectKey)) {
+              if (json[variables.clientHeartbeat.serverMessageObjectKey] !== variables.clientHeartbeat.serverMessageObjectValue) {
                 heartbeatMessage = true
               }
             }
             break
           default:
-            console.error(`${clientHeartbeat.serverMessageObjectOperator} is not a valid value for serverMessageObjectOperator`)
+            console.error(`${variables.clientHeartbeat.serverMessageObjectOperator} is not a valid value for serverMessageObjectOperator`)
         }
         break
       case 'string':
-        if (data.includes(clientHeartbeat.serverMessageString)) {
+        if (data.includes(variables.clientHeartbeat.serverMessageString)) {
           heartbeatMessage = true
         }
         break
       default:
-        console.error(`${clientHeartbeat.serverMessageType} is not a valid value for serverMessageType`)
+        console.error(`${variables.clientHeartbeat.serverMessageType} is not a valid value for serverMessageType`)
     }
   }
   if (displayServerMessage && heartbeatMessage) {
     heartbeatLastServerMessageTime = Date.now()
     functions.updateHeartbeatServerStatus()
     functions.addMessage(data, null)
-  } else if (heartbeatMessage) {
+  } else if (!displayServerMessage && heartbeatMessage) {
     heartbeatLastServerMessageTime = Date.now()
     functions.updateHeartbeatServerStatus()
   } else {
@@ -1424,7 +1427,7 @@ functions.checkMessageForHeartbeat = function (clientHeartbeat, data) {
 functions.updateHeartbeatServerStatus = function () {
   const unknown = heartbeatLastServerMessageTime === null
   let overdue = false
-  if ((Date.now() - heartbeatLastServerMessageTime) > 1000 * clientHeartbeat.interval) {
+  if ((Date.now() - heartbeatLastServerMessageTime) > 1000 * variables.clientHeartbeat.interval) {
     overdue = true
   }
   if (unknown) {
@@ -1532,7 +1535,7 @@ const onClose = function () {
 
 // WebSocket onMessage handler
 const onMessage = function (event) {
-  functions.checkMessageForHeartbeat(clientHeartbeat, event.data)
+  functions.checkMessageForHeartbeat(event.data)
 }
 
 // WebSocket onError handler
@@ -1685,5 +1688,6 @@ $(document).ready(function () {
 
 // Used in unit tests
 export {
-  functions
+  functions,
+  variables
 }

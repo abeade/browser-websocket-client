@@ -6,5 +6,7 @@ describe('Options -> Heartbeats', function () {
     cy.get('#optionsHeartbeats').should('be.visible')
   })
 
+  // TODO
+
 })
 

@@ -1,4 +1,4 @@
-import { functions } from '../../../main/index'
+import { functions, variables } from '../../../main/index'
 
 describe('Unit Tests', function () {
   const jsonMessageInvalid = '"missingLeadingBracket": true}'
@@ -38,6 +38,185 @@ describe('Unit Tests', function () {
       expect(children[7].innerHTML).to.eq('"boolean":')
       expect(children[8].className).to.eq('bwc-boolean')
       expect(children[8].innerHTML).to.eq('false')
+    })
+  })
+
+  describe('checkMessageForHeartbeat()', function () {
+    const clientHeartbeatDefault = {
+      name: 'none',
+      interval: 60,
+      clientMessage: 'none',
+      trackServerMessage: false,
+      serverMessageType: 'object',
+      serverMessageObjectKey: 'none',
+      serverMessageObjectOperator: 'equals',
+      serverMessageObjectValue: 'none',
+      serverMessageString: 'none',
+      displayServerMessage: false
+    }
+    const objectMessage = '{"message": {"type": "heartbeat", "payload": "heartbeat message from server"}}'
+    const serverMessageObjectKey = 'message.type'
+    const serverMessageObjectValue = 'heartbeat'
+    const stringMessage = 'heartbeat message from server'
+    let messageFromServer = ''
+    beforeEach(() => {
+      variables.clientHeartbeat =  clientHeartbeatDefault
+      cy.spy(console, 'error')
+      cy.stub(functions, 'addMessage')
+      cy.stub(functions, 'updateHeartbeatServerStatus')
+    })
+    it ('should react correctly to invalid JSON in the server message', function () {
+      messageFromServer = '{"invalid"'
+      variables.clientHeartbeat.trackServerMessage = true
+      functions.checkMessageForHeartbeat(messageFromServer)
+      expect(console.error).to.be.calledWith('The server message below is not valid JSON:')
+      expect(functions.addMessage).to.be.calledWith(messageFromServer, null)
+      expect(functions.updateHeartbeatServerStatus).not.to.be.called
+    })
+    it ('should react correctly to object and noValue when not heartbeatMessage', function () {
+      messageFromServer = objectMessage
+      variables.clientHeartbeat.trackServerMessage = true
+      variables.clientHeartbeat.serverMessageType = 'object'
+      variables.clientHeartbeat.serverMessageObjectOperator = 'noValue'
+      functions.checkMessageForHeartbeat(messageFromServer)
+      expect(console.error).not.to.be.called
+      expect(functions.addMessage).to.be.calledWith(messageFromServer, null)
+      expect(functions.updateHeartbeatServerStatus).not.to.be.called
+    })
+    it ('should react correctly to object and noValue when heartbeatMessage', function () {
+      messageFromServer = objectMessage
+      variables.clientHeartbeat.trackServerMessage = true
+      variables.clientHeartbeat.serverMessageType = 'object'
+      variables.clientHeartbeat.serverMessageObjectOperator = 'noValue'
+      variables.clientHeartbeat.serverMessageObjectKey = serverMessageObjectKey
+      functions.checkMessageForHeartbeat(messageFromServer)
+      expect(console.error).not.to.be.called
+      expect(functions.addMessage).to.be.calledWith(messageFromServer, null)
+      expect(functions.updateHeartbeatServerStatus).to.be.called
+    })
+    it ('should react correctly to object and noValue when heartbeatMessage and displayServerMessage', function () {
+      messageFromServer = objectMessage
+      variables.clientHeartbeat.trackServerMessage = true
+      variables.clientHeartbeat.serverMessageType = 'object'
+      variables.clientHeartbeat.serverMessageObjectOperator = 'noValue'
+      variables.clientHeartbeat.serverMessageObjectKey = serverMessageObjectKey
+      functions.checkMessageForHeartbeat(messageFromServer)
+      expect(console.error).not.to.be.called
+      expect(functions.addMessage).to.be.calledWith(messageFromServer, null)
+      expect(functions.updateHeartbeatServerStatus).to.be.called
+    })
+    it ('should react correctly to object and equals when not heartbeatMessage', function () {
+      messageFromServer = objectMessage
+      variables.clientHeartbeat.trackServerMessage = true
+      variables.clientHeartbeat.serverMessageType = 'object'
+      variables.clientHeartbeat.serverMessageObjectOperator = 'equals'
+      functions.checkMessageForHeartbeat(messageFromServer)
+      expect(console.error).not.to.be.called
+      expect(functions.addMessage).to.be.calledWith(messageFromServer, null)
+      expect(functions.updateHeartbeatServerStatus).not.to.be.called
+    })
+    it ('should react correctly to object and equals when heartbeatMessage', function () {
+      messageFromServer = objectMessage
+      variables.clientHeartbeat.trackServerMessage = true
+      variables.clientHeartbeat.serverMessageType = 'object'
+      variables.clientHeartbeat.serverMessageObjectOperator = 'equals'
+      variables.clientHeartbeat.serverMessageObjectValue = serverMessageObjectValue
+      functions.checkMessageForHeartbeat(messageFromServer)
+      expect(console.error).not.to.be.called
+      expect(functions.addMessage).not.to.be.called
+      expect(functions.updateHeartbeatServerStatus).to.be.called
+    })
+    it ('should react correctly to object and equals when heartbeatMessage and displayServerMessage', function () {
+      messageFromServer = objectMessage
+      variables.clientHeartbeat.trackServerMessage = true
+      variables.clientHeartbeat.serverMessageType = 'object'
+      variables.clientHeartbeat.serverMessageObjectOperator = 'equals'
+      variables.clientHeartbeat.serverMessageObjectKey = serverMessageObjectKey
+      variables.clientHeartbeat.serverMessageObjectValue = serverMessageObjectValue
+      functions.checkMessageForHeartbeat(messageFromServer)
+      expect(console.error).not.to.be.called
+      expect(functions.addMessage).to.be.calledWith(messageFromServer, null)
+      expect(functions.updateHeartbeatServerStatus).not.to.be.called
+    })
+    it ('should react correctly to object and notEquals when not heartbeatMessage', function () {
+      messageFromServer = objectMessage
+      variables.clientHeartbeat.trackServerMessage = true
+      variables.clientHeartbeat.serverMessageType = 'object'
+      variables.clientHeartbeat.serverMessageObjectOperator = 'notEquals'
+      variables.clientHeartbeat.serverMessageObjectValue = serverMessageObjectValue
+      functions.checkMessageForHeartbeat(messageFromServer)
+      expect(console.error).not.to.be.called
+      expect(functions.addMessage).to.be.calledWith(messageFromServer, null)
+      expect(functions.updateHeartbeatServerStatus).not.to.be.called
+    })
+    it ('should react correctly to object and notEquals when heartbeatMessage', function () {
+      messageFromServer = objectMessage
+      variables.clientHeartbeat.trackServerMessage = true
+      variables.clientHeartbeat.serverMessageType = 'object'
+      variables.clientHeartbeat.serverMessageObjectOperator = 'notEquals'
+      functions.checkMessageForHeartbeat(messageFromServer)
+      expect(console.error).not.to.be.called
+      expect(functions.addMessage).to.be.calledWith(messageFromServer, null)
+      expect(functions.updateHeartbeatServerStatus).not.to.be.called
+    })
+    it ('should react correctly to object and notEquals when heartbeatMessage and displayServerMessage', function () {
+      messageFromServer = objectMessage
+      variables.clientHeartbeat.trackServerMessage = true
+      variables.clientHeartbeat.serverMessageType = 'object'
+      variables.clientHeartbeat.serverMessageObjectOperator = 'notEquals'
+      functions.checkMessageForHeartbeat(messageFromServer)
+      expect(console.error).not.to.be.called
+      expect(functions.addMessage).to.be.calledWith(messageFromServer, null)
+      expect(functions.updateHeartbeatServerStatus).not.to.be.called
+    })
+    it ('should react correctly to invalid clientHeartbeat.serverMessageObjectOperator', function () {
+      messageFromServer = objectMessage
+      variables.clientHeartbeat.trackServerMessage = true
+      variables.clientHeartbeat.serverMessageType = 'object'
+      variables.clientHeartbeat.serverMessageObjectOperator = 'none'
+      functions.checkMessageForHeartbeat(messageFromServer)
+      expect(console.error).to.be.calledWith('none is not a valid value for serverMessageObjectOperator')
+      expect(functions.addMessage).to.be.calledWith(messageFromServer, null)
+      expect(functions.updateHeartbeatServerStatus).not.to.be.called
+    })
+    it ('should react correctly to string when not heartbeatMessage', function () {
+      messageFromServer = stringMessage
+      variables.clientHeartbeat.trackServerMessage = true
+      variables.clientHeartbeat.serverMessageType = 'string'
+      functions.checkMessageForHeartbeat(messageFromServer)
+      expect(console.error).not.to.be.called
+      expect(functions.addMessage).to.be.calledWith(messageFromServer, null)
+      expect(functions.updateHeartbeatServerStatus).not.to.be.called
+    })
+    it ('should react correctly to string when heartbeatMessage', function () {
+      messageFromServer = stringMessage
+      variables.clientHeartbeat.trackServerMessage = true
+      variables.clientHeartbeat.serverMessageType = 'string'
+      variables.clientHeartbeat.serverMessageString = stringMessage
+      functions.checkMessageForHeartbeat(messageFromServer)
+      expect(console.error).not.to.be.called
+      expect(functions.addMessage).not.to.be.called
+      expect(functions.updateHeartbeatServerStatus).to.be.called
+    })
+    it ('should react correctly to string when heartbeatMessage and displayServerMessage', function () {
+      messageFromServer = stringMessage
+      variables.clientHeartbeat.trackServerMessage = true
+      variables.clientHeartbeat.serverMessageType = 'string'
+      variables.clientHeartbeat.serverMessageString = stringMessage
+      variables.clientHeartbeat.displayServerMessage = true
+      functions.checkMessageForHeartbeat(messageFromServer)
+      expect(console.error).not.to.be.called
+      expect(functions.addMessage).to.be.calledWith(messageFromServer, null)
+      expect(functions.updateHeartbeatServerStatus).to.be.called
+    })
+    it ('should react correctly to invalid clientHeartbeat.serverMessageType', function () {
+      messageFromServer = stringMessage
+      variables.clientHeartbeat.trackServerMessage = true
+      variables.clientHeartbeat.serverMessageType = 'none'
+      functions.checkMessageForHeartbeat(messageFromServer)
+      expect(console.error).to.be.calledWith('none is not a valid value for serverMessageType')
+      expect(functions.addMessage).to.be.calledWith(messageFromServer, null)
+      expect(functions.updateHeartbeatServerStatus).not.to.be.called
     })
   })
 
