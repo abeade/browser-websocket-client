@@ -4,7 +4,7 @@ It does not impact the WebSocket client itself.
  */
 
 function extensionUrl () {
-  let isFirefox = typeof InstallTrigger !== 'undefined'
+  const isFirefox = typeof InstallTrigger !== 'undefined'
   let extensionUrl = 'chrome-extension://' + location.host + '/index.html'
   if (isFirefox) {
     extensionUrl = 'moz-extension://' + location.host + '/index.html'

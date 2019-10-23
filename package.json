@@ -24,7 +24,7 @@
     "lint": "eslint -c .eslintrc.json src/**/*.js",
     "cypress": "cypress open --project ./src/test",
     "serve": "serve -l 3000",
-    "test": "concurrently --kill-others \"npm:build:firefox\" \"npm:serve\" \"npm:cypress\"",
+    "test": "concurrently --kill-others \"npm:build:chrome\" \"npm:serve\" \"npm:cypress\"",
     "zip:chrome": "npm run build:chrome:production && mkdirp ./dist && zip -jr dist/chrome.zip build/production/chrome/*",
     "zip:firefox": "npm run build:firefox:production && mkdirp ./dist && zip -jr dist/firefox.zip build/production/firefox/*",
     "zip:all": "npm run zip:chrome && npm run zip:firefox"
@@ -47,7 +47,7 @@
     "@babel/preset-env": "7.6.3",
     "@cypress/webpack-preprocessor": "4.1.0",
     "@types/chrome": "0.0.91",
-    "@types/node": "12.11.2",
+    "@types/node": "12.11.5",
     "autoprefixer": "9.6.5",
     "babel-loader": "8.0.6",
     "concurrently": "5.0.0",
