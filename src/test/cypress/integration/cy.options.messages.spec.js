@@ -161,8 +161,6 @@ describe('Options -> Messages', function () {
     cy.get('.deleteMessage').click()
     cy.get('#deleteModal').should('be.visible')
     cy.get('#deleteModalCancelButton').click()
-    cy.get('#deleteModalCancelButton').click()
-    cy.get('#deleteModalCancelButton').click()
     cy.get('#deleteModal').should('not.be.visible')
     cy.fixture('optionsDefaults').then((input) => {
       input.optionsMessageNoneSavedVisible = 'not.'
