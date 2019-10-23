@@ -316,7 +316,8 @@
 									   type="text"
 									   placeholder="Display Name"/>
 								<label id="optionsMessageTextareaLabel" for="optionsMessageTextarea">
-									The message body does not appear in the "Saved Messages" table or Client drop-down menu:
+									The message body does not appear in the "Saved Messages" table or Client drop-down
+									menu:
 								</label>
 								<textarea id="optionsMessageTextarea"
 										  class="form-control"
@@ -352,61 +353,68 @@
 							</div>
 						</div>
 					</div>
-					
-					<!--IMPORT/EXPORT-->
+
+					<!--EXPORT/IMPORT-->
 
 					<div class="card">
-						<div id="optionsImportExportHeading" class="card-header" role="tab">
+						<div id="optionsExportImportHeading" class="card-header" role="tab">
 							<h5 class="mb-0">
-								<a id="optionsImportExportAnchor"
+								<a id="optionsExportImportAnchor"
 								   class="bwc-accordion-anchor"
 								   data-toggle="collapse"
-								   href="#optionsImportExport"
+								   href="#optionsExportImport"
 								   aria-expanded="false"
-								   aria-controls="optionsImportExport">
-								   	Import/Export
+								   aria-controls="optionsExportImport">
+									Configuration Export and Import
 									<i class="fa fa-chevron-down bwc-accordion-heading-icon float-right"
 									   aria-hidden="true"></i>
 								</a>
 							</h5>
 						</div>
-						<div id="optionsImportExport"
+						<div id="optionsExportImport"
 							 class="collapse"
 							 role="tabpanel"
-							 aria-labelledby="optionsImportExportHeading"
+							 aria-labelledby="optionsExportImportHeading"
 							 data-parent="#options">
 							<div class="card-body">
 								<h5>
-									Import and export
+									Export and Import
 								</h5>
 								<p>
-									You can import and export saved data (preferences, URLs, protoclos, and messages).
+									You can export and import the extension's configuration (preferences, URLs, protocols, and
+									messages).
 								</p>
 								<h5 class="bwc-margin-top">
-									Export data
+									Export Configuration
 								</h5>
 								<p>
-									Exports current saved data.
+									Exports the current configuration. You will be prompted to choose a file
+									name and location. It defaults to your downloads directory and a filename of
+									<code>wsclient.json</code>.
 								</p>
-								<button id="optionsExportButton" class="btn btn-primary">
-									Export
+								<button id="optionsExportImportExportButton" class="btn btn-primary">
+									Export Configuration
 								</button>
 								<h5 class="bwc-margin-top">
-									Import data
+									Import Configuration
 								</h5>
 								<p>
-									Imports previously exported saved data.
+									Imports a previously exported configuration.
 								</p>
-								<p id="optionsImportWarning" class="alert alert-warning rounded">
-									Current saved data will be oberrided by imported data.
+								<p id="optionsExportImportImportWarning" class="alert alert-warning rounded">
+									<b><em>All</em></b> of your current settings will be overridden by the imported configuration.
 								</p>
-								<form id="optionsExportForm">
+								<form>
 									<div class="form-group">
-									  	<input id="optionsFile" type="file" accept=".json" class="form-control-file">
+										<label class="btn btn-primary">
+											Choose Configuration File
+											<input id="optionsExportImportFileInput" type="file" accept=".json" hidden>
+										</label>
 									</div>
 								</form>
-								<button id="optionsImportButton" class="btn btn-danger" disabled="disabled">
-									Import saved data
+								<p id="optionsExportImportFileName"></p>
+								<button id="optionsExportImportImportButton" class="btn btn-danger" disabled="disabled">
+									Import Configuration File
 								</button>
 							</div>
 						</div>
@@ -624,7 +632,7 @@
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="deleteModalTitle">
+				<h5 class="modal-title" id="importModalTitle">
 					Confirm Import
 				</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -637,7 +645,7 @@
 			</div>
 			<div class="modal-footer">
 				<button id="importModalContinueButton" type="button" class="btn btn-danger" data-target="">
-					Continue
+					Import
 				</button>
 				<button id="importModalCancelButton" type="button" class="btn btn-secondary" data-dismiss="modal">
 					Cancel
