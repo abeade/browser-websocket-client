@@ -1,0 +1,11 @@
+{
+    "preferences": {
+        "preventSavingMessage": true,
+        "preventSavingUrl": true,
+        "preventUsingMessage": true,
+        "preventUsingUrl": false
+    },
+    "messages":[],
+    "protocols": [],
+    "urls": []
+}
