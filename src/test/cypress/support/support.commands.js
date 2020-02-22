@@ -96,3 +96,23 @@ Cypress.Commands.add('checkClient', {prevSubject: false}, (input) => {
   cy.get('#urlInvalidWarning').should(`${input.urlInvalidWarningVisible}be.visible`)
   cy.get('#urlSelectMenu').should(`${input.urlSelectMenuVisible}be.visible`)
 })
+
+Cypress.Commands.add('uploadFile', { prevSubject: true }, (subject, fileName) => {
+  cy.fixture(fileName).then((content) => {
+      const el = subject[0]
+      const testFile = new File([JSON.stringify(content)], fileName, {type: "text/plain;charset=utf-8"})
+      const dataTransfer = new DataTransfer()
+      dataTransfer.items.add(testFile)
+      el.files = dataTransfer.files
+      cy.wrap(subject).trigger('change', { force: true })
+  })
+})
+
+Cypress.Commands.add('uploadFileContent', { prevSubject: true }, (subject, fileName, content) => {
+  const el = subject[0]
+  const testFile = new File([content], fileName, {type: "text/plain;charset=utf-8"})
+  const dataTransfer = new DataTransfer()
+  dataTransfer.items.add(testFile)
+  el.files = dataTransfer.files
+  cy.wrap(subject).trigger('change', { force: true })
+})

@@ -864,7 +864,6 @@ optionsExportImportImportButton.on('click', function () {
   importConfiguration(file)
 })
 
-// TODO
 // Imports configuration from file by using confirmation
 const importConfiguration = function (file) {
   importModalBody.text('Are you sure you want to overwrite your current settings?')
