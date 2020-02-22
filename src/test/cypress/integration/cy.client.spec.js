@@ -4,6 +4,7 @@ describe('Client', function () {
 
   beforeEach(function () {
     cy.mockChromeStorageAndVisit()
+    cy.wait(400)
   })
 
   it('verify defaults', function () {
@@ -48,7 +49,6 @@ describe('Client', function () {
       .type(echoServer)
     cy.get('#connectButton').click()
     cy.get('#disconnectButton').should('be.enabled')
-    // cy.get('#connectionStatus').invoke('text').should('be', 'OPENED')
     cy.fixture('clientDefaults').then((input) => {
       input.urlInputValue = echoServer
       input.connectionStatusText = 'OPENED'
@@ -81,6 +81,7 @@ describe('Client', function () {
     cy.get('#jsonModal').should('be.visible')
     cy.get('#jsonModalTitle').invoke('text').should('be', 'Incoming Message')
     cy.get('#jsonModalBody').invoke('text').should('contain', 'Message 1')
+    cy.wait(400)
     cy.get('#jsonModalCloseButton').click()
     cy.get('#jsonModal').should('not.be.visible')
 
@@ -109,6 +110,7 @@ describe('Client', function () {
     // disconnect from server
     cy.log('disconnect from server')
     cy.get('#disconnectButton').click()
+    cy.wait(400)
     cy.get('#connectButton').should('be.visible')
     cy.fixture('clientDefaults').then((input) => {
       input.urlInputValue = echoServer

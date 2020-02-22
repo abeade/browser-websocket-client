@@ -1,5 +1,5 @@
 {
-  "baseUrl": "http://localhost:3000/",
+  "baseUrl": "http://localhost:5000/",
   "pluginsFile": "cypress/plugins/plugins.js",
   "projectId": "bhz82e",
   "supportFile": "cypress/support/support.js",
