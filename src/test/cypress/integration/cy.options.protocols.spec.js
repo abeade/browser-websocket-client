@@ -5,6 +5,7 @@ describe('Options -> Protocols', function () {
     cy.mockChromeStorageAndVisit('/#options')
     cy.get('#optionsProtocolsAnchor').click()
     cy.get('#optionsProtocols').should('be.visible')
+    cy.wait(400)
   })
 
   it('entering and then deleting text in #optionsProtocolInput should show #optionsProtocolIEmpty', function () {
@@ -34,7 +35,7 @@ describe('Options -> Protocols', function () {
 
     // click protocol edit icon and then cancel button
     cy.log('click protocol edit icon and then cancel button')
-    cy.get('.editProtocol').click()
+    cy.get('.editProtocol').click({ force: true })
     cy.fixture('optionsDefaults').then((input) => {
       input.optionsProtocolInputLabelText = 'Editing protocol: protocol1'
       input.optionsProtocolInputValue = 'protocol1'
@@ -75,10 +76,10 @@ describe('Options -> Protocols', function () {
     cy.get('#client').should('be.visible')
     cy.get('#protocolSelectMenu').click()
     cy.get('.dropdown-item.protocol').invoke('text').should('be', protocolNameNew)
-    cy.get('.dropdown-item.protocol').click()
+    cy.get('.dropdown-item.protocol').first().click()
     cy.fixture('clientDefaults').then((input) => {
       input.protocolSelectMenuVisible = ''
-      input.protocolInputValue = protocolNameNew
+      input.protocolInputValue = 'protocol1'
       cy.checkClient(input)
     })
 
@@ -87,11 +88,9 @@ describe('Options -> Protocols', function () {
     cy.get('#optionsAnchor').click()
     cy.get('#options').should('be.visible')
     cy.get('#optionsProtocols').should('be.visible')
-    cy.get('.deleteProtocol').click()
+    cy.get('.deleteProtocol').first().click()
     cy.get('#deleteModal').should('be.visible')
-    cy.get('#deleteModalCancelButton').click()
-    cy.get('#deleteModalCancelButton').click()
-    cy.get('#deleteModalCancelButton').click()
+    cy.wait(400)
     cy.get('#deleteModalCancelButton').click()
     cy.get('#deleteModal').should('not.be.visible')
     cy.fixture('optionsDefaults').then((input) => {
@@ -102,6 +101,19 @@ describe('Options -> Protocols', function () {
 
     // click protocol delete icon and then delete button
     cy.log('click protocol delete icon and then delete button')
+    cy.get('.deleteProtocol').first().click()
+    cy.get('#deleteModal').should('be.visible')
+    cy.get('#deleteModalBody').invoke('text').should('be', 'Are you sure you want to delete the protocol shown below?')
+    cy.get('#deleteModalName').invoke('text').should('be', protocolNameNew)
+    cy.get('#deleteModalDeleteButton').invoke('text').should('be', 'Delete!')
+    cy.get('#deleteModalCancelButton').invoke('text').should('be', 'Cancel')
+    cy.get('#deleteModalDeleteButton').click()
+    cy.get('#deleteModalBody').invoke('text').should('be', 'Protocol deleted:')
+    cy.get('#deleteModalName').invoke('text').should('be', 'protocolNameNew')
+    cy.get('#deleteModalDeleteButton').should('not.be.visible')
+    cy.get('#deleteModalCancelButton').invoke('text').should('be', 'Close')
+    cy.get('#deleteModalCancelButton').click()
+    cy.get('#deleteModal').should('not.be.visible')
     cy.get('.deleteProtocol').click()
     cy.get('#deleteModal').should('be.visible')
     cy.get('#deleteModalBody').invoke('text').should('be', 'Are you sure you want to delete the protocol shown below?')
@@ -110,7 +122,7 @@ describe('Options -> Protocols', function () {
     cy.get('#deleteModalCancelButton').invoke('text').should('be', 'Cancel')
     cy.get('#deleteModalDeleteButton').click()
     cy.get('#deleteModalBody').invoke('text').should('be', 'Protocol deleted:')
-    cy.get('#deleteModalName').invoke('text').should('be', protocolNameNew)
+    cy.get('#deleteModalName').invoke('text').should('be', 'protocolNameNew')
     cy.get('#deleteModalDeleteButton').should('not.be.visible')
     cy.get('#deleteModalCancelButton').invoke('text').should('be', 'Close')
     cy.get('#deleteModalCancelButton').click()

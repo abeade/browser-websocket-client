@@ -7,6 +7,7 @@ describe('Options -> URLs', function () {
     cy.mockChromeStorageAndVisit('/#options')
     cy.get('#optionsUrlsAnchor').click()
     cy.get('#optionsUrls').should('be.visible')
+    cy.wait(400)
   })
 
   it('entering an invalid URL in #optionsUrlInput should show #optionsUrlInvalidWarning', function () {
@@ -46,7 +47,7 @@ describe('Options -> URLs', function () {
 
     // click URL edit icon and then cancel button
     cy.log('click URL edit icon and then cancel button')
-    cy.get('.editUrl').click()
+    cy.get('.editUrl').click({ force: true })
     cy.fixture('optionsDefaults').then((input) => {
       input.optionsUrlNoneSavedVisible = 'not.'
       input.optionsUrlSavedTableVisible = ''
@@ -66,7 +67,7 @@ describe('Options -> URLs', function () {
 
     // click URL edit icon and then save button
     cy.log('click URL edit icon and then save button')
-    cy.get('.editUrl').click()
+    cy.get('.editUrl').click({ force: true })
     cy.get('#optionsUrlInput').type('/test')
     cy.get('#optionsUrlSaveButton').click()
     cy.fixture('optionsDefaults').then((input) => {
@@ -99,11 +100,9 @@ describe('Options -> URLs', function () {
     cy.get('#optionsAnchor').click()
     cy.get('#options').should('be.visible')
     cy.get('#optionsUrls').should('be.visible')
-    cy.get('.deleteUrl').click()
+    cy.get('.deleteUrl').click({ force: true })
     cy.get('#deleteModal').should('be.visible')
-    cy.get('#deleteModalCancelButton').click()
-    cy.get('#deleteModalCancelButton').click()
-    cy.get('#deleteModalCancelButton').click()
+    cy.wait(400)
     cy.get('#deleteModalCancelButton').click()
     cy.get('#deleteModal').should('not.be.visible')
     cy.fixture('optionsDefaults').then((input) => {
@@ -113,8 +112,9 @@ describe('Options -> URLs', function () {
     })
 
     // click URL delete icon and then delete button
+    cy.wait(400)
     cy.log('click URL delete icon and then delete button')
-    cy.get('.deleteUrl').click()
+    cy.get('.deleteUrl').click({ force: true })
     cy.get('#deleteModal').should('be.visible')
     cy.get('#deleteModalBody').invoke('text').should('be', 'Are you sure you want to delete the URL shown below?')
     cy.get('#deleteModalName').invoke('text').should('be', urlNameNew)
