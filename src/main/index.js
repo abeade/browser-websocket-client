@@ -829,7 +829,7 @@ optionsMessageSaveButton.on('click', function () {
 
 function downloadFile (options) {
   if (!options.url) {
-    const blob = new Blob([options.content], {type: 'text/plain;charset=UTF-8'})
+    const blob = new Blob([options.content], {type: 'application/json;charset=UTF-8'})
     options.url = window.URL.createObjectURL(blob)
   }
   chrome.downloads.download({
