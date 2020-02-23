@@ -1,6 +1,4 @@
-# Not Maintained
-
-If you you would like to maintain this extension, please create an issue. I can transfer Chrome store ownership to you and change this readme to display only a link to your fork. Note that I'd intended the export-import branch to be the next release. It should be feature complete, but the readme and tests need updating.
+![Chrome Web Store](https://img.shields.io/chrome-web-store/v/mdmlhchldhfnfnkfmljgeinlffmdgkjo)
 
 
 ## Browser-WebSocket-Client
