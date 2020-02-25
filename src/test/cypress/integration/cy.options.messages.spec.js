@@ -10,6 +10,7 @@ describe('Options -> Messages', function () {
     cy.mockChromeStorageAndVisit('/#options')
     cy.get('#optionsMessagesAnchor').click()
     cy.get('#optionsMessages').should('be.visible')
+    cy.wait(400)
   })
 
   it('entering and then deleting text in #optionsMessageNameInput should show #optionsMessageNameInvalid', function () {
@@ -85,7 +86,7 @@ describe('Options -> Messages', function () {
 
     // clicking printer icon should show JSON modal
     cy.log('clicking printer icon should show JSON modal')
-    cy.get('.printMessage').click()
+    cy.get('.printMessage').click({ force: true })
     cy.get('#jsonModal').should('be.visible')
     cy.get('#jsonModalTitle').invoke('text').should('be', 'One')
     cy.get('#jsonModalBody').find('.bwc-key').should('have.length', 5)
@@ -160,8 +161,7 @@ describe('Options -> Messages', function () {
     cy.get('#optionsMessages').should('be.visible')
     cy.get('.deleteMessage').click()
     cy.get('#deleteModal').should('be.visible')
-    cy.get('#deleteModalCancelButton').click()
-    cy.get('#deleteModalCancelButton').click()
+    cy.get('#deleteModalName').invoke('text').should('be', messageNameNew)
     cy.get('#deleteModalCancelButton').click()
     cy.get('#deleteModal').should('not.be.visible')
     cy.fixture('optionsDefaults').then((input) => {

@@ -1,0 +1,17 @@
+{
+    "preferences": {
+        "preventSavingMessage": false,
+        "preventSavingUrl": false,
+        "preventUsingMessage": false,
+        "preventUsingUrl": true
+    },
+    "messages":[
+        "One\u0007{\"id\": \"one\"}"
+    ],
+    "protocols": [
+        "protocol"
+    ],
+    "urls": [
+        "ws://localhost"
+    ]
+}

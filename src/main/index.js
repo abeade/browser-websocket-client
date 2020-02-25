@@ -43,6 +43,12 @@ const mockChromeStorage = function (browser) {
     // eslint-disable-next-line no-global-assign
     chrome = window.chrome
   }
+  chrome.downloads = {}
+  chrome.downloads.download = function (options) {
+    // TODO testable
+    console.log('Mocking chrome.downloads.download() with the following options:')
+    console.dir(options)
+  }
   chrome.storage = {}
   chrome.storage.sync = {
     data: {
@@ -134,7 +140,16 @@ const deleteModalBody = $('#deleteModalBody')
 const deleteModalCancelButton = $('#deleteModalCancelButton')
 const deleteModalDeleteButton = $('#deleteModalDeleteButton')
 const deleteModalName = $('#deleteModalName')
+const importModal = $('#importModal')
+const importModalBody = $('#importModalBody')
+const importModalCancelButton = $('#importModalCancelButton')
+const importModalContinueButton = $('#importModalContinueButton')
+const importModalDescription = $('#importModalDescription')
 const options = $('#options')
+const optionsExportImportExportButton = $('#optionsExportImportExportButton')
+const optionsExportImportFileInput = $('#optionsExportImportFileInput')
+const optionsExportImportFileName = $('#optionsExportImportFileName')
+const optionsExportImportImportButton = $('#optionsExportImportImportButton')
 const optionsMessageCancelEditButton = $('#optionsMessageCancelEditButton')
 const optionsMessageJsonInvalidWarning = $('#optionsMessageJsonInvalidWarning')
 const optionsMessageNameInput = $('#optionsMessageNameInput')
@@ -146,8 +161,8 @@ const optionsMessageSavedTable = $('#optionsMessageSavedTable')
 const optionsMessageStatus = $('#optionsMessageStatus')
 const optionsMessageTextarea = $('#optionsMessageTextarea')
 const optionsMessageTextareaEmpty = $('#optionsMessageTextareaEmpty')
-const optionsMessageTextareaFormatSlider = $('#optionsMessageTextareaFormatSlider')
 const optionsMessageTextareaFormatCheckbox = $('#optionsMessageTextareaFormatCheckbox')
+const optionsMessageTextareaFormatSlider = $('#optionsMessageTextareaFormatSlider')
 const optionsProtocolCancelEditButton = $('#optionsProtocolCancelEditButton')
 const optionsProtocolInput = $('#optionsProtocolInput')
 const optionsProtocolInputEmpty = $('#optionsProtocolInputEmpty')
@@ -265,18 +280,18 @@ const saveOptions = function () {
 // Fetch extension options from storage and update all related objects and elements
 const loadOptions = function () {
   chrome.storage.sync.get('savedOptions', function (result) {
-    if (result['savedOptions']) {
-      if (result['savedOptions']['preferences']) {
-        savedOptions.preferences = result['savedOptions']['preferences']
+    if (result.savedOptions) {
+      if (result.savedOptions.preferences) {
+        savedOptions.preferences = result.savedOptions.preferences
       }
-      if (result['savedOptions']['messages']) {
-        savedOptions.messages = result['savedOptions']['messages']
+      if (result.savedOptions.messages) {
+        savedOptions.messages = result.savedOptions.messages
       }
-      if (result['savedOptions']['protocols']) {
-        savedOptions.protocols = result['savedOptions']['protocols']
+      if (result.savedOptions.protocols) {
+        savedOptions.protocols = result.savedOptions.protocols
       }
-      if (result['savedOptions']['urls']) {
-        savedOptions.urls = result['savedOptions']['urls']
+      if (result.savedOptions.urls) {
+        savedOptions.urls = result.savedOptions.urls
       }
     }
     setPreferencesCheckboxes()
@@ -313,6 +328,8 @@ const loadOptions = function () {
       optionsUrlSavedTable.hide()
       urlSelect.hide()
     }
+    optionsExportImportFileInput.val(undefined)
+    optionsExportImportFileInput.change()
   })
 }
 
@@ -353,8 +370,8 @@ const deleteOptions = function (option, target, options) {
 
 // Populate the saved URLs table
 const populateUrlTable = function () {
+  const urls = savedOptions.urls.sort()
   let table = ''
-  let urls = savedOptions.urls.sort()
   $.each(urls, function (key, url) {
     table += urlTableRow.replace(/REPLACE_URL/g, url)
   })
@@ -441,7 +458,7 @@ optionsUrlCancelEditButton.on('click', function () {
 
 // Persist URL to storage on save button click
 optionsUrlSaveButton.on('click', function () {
-  let url = optionsUrlInput.val()
+  const url = optionsUrlInput.val()
   if (editingUrl) {
     deleteSavedOptions('url', editingUrlTarget)
   } else {
@@ -480,8 +497,8 @@ const getProtocols = function (input) {
 
 // Populate the saved protocols table
 const populateProtocolTable = function () {
+  const protocols = savedOptions.protocols.sort()
   let table = ''
-  let protocols = savedOptions.protocols.sort()
   $.each(protocols, function (key, protocol) {
     table += protocolTableRow.replace(/REPLACE_PROTOCOL/g, protocol)
   })
@@ -553,7 +570,7 @@ optionsProtocolCancelEditButton.on('click', function () {
 
 // Persist protocol to storage on save button click
 optionsProtocolSaveButton.on('click', function () {
-  let protocol = getProtocols(optionsProtocolInput)
+  const protocol = getProtocols(optionsProtocolInput)
   if (editingProtocol) {
     deleteSavedOptions('protocol', editingProtocolTarget)
   } else {
@@ -573,7 +590,7 @@ optionsProtocolSaveButton.on('click', function () {
 
 // Populate the saved messages table
 const populateMessageTable = function () {
-  let messages = savedOptions.messages.sort()
+  const messages = savedOptions.messages.sort()
   let table = ''
   $.each(messages, function (key, message) {
     const [name, body] = message.split(SEPARATOR)
@@ -606,7 +623,8 @@ const isValidJson = function (string) {
     if (test && typeof test === 'object') {
       return true
     }
-  } catch (e) { }
+  } catch (e) {
+  }
   return false
 }
 
@@ -807,6 +825,87 @@ optionsMessageSaveButton.on('click', function () {
   optionsMessageTextareaFormatCheckbox.prop('checked', false)
 })
 
+// OPTIONS: EXPORT IMPORT
+
+function downloadFile (options) {
+  if (!options.url) {
+    const blob = new Blob([options.content], {type: 'application/json;charset=UTF-8'})
+    options.url = window.URL.createObjectURL(blob)
+  }
+  chrome.downloads.download({
+    url: options.url,
+    filename: options.filename,
+    saveAs: true
+  })
+}
+
+// Exports current configuration
+optionsExportImportExportButton.on('click', function () {
+  downloadFile({
+    filename: 'wsclient.json',
+    content: JSON.stringify(savedOptions)
+  })
+})
+
+optionsExportImportFileInput.on('change', function () {
+  const file = optionsExportImportFileInput[0].files[0]
+  if (file) {
+    optionsExportImportFileName.html(`Configuration file: <code>${file.name}</code>`)
+  }
+  optionsExportImportImportButton.prop('disabled', file === undefined)
+})
+
+// Imports configuration
+optionsExportImportImportButton.on('click', function () {
+  const file = optionsExportImportFileInput[0].files[0]
+  if (file === undefined) {
+    return
+  }
+  importConfiguration(file)
+})
+
+// Imports configuration from file by using confirmation
+const importConfiguration = function (file) {
+  importModalBody.text('Are you sure you want to overwrite your current settings?')
+  importModalContinueButton.show()
+  importModalDescription.hide()
+  importModalContinueButton.on('click', function () {
+    importModalDescription.hide()
+    importModalContinueButton.hide()
+    const reader = new FileReader()
+    reader.onload = function (e) {
+      let data = null
+      try {
+        data = JSON.parse(e.target.result)
+      } catch (e) {
+        importModalBody.text('Error parsing JSON')
+        importModalDescription.text(e)
+        importModalDescription.show()
+        importModalCancelButton.text('Close')
+        return
+      }
+      // eslint-disable-next-line no-prototype-builtins
+      if (data != null && data.hasOwnProperty('messages') && data.hasOwnProperty('protocols') && data.hasOwnProperty('urls') && data.hasOwnProperty('preferences')) {
+        savedOptions.messages = data.messages
+        savedOptions.protocols = data.protocols
+        savedOptions.urls = data.urls
+        savedOptions.preferences = data.preferences
+        saveOptions()
+        importModalDescription.hide()
+        importModalBody.text('File successfully imported')
+        importModalCancelButton.text('Close')
+      } else {
+        importModalBody.text('Error parsing JSON')
+        importModalDescription.text('Unexpected file format found.')
+        importModalDescription.show()
+        importModalCancelButton.text('Close')
+      }
+    }
+    reader.readAsText(file)
+  })
+  importModal.modal('show')
+}
+
 // CLIENT SECTION
 
 // Populate URL select menu
@@ -898,7 +997,7 @@ urlInput.on('keyup', function () {
 })
 
 // Validate message body on textarea keyup
-messageTextarea.on('keyup', function (e) {
+messageTextarea.on('keyup', function () {
   validateClientMessage()
 })
 
@@ -917,9 +1016,13 @@ clearMessagesButton.on('click', function () {
 
 // Open WebSocket connection
 const open = function () {
-  let url = urlInput.val().toString()
-  let protocol = getProtocols(protocolInput)
-  if (protocol) { ws = new WebSocket(url, protocol) } else { ws = new WebSocket(url) }
+  const protocol = getProtocols(protocolInput)
+  const url = urlInput.val().toString()
+  if (protocol) {
+    ws = new WebSocket(url, protocol)
+  } else {
+    ws = new WebSocket(url)
+  }
   ws.onopen = onOpen
   ws.onclose = onClose
   ws.onmessage = onMessage
@@ -981,7 +1084,7 @@ const onError = function (event) {
 // Add outgoing and incoming message to DOM, formatting as necessary
 // Format incoming messages to open JSON pretty-print modal on click
 const addMessage = function (data, type) {
-  let message, messageBox
+  let message
   if (type === 'SENT') {
     message = $('<pre>')
       .attr('class', 'bwc-sent')
@@ -998,7 +1101,7 @@ const addMessage = function (data, type) {
   }
   messages.append(message)
   clearMessagesButton.prop('disabled', false)
-  messageBox = messages.get(0)
+  const messageBox = messages.get(0)
   while (messageBox.childNodes.length > 500) {
     messageBox.removeChild(messageBox.firstChild)
   }
@@ -1007,7 +1110,7 @@ const addMessage = function (data, type) {
 
 // Add outgoing message to DOM and send it to server
 const sendMessage = function () {
-  let message = messageTextarea.val()
+  const message = messageTextarea.val()
   addMessage(message, 'SENT')
   ws.send(message)
 }

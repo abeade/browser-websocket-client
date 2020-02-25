@@ -10,17 +10,17 @@ process.traceDeprecation = true
 
 module.exports = function (env) {
   const environment = env.toString().split(':')
-  let mode = environment[0] ? environment[0] : 'development'
-  let platform = environment[1] ? environment[1] : 'chrome'
-  let buildPath = root('build/' + mode + '/' + platform)
+  const mode = environment[0] ? environment[0] : 'development'
+  const platform = environment[1] ? environment[1] : 'chrome'
+  const buildPath = root('build/' + mode + '/' + platform)
 
   // noinspection WebpackConfigHighlighting
   return {
     mode: mode,
     entry: {
-      'index': './src/main/index.js',
-      'background': './src/main/background.js',
-      'styles': './src/main/styles/custom.scss'
+      index: './src/main/index.js',
+      background: './src/main/background.js',
+      styles: './src/main/styles/custom.scss'
     },
     output: {
       path: buildPath,
