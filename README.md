@@ -119,7 +119,7 @@ The JavaScript is written in ES6.
 
 To run the tests:
 
-* Start [Serve](https://github.com/zeit/serve) using `npx serve` on the prject root folder
+* Start [Serve](https://github.com/zeit/serve) using `npx serve` on the project root folder
 * Execute `npx cypress open` in the tests folder at `src/test`
 
 ## Inspiration
