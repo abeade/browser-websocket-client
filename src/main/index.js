@@ -249,28 +249,28 @@ const setPreferencesCheckboxes = function () {
 preferencesOptionsUrlCheckbox.on('change', function () {
   savedOptions.preferences.preventSavingUrl = preferencesOptionsUrlCheckbox.is(':checked')
   saveOptions()
-  tracker.sendEvent('Options', 'PreventSavingUrl', savedOptions.preferences.preventSavingUrl);
+  tracker.sendEvent('Options', 'PreventSavingUrl', savedOptions.preferences.preventSavingUrl)
 })
 
 // React to preventUsingUrl checkbox changes
 preferencesClientUrlCheckbox.on('change', function () {
   savedOptions.preferences.preventUsingUrl = preferencesClientUrlCheckbox.is(':checked')
   saveOptions()
-  tracker.sendEvent('Options', 'PreventUsingUrl', savedOptions.preferences.preventUsingUrl);
+  tracker.sendEvent('Options', 'PreventUsingUrl', savedOptions.preferences.preventUsingUrl)
 })
 
 // React to preventSavingMessage checkbox changes
 preferencesOptionsMessageCheckbox.on('change', function () {
   savedOptions.preferences.preventSavingMessage = preferencesOptionsMessageCheckbox.is(':checked')
   saveOptions()
-  tracker.sendEvent('Options', 'PreventSavingMessage', savedOptions.preferences.preventSavingMessage);
+  tracker.sendEvent('Options', 'PreventSavingMessage', savedOptions.preferences.preventSavingMessage)
 })
 
 // React to preventUsingMessage checkbox changes
 preferencesClientMessageCheckbox.on('change', function () {
   savedOptions.preferences.preventUsingMessage = preferencesClientMessageCheckbox.is(':checked')
   saveOptions()
-  tracker.sendEvent('Options', 'PreventUsingMessage', savedOptions.preferences.preventUsingMessage);
+  tracker.sendEvent('Options', 'PreventUsingMessage', savedOptions.preferences.preventUsingMessage)
 })
 
 // OPTIONS SECTION
@@ -425,7 +425,7 @@ const deleteUrl = function (url) {
       const url = jQuery(this).data('target')
       deleteSavedOptions('url', url)
       saveOptions()
-      tracker.sendEvent('Options', 'Deleted', 'Url');
+      tracker.sendEvent('Options', 'Deleted', 'Url')
       deleteModalBody.text('URL deleted:')
       deleteModalName.text(url)
       deleteModalDeleteButton.hide()
@@ -474,7 +474,7 @@ optionsUrlSaveButton.on('click', function () {
   }
   savedOptions.urls.push(url)
   saveOptions()
-  tracker.sendEvent('Options', 'Saved', 'Url');
+  tracker.sendEvent('Options', 'Saved', 'Url')
   optionsUrlInput.val('')
   optionsUrlInputLabel.html(optionsUrlInputLabelDefaultText)
   optionsUrlSaveButton.prop('disabled', savedOptions.preferences.preventSavingUrl)
@@ -548,7 +548,7 @@ const deleteProtocol = function (protocol) {
       const protocol = jQuery(this).data('target')
       deleteSavedOptions('protocol', protocol)
       saveOptions()
-      tracker.sendEvent('Options', 'Deleted', 'Protocol');
+      tracker.sendEvent('Options', 'Deleted', 'Protocol')
       deleteModalBody.text('Protocol deleted:')
       deleteModalName.text(protocol)
       deleteModalDeleteButton.hide()
@@ -588,7 +588,7 @@ optionsProtocolSaveButton.on('click', function () {
   }
   savedOptions.protocols.push(protocol.toString().replace(/,/g, ', '))
   saveOptions()
-  tracker.sendEvent('Options', 'Saved', 'Protocol');
+  tracker.sendEvent('Options', 'Saved', 'Protocol')
   optionsProtocolInput.val('')
   optionsProtocolInputLabel.text(optionsProtocolInputLabelDefaultText)
   optionsProtocolSaveButton.prop('disabled', true)
@@ -741,7 +741,7 @@ const deleteMessage = function (all) {
     .on('click', function () {
       deleteSavedOptions('message', `${name}${SEPARATOR}`)
       saveOptions()
-      tracker.sendEvent('Options', 'Deleted', 'Message');
+      tracker.sendEvent('Options', 'Deleted', 'Message')
       deleteModalBody.text('Message deleted:')
       deleteModalName.text(name)
       deleteModalDeleteButton.hide()
@@ -823,7 +823,7 @@ optionsMessageSaveButton.on('click', function () {
   }
   savedOptions.messages.push(message)
   saveOptions()
-  tracker.sendEvent('Options', 'Saved', 'Message');
+  tracker.sendEvent('Options', 'Saved', 'Message')
   optionsMessageTextareaEmpty.hide()
   optionsMessageJsonInvalidWarning.hide()
   optionsMessageNameInput.val('')
@@ -858,7 +858,7 @@ optionsExportImportExportButton.on('click', function () {
     filename: 'wsclient.json',
     content: JSON.stringify(savedOptions)
   })
-  tracker.sendEvent('Options', 'Exported');
+  tracker.sendEvent('Options', 'Exported')
 })
 
 optionsExportImportFileInput.on('change', function () {
@@ -876,7 +876,7 @@ optionsExportImportImportButton.on('click', function () {
     return
   }
   importConfiguration(file)
-  tracker.sendEvent('Options', 'Imported');
+  tracker.sendEvent('Options', 'Imported')
 })
 
 // Imports configuration from file by using confirmation
@@ -1043,7 +1043,7 @@ const open = function () {
   ws.onmessage = onMessage
   ws.onerror = onError
   connectionStatus.text('OPENING CONNECTION ...')
-  tracker.sendEvent('Websocket', 'Connection', 'Opening');
+  tracker.sendEvent('Websocket', 'Connection', 'Opening')
 }
 
 // Close WebSocket connection
@@ -1052,7 +1052,7 @@ const close = function () {
     console.log('CLOSING CONNECTION ...')
     wsPoliteDisconnection = true
     ws.close()
-    tracker.sendEvent('Websocket', 'Connection', 'Closing');
+    tracker.sendEvent('Websocket', 'Connection', 'Closing')
   }
 }
 
@@ -1069,7 +1069,7 @@ const onOpen = function () {
   wsConnected = true
   wsPoliteDisconnection = false
   validateClientMessage()
-  tracker.sendEvent('Websocket', 'Connection', 'Opened');
+  tracker.sendEvent('Websocket', 'Connection', 'Opened')
 }
 
 // WebSocket onClose handler
@@ -1087,7 +1087,7 @@ const onClose = function () {
   urlInput.prop('disabled', false)
   protocolInput.prop('disabled', false)
   wsConnected = false
-  tracker.sendEvent('Websocket', 'Connection', 'Closed');
+  tracker.sendEvent('Websocket', 'Connection', 'Closed')
 }
 
 // WebSocket onMessage handler
@@ -1097,7 +1097,7 @@ const onMessage = function (event) {
 
 // WebSocket onError handler
 const onError = function (event) {
-  console.error(event.data);
+  console.error(event.data)
 }
 
 // Add outgoing and incoming message to DOM, formatting as necessary
@@ -1138,19 +1138,19 @@ const sendMessage = function () {
 connectButton.on('click', function () {
   close()
   open()
-  tracker.sendEvent('Websocket', 'Connect');
+  tracker.sendEvent('Websocket', 'Connect')
 })
 
 // Disconnect button click
 disconnectButton.on('click', function () {
   close()
-  tracker.sendEvent('Websocket', 'Disconnect');
+  tracker.sendEvent('Websocket', 'Disconnect')
 })
 
 // Send message button click
 messageSendButton.on('click', function () {
   sendMessage()
-  tracker.sendEvent('Websocket', 'SendMessage', 'Button');
+  tracker.sendEvent('Websocket', 'SendMessage', 'Button')
 })
 
 // Allow Ctrl+Enter shortcut to send message from message body textarea
@@ -1158,7 +1158,7 @@ messageTextarea.on('keydown', function (e) {
   const sendEnabled = !messageSendButton.prop('disabled')
   if (sendEnabled && (e.ctrlKey || e.metaKey) && (e.keyCode === 13 || e.keyCode === 10)) {
     sendMessage()
-    tracker.sendEvent('Websocket', 'SendMessage', 'Shortcut');
+    tracker.sendEvent('Websocket', 'SendMessage', 'Shortcut')
   }
 })
 
@@ -1231,6 +1231,31 @@ $('*').focus(function () {
   optionsMessageStatus.text('').hide()
 })
 
+// Add screen view trackings
+$('#optionsPreferences').on('shown.bs.collapse', function () {
+  tracker.sendAppView('Preferences')
+})
+
+$('#optionsUrls').on('shown.bs.collapse', function () {
+  tracker.sendAppView('Urls')
+})
+
+$('#optionsProtocols').on('shown.bs.collapse', function () {
+  tracker.sendAppView('Protocols')
+})
+
+$('#optionsMessages').on('shown.bs.collapse', function () {
+  tracker.sendAppView('Messages')
+})
+
+$('#optionsExportImport').on('shown.bs.collapse', function () {
+  tracker.sendAppView('ExportImport')
+})
+
+$('#client').on('shown.bs.collapse', function () {
+  tracker.sendAppView('Client')
+})
+
 // Document ready
 $(document).ready(function () {
   loadOptions()
@@ -1245,7 +1270,7 @@ $(document).ready(function () {
   messageTextarea.val('')
   optionsMessageTextareaFormatCheckbox.prop('checked', false)
   messageTextareaFormatCheckbox.prop('checked', false)
-  tracker.sendAppView('Extension');
+  tracker.sendAppView('Client')
 })
 
 // Used in unit tests

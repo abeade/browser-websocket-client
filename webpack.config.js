@@ -53,9 +53,7 @@ module.exports = function (env) {
                 }
               }
             }, 
-            {
-              loader: 'sass-loader'
-            }
+            { loader: 'sass-loader' }
           ]
         }
       ]
