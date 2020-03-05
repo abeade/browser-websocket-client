@@ -36,25 +36,25 @@ module.exports = function (env) {
             /\.spec\.js$/
           ],
           loader: 'babel-loader'
-        }, {
+        }, 
+        {
           test: /\.(scss)$/,
-          use: [{
-            loader: 'style-loader'
-          }, {
-            loader: 'css-loader'
-          }, {
-            loader: 'postcss-loader',
-            options: {
-              plugins: function () {
-                return [
-                  require('precss'),
-                  require('autoprefixer')
-                ]
+          use: [
+            { loader: 'style-loader'}, 
+            { loader: 'css-loader' }, 
+            {
+              loader: 'postcss-loader',
+              options: {
+                plugins: function () {
+                  return [
+                    require('precss'),
+                    require('autoprefixer')
+                  ]
+                }
               }
-            }
-          }, {
-            loader: 'sass-loader'
-          }]
+            }, 
+            { loader: 'sass-loader' }
+          ]
         }
       ]
     },
@@ -66,16 +66,14 @@ module.exports = function (env) {
     },
     plugins: [
       new CopyWebpackPlugin([
-        {
-          from: 'icons', to: buildPath
-        }, {
-          from: 'src/main/index.html', to: buildPath
-        }
+        { from: 'icons', to: buildPath }, 
+        { from: 'src/main/index.html', to: buildPath },
+        { from: 'src/main/google-analytics-bundle.js', to: buildPath }
       ]),
       new GenerateJsonPlugin('manifest.json', merge(
         require('./src/manifest/common.json'),
         require(`./src/manifest/${platform}.json`),
-        {version}
+        { version }
       ), null, 2)
     ]
   }
