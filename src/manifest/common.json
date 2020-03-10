@@ -1,7 +1,7 @@
 {
   "name": "Browser WebSocket Client",
   "manifest_version": 2,
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Connect to a WebSocket server to send and receive raw JSON messages.",
   "icons": {
     "16": "icon_016.png",
@@ -21,7 +21,7 @@
   "permissions": [
     "https://www.google-analytics.com/",
     "storage",
-    "tabs",
+    "activeTab",
     "downloads"
   ]
 }
