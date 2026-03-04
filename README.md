@@ -36,7 +36,7 @@ The screenshot below shows the "Client" section in use with a pretty-printed mes
 
 ### Options Section
 
-All user options are saved using [storage.sync](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/storage/sync) which allows you to login to [Chrome](https://accounts.google.com) or [Mozilla](https://www.mozilla.org/en-US/firefox/accounts/)  and sync your settings across different devices. Your settings also remain available locally after a browser restart even if you do not login with a Chrome or Mozilla account.
+All user options are saved using [storage.sync](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage/sync) which allows you to login to [Chrome](https://accounts.google.com) or [Mozilla](https://www.mozilla.org/en-US/firefox/accounts/)  and sync your settings across different devices. Your settings also remain available locally after a browser restart even if you do not login with a Chrome or Mozilla account.
 
 #### Preferences
 
@@ -103,7 +103,7 @@ Then you can load the unpacked extension using these [instructions](https://deve
 npm run build:firefox
 ```
 
-Then you can load the unpacked extension using these [instructions](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Temporary_Installation_in_Firefox) and choosing the path below:
+Then you can load the unpacked extension using these [instructions](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Temporary_Installation_in_Firefox) and choosing the path below:
 
 ```
 /some/directory/browser-websocket-client/build/dev/firefox
